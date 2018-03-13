@@ -1,18 +1,18 @@
-/Users/programmer/ReactProject/Project App/CrossPlatformApp/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSBigString.o
-/Users/programmer/ReactProject/Project App/CrossPlatformApp/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSIndexedRAMBundle.o
-/Users/programmer/ReactProject/Project App/CrossPlatformApp/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/ModuleRegistry.o
-/Users/programmer/ReactProject/Project App/CrossPlatformApp/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/RAMBundleRegistry.o
-/Users/programmer/ReactProject/Project App/CrossPlatformApp/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/CxxNativeModule.o
-/Users/programmer/ReactProject/Project App/CrossPlatformApp/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSCExecutor.o
-/Users/programmer/ReactProject/Project App/CrossPlatformApp/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSCLegacyTracing.o
-/Users/programmer/ReactProject/Project App/CrossPlatformApp/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSCPerfStats.o
-/Users/programmer/ReactProject/Project App/CrossPlatformApp/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSBundleType.o
-/Users/programmer/ReactProject/Project App/CrossPlatformApp/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSCUtils.o
-/Users/programmer/ReactProject/Project App/CrossPlatformApp/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSCSamplingProfiler.o
-/Users/programmer/ReactProject/Project App/CrossPlatformApp/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSCMemory.o
-/Users/programmer/ReactProject/Project App/CrossPlatformApp/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/MethodCall.o
-/Users/programmer/ReactProject/Project App/CrossPlatformApp/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/Platform.o
-/Users/programmer/ReactProject/Project App/CrossPlatformApp/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/Instance.o
-/Users/programmer/ReactProject/Project App/CrossPlatformApp/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/NativeToJsBridge.o
-/Users/programmer/ReactProject/Project App/CrossPlatformApp/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSCNativeModules.o
-/Users/programmer/ReactProject/Project App/CrossPlatformApp/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/SampleCxxModule.o
+/Users/programmer/ReactProject/CrossPlatformApp2/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSBigString.o
+/Users/programmer/ReactProject/CrossPlatformApp2/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSIndexedRAMBundle.o
+/Users/programmer/ReactProject/CrossPlatformApp2/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/ModuleRegistry.o
+/Users/programmer/ReactProject/CrossPlatformApp2/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/RAMBundleRegistry.o
+/Users/programmer/ReactProject/CrossPlatformApp2/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/CxxNativeModule.o
+/Users/programmer/ReactProject/CrossPlatformApp2/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSCExecutor.o
+/Users/programmer/ReactProject/CrossPlatformApp2/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSCLegacyTracing.o
+/Users/programmer/ReactProject/CrossPlatformApp2/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSCPerfStats.o
+/Users/programmer/ReactProject/CrossPlatformApp2/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSBundleType.o
+/Users/programmer/ReactProject/CrossPlatformApp2/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSCUtils.o
+/Users/programmer/ReactProject/CrossPlatformApp2/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSCSamplingProfiler.o
+/Users/programmer/ReactProject/CrossPlatformApp2/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSCMemory.o
+/Users/programmer/ReactProject/CrossPlatformApp2/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/MethodCall.o
+/Users/programmer/ReactProject/CrossPlatformApp2/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/Platform.o
+/Users/programmer/ReactProject/CrossPlatformApp2/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/Instance.o
+/Users/programmer/ReactProject/CrossPlatformApp2/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/NativeToJsBridge.o
+/Users/programmer/ReactProject/CrossPlatformApp2/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/JSCNativeModules.o
+/Users/programmer/ReactProject/CrossPlatformApp2/ios/build/Build/Intermediates.noindex/React.build/Debug-iphonesimulator/cxxreact.build/Objects-normal/x86_64/SampleCxxModule.o
