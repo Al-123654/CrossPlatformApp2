@@ -41,7 +41,7 @@ class App extends Component {
 				// this is much more performant.
 				fileCache : true,
 			})
-			.fetch('GET', 'http://via.placeholder.com/350x150', {
+			.fetch('GET', 'https://via.placeholder.com/350x150', {
 				//some headers ..
 			})
 			.then((res) => {
