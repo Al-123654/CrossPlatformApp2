@@ -52,15 +52,48 @@ class App extends Component {
 		})
 	}
 
+	onUploadPressHandler = () => {
+		if(!this.state.isLoggedIn){
+			return this.setState({
+				log: "LOGIN FIRST"
+			});
+		}
+		// download image
+		RNFetchBlob
+		.config({
+			// add this option that makes response data to be stored as a file,
+			// this is much more performant.
+			fileCache : true,
+		})
+		.fetch('GET', 'https://via.placeholder.com/200x150', {
+			//some headers ..
+		})
+		.then((res) => {
+			// the temp file path
+			console.log('The file saved to ', res.path());
+			test = res.path();
+			console.log("PATH to FILE: " + test);
+
+			// save image
+			RNFetchBlob.fetch('POST', 'https://app-api-testing.herokuapp.com/upload', {
+				'Content-Type' : 'multipart/form-data',
+			}, [
+				{ name : 'sampleFile', filename : 'file.png', type:'image/png', data: RNFetchBlob.wrap(test)},
+			]).then((res) => {
+				console.log("TEST RESPONSE: " + res.text());
+				this.setState({
+					log: "Response from server",
+					logDetails: "test" + res.text()
+				});
+			}).catch((err) => {
+				console.log("TEST ERROR: " + err);
+			});
+		});
+	}
+
 	onLoginPressHandler = () => {
 		if(this.state.username.length > 1 && this.state.password.length > 1){
-			// this.setState(
-			// 	log: "Username and Password provided.",
-			// 	isLoggedIn: true
-			// });
-			// this.props.navigation.navigate('User',{username: this.state.username ,});
 			
-			// return fetch('https://app-api-testing.herokuapp.com/login', {
 			return fetch('https://app-api-testing.herokuapp.com/login', {
 				method: 'POST',
 				headers: {
@@ -69,25 +102,32 @@ class App extends Component {
 				},
 				body: JSON.stringify({
 					username: this.state.username,
-					// fname: this.state.fname,
-					// lname: this.state.lname,
-					// email: this.state.email,
 					password: this.state.password
 				}),
 			})
-
 				.then((response) => response.json())
 				.then((responseJson) => {
-					this.setState({ log: responseJson.data._id });
-					// this.props.navigation.navigate('User', { username: this.state.username, });
-					this.props.navigation.navigate('User', { 
-						id:responseJson.data._id, 
-						username: this.state.username, 
-						fname: responseJson.data.fname,
-						lname: responseJson.data.lname,
-						email: responseJson.data.email
-					});
-					console.log("TEST" + responseJson.username)			
+					if(responseJson.data){
+						console.log("LOGGED IN!");
+						this.setState({ 
+							id: responseJson.data._id,
+							isLoggedIn: true
+						});
+						// go to user page
+						this.props.navigation.navigate('User', {
+							id: responseJson.data._id,
+							username: responseJson.data.username,
+							fname: responseJson.data.fname,
+							lname: responseJson.data.lname,
+							email: responseJson.data.email,
+							isLoggedIn: this.state.isLoggedIn
+						});
+					}else{
+						console.log("NOT LOGGED IN!");
+						this.setState({ 
+							log: "NOT LOGGED IN"
+						});
+					}	
 				})
 				.catch((error) => {
 					console.error(error);
@@ -114,6 +154,7 @@ class App extends Component {
 					<TextInput placeholder="Password" onChangeText={(text) => this.onChangedPasswordHandler(text)} />
 					<Button title="Login" onPress={this.onLoginPressHandler} />
 					<Button title="Test Download" onPress={this.onBlobPressHandler} />
+					<Button title="Test Upload" onPress={this.onUploadPressHandler} />
 					<Text style={styles.registerLink} onPress={this.onRegisterPressHandler}>Register</Text>
 					<Text>{this.state.log}</Text>
 					<Text>{this.state.logDetails}</Text>
