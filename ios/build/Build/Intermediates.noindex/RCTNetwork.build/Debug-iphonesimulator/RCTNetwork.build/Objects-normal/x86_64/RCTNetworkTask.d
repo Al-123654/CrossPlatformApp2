@@ -1,0 +1,10 @@
+dependencies: \
+  /Users/programmer/ReactProject/Project\ App/CrossPlatformApp/node_modules/react-native/Libraries/Network/RCTNetworkTask.m \
+  /Users/programmer/ReactProject/Project\ App/CrossPlatformApp/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTLog.h \
+  /Users/programmer/ReactProject/Project\ App/CrossPlatformApp/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTAssert.h \
+  /Users/programmer/ReactProject/Project\ App/CrossPlatformApp/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTDefines.h \
+  /Users/programmer/ReactProject/Project\ App/CrossPlatformApp/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTUtils.h \
+  /Users/programmer/ReactProject/Project\ App/CrossPlatformApp/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTNetworkTask.h \
+  /Users/programmer/ReactProject/Project\ App/CrossPlatformApp/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTURLRequestDelegate.h \
+  /Users/programmer/ReactProject/Project\ App/CrossPlatformApp/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTURLRequestHandler.h \
+  /Users/programmer/ReactProject/Project\ App/CrossPlatformApp/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTBridgeModule.h
