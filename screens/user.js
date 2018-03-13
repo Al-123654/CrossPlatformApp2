@@ -8,14 +8,16 @@ class UserScreen extends Component {
     constructor(props) {
         super(props);
     }
-    
+    state = {
+        message: ""
+    };
 
     onUploadPressHandler = () =>{
         RNFetchBlob
         .config({
             fileCache : true,
         })
-        .fetch('GET', 'http://via.placehoder.com/200x150', {
+        .fetch('GET', 'https://via.placeholder.com/200x150', {
 
         })
         .then((res) => {
@@ -28,9 +30,15 @@ class UserScreen extends Component {
             }, [
                     { name: 'sampleFile', filename: 'file.png', type: 'image/png', data: RNFetchBlob.wrap(test)},
             ]).then((resp) => {
-                console.log("TEST RESPONSE" + resp);
+                console.log("TEST RESPONSE" + resp.text());
+                this.setState({
+                    message: resp.text()
+                });
             }).catch((err) => {
                 console.log("TEST ERROR: " + err);
+                this.setState({
+                    message: "ERROR"
+                });
             });
         });
     }
@@ -67,9 +75,6 @@ class UserScreen extends Component {
     
     
     }
-
-
-    
     render() {
         const {params} = this.props.navigation.state;
         const username = params ? params.username : null;
@@ -88,6 +93,7 @@ class UserScreen extends Component {
                 </Text>
 				<Button title="Upload" onPress={this.onUploadPressHandler} />
 				<Button title="Logout" onPress={this.onLogoutPressHandler} />
+                <Text>{this.state.message}</Text>
             </View>
         );
     }

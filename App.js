@@ -97,8 +97,8 @@ class App extends Component {
 	onLoginPressHandler = () => {
 		if(this.state.username.length > 1 && this.state.password.length > 1){
 			
-			return fetch('http://localhost:5000/login', {
-			// return fetch('https://app-api-testing.herokuapp.com/login', {
+			// return fetch('http://localhost:5000/login', {
+			return fetch('https://app-api-testing.herokuapp.com/login', {
 				method: 'POST',
 				headers: {
 					Accept: 'application/json',
