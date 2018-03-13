@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import { StackNavigator, } from 'react-navigation';
 
-import RNFetchBlob from 'react-native-fetch-blob'
-
+import ImagePicker from 'react-native-image-picker';
+import RNFetchBlob from 'react-native-fetch-blob';
 
 var RegisterScreen = require('./screens/register.js');
 var UserScreen = require('./screens/user.js');
@@ -34,7 +34,7 @@ class App extends Component {
 		}
 	}
 
-	onBlobPressHandler = () => {
+	onDownloadPressHandler = () => {
 		RNFetchBlob
 			.config({
 				// add this option that makes response data to be stored as a file,
@@ -144,17 +144,49 @@ class App extends Component {
 		this.props.navigation.navigate('Register');
 	}
 
+	onImagePickerHandler = () => {
+		let imagePickerOptions = {
+			title: 'Select Image',
+			customButtons: [
+				{name: 'fb', title: 'Choose Photo from Facebook'}
+			],
+			storageOptions: {
+				skipBackup: true,
+				path: 'images'
+			}
+		};
+
+		ImagePicker.showImagePicker(imagePickerOptions, (response) => {
+			console.log('Image Picker Response: ', response);
+
+			if(response.didCancel){
+				console.log('User cancelled the picker.');
+			}else if(response.error){
+				console.log('ImagePicker Error:', response.error);
+			}else if (response.customButton){
+				console.log('User tapped custom button: ', response.customButton);
+			}else{
+				let source = { uri: response.uri };
+				this.setState({
+					avatarSource: source
+				});
+			}
+		});
+	}
+
 	render() {
 	
 		return (
 			<View style={styles.container}>
 				<View style={styles.formContainer}>
 					<Text style={styles.appHeading}>Test App</Text>
+					
 					<TextInput placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
 					<TextInput placeholder="Password" onChangeText={(text) => this.onChangedPasswordHandler(text)} />
 					<Button title="Login" onPress={this.onLoginPressHandler} />
-					<Button title="Test Download" onPress={this.onBlobPressHandler} />
+					<Button title="Test Download" onPress={this.onDownloadPressHandler} />
 					<Button title="Test Upload" onPress={this.onUploadPressHandler} />
+					<Button title="Image Picker" onPress={this.onImagePickerHandler} />
 					<Text style={styles.registerLink} onPress={this.onRegisterPressHandler}>Register</Text>
 					<Text>{this.state.log}</Text>
 					<Text>{this.state.logDetails}</Text>
