@@ -1,3 +1,3 @@
 dependencies: \
-  /Users/programmer/ReactProject/Project\ App/CrossPlatformApp/node_modules/react-native/ReactCommon/privatedata/PrivateDataBase.cpp \
-  /Users/programmer/ReactProject/Project\ App/CrossPlatformApp/node_modules/react-native/ReactCommon/privatedata/PrivateDataBase.h
+  /Users/programmer/ReactProject/CrossPlatformApp2/node_modules/react-native/ReactCommon/privatedata/PrivateDataBase.cpp \
+  /Users/programmer/ReactProject/CrossPlatformApp2/node_modules/react-native/ReactCommon/privatedata/PrivateDataBase.h
