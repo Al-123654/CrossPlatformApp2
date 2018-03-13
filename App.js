@@ -94,7 +94,8 @@ class App extends Component {
 	onLoginPressHandler = () => {
 		if(this.state.username.length > 1 && this.state.password.length > 1){
 			
-			return fetch('https://app-api-testing.herokuapp.com/login', {
+			return fetch('http://localhost:5000/login', {
+			// return fetch('https://app-api-testing.herokuapp.com/login', {
 				method: 'POST',
 				headers: {
 					Accept: 'application/json',
@@ -110,18 +111,19 @@ class App extends Component {
 					if(responseJson.data){
 						console.log("LOGGED IN!");
 						this.setState({ 
-							id: responseJson.data._id,
+							// id: responseJson.data._id,
 							isLoggedIn: true
 						});
 						// go to user page
-						this.props.navigation.navigate('User', {
-							id: responseJson.data._id,
-							username: responseJson.data.username,
-							fname: responseJson.data.fname,
-							lname: responseJson.data.lname,
-							email: responseJson.data.email,
-							isLoggedIn: this.state.isLoggedIn
-						});
+						// this.props.navigation.navigate('User', {
+						// 	id: responseJson.data._id,
+						// 	username: responseJson.data.username,
+						// 	fname: responseJson.data.fname,
+						// 	lname: responseJson.data.lname,
+						// 	email: responseJson.data.email,
+						// 	isLoggedIn: this.state.isLoggedIn
+						// });
+						this.props.navigation.navigate('User', responseJson.data);
 					}else{
 						console.log("NOT LOGGED IN!");
 						this.setState({ 
