@@ -16,6 +16,7 @@ class App extends Component {
 		logDetails: "",
 		isLoggedIn: false,
 		id: "",
+		imageSource: ""
 	};
 
 	onChangedUsernameHandler = (username) => {
@@ -35,21 +36,23 @@ class App extends Component {
 	}
 
 	onDownloadPressHandler = () => {
-		RNFetchBlob
-			.config({
-				// add this option that makes response data to be stored as a file,
-				// this is much more performant.
-				fileCache : true,
-			})
-			.fetch('GET', 'https://via.placeholder.com/350x150', {
-				//some headers ..
-			})
-			.then((res) => {
-				// the temp file path
-				console.log('The file saved to ', res.path());
-				this.setState({log: "Image downloaded!"});
-				this.setState({logDetails: res.path()});
+		let dirs = RNFetchBlob.fs.dirs;
+
+		RNFetchBlob.config({
+			fileCache: true,
+			appendExt: 'png',
+			path: dirs.DocumentDir + '/images'
 		})
+		.fetch('GET', 'https://via.placeholder.com/100x100', {
+			// headers
+		})
+		.then((res) => {
+			console.log('File saved to ', res.path());
+			this.setState({
+				log: "File downloaded!",
+				logDetails: res.path()
+			});
+		});
 	}
 
 	onUploadPressHandler = () => {
@@ -168,7 +171,7 @@ class App extends Component {
 			}else{
 				let source = { uri: response.uri };
 				this.setState({
-					avatarSource: source
+					imageSource: source
 				});
 			}
 		});
@@ -190,6 +193,7 @@ class App extends Component {
 					<Text style={styles.registerLink} onPress={this.onRegisterPressHandler}>Register</Text>
 					<Text>{this.state.log}</Text>
 					<Text>{this.state.logDetails}</Text>
+					<Text>{this.state.imageSource.fileName}</Text>
 				</View>
 			</View>
 		);
