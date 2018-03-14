@@ -136,6 +136,58 @@ class App extends Component {
 						// 	email: responseJson.data.email,
 						// 	isLoggedIn: this.state.isLoggedIn
 						// });
+						this.props.navigation.navigate('User', responseJson.data);
+					}else{
+						console.log("NOT LOGGED IN!");
+						this.setState({ 
+							log: "NOT LOGGED IN"
+						});
+					}	
+				})
+				.catch((error) => {
+					console.error(error);
+				});
+		}else {
+			this.setState({
+				log: "Username and Password not provided.",
+				logDetails: ""
+			});
+		}
+	}
+
+	onLoginPressTestHandler = () => {
+		if(this.state.username.length > 1 && this.state.password.length > 1){
+			
+			// return fetch('http://localhost:5000/login', {
+			return fetch('https://app-api-testing.herokuapp.com/login', {
+				method: 'POST',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					username: this.state.username,
+					password: this.state.password
+				}),
+			})
+				.then((response) => response.json())
+				.then((responseJson) => {
+					if(responseJson.data){
+						console.log("LOGGED IN!");
+						this.setState({ 
+							// id: responseJson.data._id,
+							isLoggedIn: true,
+							log: "Logged in!"
+						});
+						// go to user page
+						// this.props.navigation.navigate('User', {
+						// 	id: responseJson.data._id,
+						// 	username: responseJson.data.username,
+						// 	fname: responseJson.data.fname,
+						// 	lname: responseJson.data.lname,
+						// 	email: responseJson.data.email,
+						// 	isLoggedIn: this.state.isLoggedIn
+						// });
 						// this.props.navigation.navigate('User', responseJson.data);
 					}else{
 						console.log("NOT LOGGED IN!");
@@ -189,9 +241,31 @@ class App extends Component {
 			}else{
 				let source = { uri: response.uri };
 				this.setState({
-					imageSource: source
+					imageSource: source,
+					log: "Image chosen"
 				});
 				console.log('IMAGE CHOSEN: ', source);
+
+				// the file path
+				// console.log('The file saved to ', res.path());
+				// test = res.path();
+				// console.log("PATH to FILE: " + test);
+
+				// // save image
+				// RNFetchBlob.fetch('POST', 'https://app-api-testing.herokuapp.com/upload', {
+				// 	'Content-Type' : 'multipart/form-data',
+				// }, [
+				// 	{ name : 'sampleFile', filename : 'file.png', type:'image/png', data: RNFetchBlob.wrap(test)},
+				// ]).then((res) => {
+				// 	console.log("TEST RESPONSE: " + res.text());
+				// 	this.setState({
+				// 		log: "Response from server",
+				// 		logDetails: "test" + res.text()
+				// 	});
+				// }).catch((err) => {
+				// 	console.log("TEST ERROR: " + err);
+				// });
+
 			}
 		});
 	}
@@ -206,6 +280,7 @@ class App extends Component {
 					<TextInput placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
 					<TextInput placeholder="Password" secureTextEntry ={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
 					<Button title="Login" onPress={this.onLoginPressHandler} />
+					<Button title="Test Login" onPress={this.onLoginPressTestHandler} />
 					<Button title="Test Download" onPress={this.onDownloadPressHandler} />
 					<Button title="Test Upload" onPress={this.onUploadPressHandler} />
 					{/* <Image source={this.state.imageSource} style={styles.imageDimensions} /> */}
