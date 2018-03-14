@@ -229,50 +229,100 @@ class App extends Component {
 		};
 
 		ImagePicker.showImagePicker(imagePickerOptions, (response) => {
-			console.log('Image Picker Response: ', response);
+			
+			if (Platform.OS == 'ios') {
+				console.log('Image Picker Response: ', response);
 
-			if(response.didCancel){
-				console.log('User cancelled the picker.');
-			}else if(response.error){
-				console.log('ImagePicker Error:', response.error);
-			}else if (response.customButton){
-				console.log('User tapped custom button: ', response.customButton);
-			}else{
-				let source = { uri: response.uri };
-				this.setState({
-					imageSource: source,
-					log: "Image chosen"
-				});
-				console.log('IMAGE CHOSEN: ', source);
+				if (response.didCancel) {
+					console.log('User cancelled the picker.');
+				} else if (response.error) {
+					console.log('ImagePicker Error:', response.error);
+				} else if (response.customButton) {
+					console.log('User tapped custom button: ', response.customButton);
+				} else {
+					let source = { uri: response.uri };
+					this.setState({
+						imageSource: source,
+						log: "Image chosen"
+					});
+					console.log('IMAGE CHOSEN: ', source);
 
-				// the file path
-				// console.log("PATH OF IMAGE SELECTED: ", response.path);
-				console.log("PATH OF IMAGE SELECTED: ", response.uri);
-				let cleanUri = response.uri.replace(/^file?\:\/\//i, "");
-				console.log('SPECIAL CHARACTERS REMOVED: ',cleanUri);
-				// save image
-				RNFetchBlob.fetch('POST', 'https://app-api-testing.herokuapp.com/upload', 
-					{ 'Content-Type': 'multipart/form-data' },
-					[
-						{
-							name: 'sampleFile', filename: response.fileName,
-							// type: response.type, data: RNFetchBlob.wrap(response.path)
-							data: RNFetchBlob.wrap(cleanUri)
-						}
-					]
-				).then((res) => {
-					console.log("TEST RESPONSE: " + res.text());
-					this.setState({
-						log: "Response from server",
-						logDetails: "test" + res.text()
+					// the file path
+					// console.log("PATH OF IMAGE SELECTED: ", response.path);
+					console.log("PATH OF IMAGE SELECTED: ", response.uri);
+					let cleanUri = response.uri.replace(/^file?\:\/\//i, "");
+					console.log('SPECIAL CHARACTERS REMOVED: ', cleanUri);
+					// save image
+					RNFetchBlob.fetch('POST', 'https://app-api-testing.herokuapp.com/upload',
+						{ 'Content-Type': 'multipart/form-data' },
+						[
+							{
+								name: 'sampleFile', filename: response.fileName,
+								// type: response.type, data: RNFetchBlob.wrap(response.path)
+								data: RNFetchBlob.wrap(cleanUri)
+							}
+						]
+					).then((res) => {
+						console.log("TEST RESPONSE: " + res.text());
+						this.setState({
+							log: "Response from server",
+							logDetails: "test" + res.text()
+						});
+					}).catch((err) => {
+						console.log("TEST ERROR: " + err);
+						this.setState({
+							log: "Error uploading",
+							logDetails: err
+						});
 					});
-				}).catch((err) => {
-					console.log("TEST ERROR: " + err);
-					this.setState({
-						log: "Error uploading",
-						logDetails: err
-					});
-				});
+				}
+				
+			}
+			// console.log('Image Picker Response: ', response);
+
+			// if(response.didCancel){
+			// 	console.log('User cancelled the picker.');
+			// }else if(response.error){
+			// 	console.log('ImagePicker Error:', response.error);
+			// }else if (response.customButton){
+			// 	console.log('User tapped custom button: ', response.customButton);
+			// }else{
+			// 	let source = { uri: response.uri };
+			// 	this.setState({
+			// 		imageSource: source,
+			// 		log: "Image chosen"
+			// 	});
+			// 	console.log('IMAGE CHOSEN: ', source);
+
+			// 	// the file path
+			// 	// console.log("PATH OF IMAGE SELECTED: ", response.path);
+			// 	console.log("PATH OF IMAGE SELECTED: ", response.uri);
+			// 	let cleanUri = response.uri.replace(/^file?\:\/\//i, "");
+			// 	console.log('SPECIAL CHARACTERS REMOVED: ',cleanUri);
+			// 	// save image
+			// 	RNFetchBlob.fetch('POST', 'https://app-api-testing.herokuapp.com/upload', 
+			// 		{ 'Content-Type': 'multipart/form-data' },
+			// 		[
+			// 			{
+			// 				name: 'sampleFile', filename: response.fileName,
+			// 				// type: response.type, data: RNFetchBlob.wrap(response.path)
+			// 				data: RNFetchBlob.wrap(cleanUri)
+			// 			}
+			// 		]
+			// 	).then((res) => {
+			// 		console.log("TEST RESPONSE: " + res.text());
+			// 		this.setState({
+			// 			log: "Response from server",
+			// 			logDetails: "test" + res.text()
+			// 		});
+			// 	}).catch((err) => {
+			// 		console.log("TEST ERROR: " + err);
+			// 		this.setState({
+			// 			log: "Error uploading",
+			// 			logDetails: err
+			// 		});
+			// 	});
+			// }
 
 				// the file path
 				// console.log('The file saved to ', res.path());
@@ -294,7 +344,7 @@ class App extends Component {
 				// 	console.log("TEST ERROR: " + err);
 				// });
 
-			}
+			
 		});
 	}
 
