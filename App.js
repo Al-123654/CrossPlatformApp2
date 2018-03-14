@@ -266,6 +266,10 @@ class App extends Component {
 					});
 				}).catch((err) => {
 					console.log("TEST ERROR: " + err);
+					this.setState({
+						log: "Error uploading",
+						logDetails: err
+					});
 				});
 
 				// the file path
