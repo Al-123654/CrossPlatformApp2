@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import { Text, TextInput, StyleSheet, View, Button, Image, Alert } from 'react-native';
-import { StackNavigator, } from 'react-navigation';
+import { StackNavigator, NavigationActions } from 'react-navigation';
 
 import RNFetchBlob from 'react-native-fetch-blob';
+
+
+
 
 class UserScreen extends Component {
     constructor(props) {
