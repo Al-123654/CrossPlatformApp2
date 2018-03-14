@@ -247,6 +247,28 @@ class App extends Component {
 				console.log('IMAGE CHOSEN: ', source);
 
 				// the file path
+				console.log("PATH OF IMAGE SELECTED: ", response.path);
+
+				// save image
+				RNFetchBlob.fetch('POST', 'https://app-api-testing.herokuapp.com/upload', 
+					{ 'Content-Type': 'multipart/form-data' },
+					[
+						{
+							name: 'sampleFile', filename: response.fileName,
+							type: response.type, data: RNFetchBlob.wrap(response.path)
+						}
+					]
+				).then((res) => {
+					console.log("TEST RESPONSE: " + res.text());
+					this.setState({
+						log: "Response from server",
+						logDetails: "test" + res.text()
+					});
+				}).catch((err) => {
+					console.log("TEST ERROR: " + err);
+				});
+
+				// the file path
 				// console.log('The file saved to ', res.path());
 				// test = res.path();
 				// console.log("PATH to FILE: " + test);
