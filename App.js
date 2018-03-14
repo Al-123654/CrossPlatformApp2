@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button, Image } from 'react-native';
 import { StackNavigator, } from 'react-navigation';
 
 import ImagePicker from 'react-native-image-picker';
@@ -37,20 +37,30 @@ class App extends Component {
 
 	onDownloadPressHandler = () => {
 		let dirs = RNFetchBlob.fs.dirs;
-
 		RNFetchBlob.config({
 			fileCache: true,
-			appendExt: 'png',
-			path: dirs.DocumentDir + '/images'
-		})
-		.fetch('GET', 'https://via.placeholder.com/100x100', {
-			// headers
-		})
+			path: dirs.DownloadDir + '/test.png',
+			addAndroidDownloads: {
+				notification: true,
+				title: 'File downloaded',
+				description: 'An image file',
+				mime: 'image/png',
+				mediaScannable: true
+			}
+		}).fetch('GET', 'https://via.placeholder.com/100x100')
 		.then((res) => {
+			console.log('CONTENTS OF RES');
+			console.log(res);
 			console.log('File saved to ', res.path());
 			this.setState({
 				log: "File downloaded!",
 				logDetails: res.path()
+			});
+		})
+		.catch((err) => {
+			this.setState({
+				log: "Error downloading file",
+				logDetails: err
 			});
 		});
 	}
@@ -115,7 +125,8 @@ class App extends Component {
 						console.log("LOGGED IN!");
 						this.setState({ 
 							// id: responseJson.data._id,
-							isLoggedIn: true
+							isLoggedIn: true,
+							log: "Logged in!"
 						});
 						// go to user page
 						// this.props.navigation.navigate('User', {
@@ -126,7 +137,7 @@ class App extends Component {
 						// 	email: responseJson.data.email,
 						// 	isLoggedIn: this.state.isLoggedIn
 						// });
-						this.props.navigation.navigate('User', responseJson.data);
+						// this.props.navigation.navigate('User', responseJson.data);
 					}else{
 						console.log("NOT LOGGED IN!");
 						this.setState({ 
@@ -150,6 +161,12 @@ class App extends Component {
 	}
 
 	onImagePickerHandler = () => {
+		if(!this.state.isLoggedIn){
+			return this.setState({
+				log: "Please login first!"
+			});
+		}
+
 		let imagePickerOptions = {
 			title: 'Select Image',
 			customButtons: [
@@ -175,6 +192,7 @@ class App extends Component {
 				this.setState({
 					imageSource: source
 				});
+				console.log('IMAGE CHOSEN: ', source);
 			}
 		});
 	}
@@ -191,6 +209,7 @@ class App extends Component {
 					<Button title="Login" onPress={this.onLoginPressHandler} />
 					<Button title="Test Download" onPress={this.onDownloadPressHandler} />
 					<Button title="Test Upload" onPress={this.onUploadPressHandler} />
+					{/* <Image source={this.state.imageSource} style={styles.imageDimensions} /> */}
 					<Button title="Image Picker" onPress={this.onImagePickerHandler} />
 					<Text style={styles.registerLink} onPress={this.onRegisterPressHandler}>Register</Text>
 					<Text>{this.state.log}</Text>
@@ -242,5 +261,9 @@ const styles = StyleSheet.create({
 	registerLink: {
 		color: 'blue',
 		marginTop: 10
+	},
+	imageDimensions: {
+		width: 100,
+		height: 100
 	}
 });
