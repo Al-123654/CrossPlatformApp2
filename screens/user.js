@@ -84,24 +84,36 @@ class UserScreen extends Component {
         const fname = params ? params.fname : null;
         const lname= params ? params.lname: null;
         const email = params ? params.email : null;
-        const id = params ? params.id : null;
-        return (
+        const _id = params ? params._id : null;
+        const images = params ? params.images : null;
+        console.log('IMAGE', 'https://app-api-testing.herokuapp.com/api/users/' + _id
+            + '/images/' + images)
+        console.log('ID',_id )
+        
+            return (
             <View style={styles.viewContainer}>
                 <Text>
                     username: {JSON.stringify(username)}
                     fname: {JSON.stringify(fname)}
                     lname: {JSON.stringify(lname)}
                     email: {JSON.stringify(email)}
-                    id: {JSON.stringify(id)}
+                    id: {JSON.stringify(_id)}
                 </Text>
+                <Image
+                        source={{ uri: 'https://app-api-testing.herokuapp.com/api/users/' + _id +
+                     '/images/' + images}}
+
+                    style={{width: 50, height: 50}}   
+                />
 				<Button title="Upload" onPress={this.onUploadPressHandler} />
 				<Button title="Logout" onPress={this.onLogoutPressHandler} />
                 <Text>{this.state.message}</Text>
             </View>
+           
         );
     }
 }
-
+// file ?\: \/\//i
 const styles = StyleSheet.create({
 	viewContainer: {
 		flex: 1,
