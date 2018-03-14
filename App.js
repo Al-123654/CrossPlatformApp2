@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View, TextInput, Button, Image } from 'react-native';
+import { Platform, StyleSheet, Text, View, TextInput, Button, Image } from 'react-native';
 import { StackNavigator, navigationOptions} from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
@@ -220,12 +220,11 @@ class App extends Component {
 
 		let imagePickerOptions = {
 			title: 'Select Image',
-			customButtons: [
-				{name: 'fb', title: 'Choose Photo from Facebook'}
-			],
+			
 			storageOptions: {
 				skipBackup: true,
-				path: 'images'
+				
+				
 			}
 		};
 
@@ -247,15 +246,18 @@ class App extends Component {
 				console.log('IMAGE CHOSEN: ', source);
 
 				// the file path
-				console.log("PATH OF IMAGE SELECTED: ", response.path);
-
+				// console.log("PATH OF IMAGE SELECTED: ", response.path);
+				console.log("PATH OF IMAGE SELECTED: ", response.uri);
+				let cleanUri = response.uri.replace(/^file?\:\/\//i, "");
+				console.log('SPECIAL CHARACTERS REMOVED: ',cleanUri);
 				// save image
 				RNFetchBlob.fetch('POST', 'https://app-api-testing.herokuapp.com/upload', 
 					{ 'Content-Type': 'multipart/form-data' },
 					[
 						{
 							name: 'sampleFile', filename: response.fileName,
-							type: response.type, data: RNFetchBlob.wrap(response.path)
+							// type: response.type, data: RNFetchBlob.wrap(response.path)
+							data: RNFetchBlob.wrap(cleanUri)
 						}
 					]
 				).then((res) => {
@@ -296,6 +298,21 @@ class App extends Component {
 		});
 	}
 
+	onPlatformHandler = () => {
+		if (Platform.OS == 'ios')
+		{
+			this.setState({
+				log:"This is ios"
+			})
+		}
+		else if (Platform.OS ==  'android')
+		{
+			this.setState({
+				log:"This is android"
+			})
+		}
+	}
+
 	render() {
 	
 		return (
@@ -311,6 +328,7 @@ class App extends Component {
 					<Button title="Test Upload" onPress={this.onUploadPressHandler} />
 					{/* <Image source={this.state.imageSource} style={styles.imageDimensions} /> */}
 					<Button title="Image Picker" onPress={this.onImagePickerHandler} />
+					<Button title="Platform Detector" onPress={this.onPlatformHandler} />
 					<Text style={styles.registerLink} onPress={this.onRegisterPressHandler}>Register</Text>
 					<Text>{this.state.log}</Text>
 					<Text>{this.state.logDetails}</Text>
