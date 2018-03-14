@@ -1,8 +1,5 @@
 import React, {Component} from 'react';
 import { StyleSheet, Text, View, TextInput, Button, Image } from 'react-native';
-import { StackNavigator, } from 'react-navigation';
-
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import { StackNavigator, navigationOptions} from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';

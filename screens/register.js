@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import { Text, TextInput, StyleSheet, View, Button, Image, Alert } from 'react-native';
 import { StackNavigator, } from 'react-navigation';
 
-navigationOptions: {
-    headerLeft: null
-}
 
 class RegisterScreen extends Component {
     constructor(props) {
