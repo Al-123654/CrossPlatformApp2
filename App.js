@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import { StyleSheet, Text, View, TextInput, Button, Image } from 'react-native';
 import { StackNavigator, } from 'react-navigation';
 
+import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { StackNavigator, navigationOptions} from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
 
@@ -205,7 +207,7 @@ class App extends Component {
 					<Text style={styles.appHeading}>Test App</Text>
 					
 					<TextInput placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
-					<TextInput placeholder="Password" onChangeText={(text) => this.onChangedPasswordHandler(text)} />
+					<TextInput placeholder="Password" secureTextEntry ={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
 					<Button title="Login" onPress={this.onLoginPressHandler} />
 					<Button title="Test Download" onPress={this.onDownloadPressHandler} />
 					<Button title="Test Upload" onPress={this.onUploadPressHandler} />
@@ -225,12 +227,21 @@ const RootStack = StackNavigator(
 	{
 	  Home: {
 		screen: App,
+		navigationOptions: {
+			title: "App",
+			headerLeft: null
+		}
+		  
 	  },
 	  Register: {
 		screen: RegisterScreen,
 	  },
 	  User: {
 		screen: UserScreen,
+		  navigationOptions: {
+			  title: "App",
+			  headerLeft: null
+		  }
 	  }
 	},
 	{
