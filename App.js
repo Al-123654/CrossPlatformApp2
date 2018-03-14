@@ -230,53 +230,61 @@ class App extends Component {
 
 		ImagePicker.showImagePicker(imagePickerOptions, (response) => {
 			
-			if (Platform.OS == 'ios') {
-				console.log('Image Picker Response: ', response);
+			console.log('Image Picker Response: ', response);
+			if (response.didCancel) {
+				console.log('User cancelled the picker.');
+			} else if (response.error) {
+				console.log('ImagePicker Error:', response.error);
+			} else if (response.customButton) {
+				console.log('User tapped custom button: ', response.customButton);
+			} else {
+				let source = { uri: response.uri };
+				this.setState({
+					imageSource: source,
+					log: "Image chosen"
+				});
 
-				if (response.didCancel) {
-					console.log('User cancelled the picker.');
-				} else if (response.error) {
-					console.log('ImagePicker Error:', response.error);
-				} else if (response.customButton) {
-					console.log('User tapped custom button: ', response.customButton);
-				} else {
-					let source = { uri: response.uri };
-					this.setState({
-						imageSource: source,
-						log: "Image chosen"
-					});
-					console.log('IMAGE CHOSEN: ', source);
+				console.log('IMAGE CHOSEN: ', source);
 
-					// the file path
-					// console.log("PATH OF IMAGE SELECTED: ", response.path);
-					console.log("PATH OF IMAGE SELECTED: ", response.uri);
-					let cleanUri = response.uri.replace(/^file?\:\/\//i, "");
-					console.log('SPECIAL CHARACTERS REMOVED: ', cleanUri);
-					// save image
-					RNFetchBlob.fetch('POST', 'https://app-api-testing.herokuapp.com/upload',
-						{ 'Content-Type': 'multipart/form-data' },
-						[
-							{
-								name: 'sampleFile', filename: response.fileName,
-								// type: response.type, data: RNFetchBlob.wrap(response.path)
-								data: RNFetchBlob.wrap(cleanUri)
-							}
-						]
-					).then((res) => {
-						console.log("TEST RESPONSE: " + res.text());
-						this.setState({
-							log: "Response from server",
-							logDetails: "test" + res.text()
-						});
-					}).catch((err) => {
-						console.log("TEST ERROR: " + err);
-						this.setState({
-							log: "Error uploading",
-							logDetails: err
-						});
+				let platformPath = '';
+				if(Platform.OS == 'ios'){
+					console.log("PATH OF IMAGE SELECTED IOS: ", response.uri);
+					platformPath = response.uri.replace(/^file?\:\/\//i, "");
+					console.log('SPECIAL CHARACTERS REMOVED: ', platformPath);
+				}else if(Platform.OS == 'android'){
+					console.log("PATH OF IMAGE SELECTED ANDROID: ", response.path);
+					platformPath = response.path;
+				}
+
+				if(platformPath == ''){
+					return this.setState({
+						log: "Platform path empty"
 					});
 				}
-				
+
+				// save image
+				RNFetchBlob.fetch('POST', 'https://app-api-testing.herokuapp.com/upload',
+					{ 'Content-Type': 'multipart/form-data' },
+					[
+						{
+							name: 'sampleFile', filename: response.fileName,
+							// type: response.type, data: RNFetchBlob.wrap(response.path)
+							data: RNFetchBlob.wrap(platformPath)
+						}
+					]
+				).then((res) => {
+					console.log("TEST RESPONSE: " + res.text());
+					this.setState({
+						log: "Response from server",
+						logDetails: "test" + res.text()
+					});
+				}).catch((err) => {
+					console.log("TEST ERROR: " + err);
+					this.setState({
+						log: "Error uploading",
+						logDetails: err
+					});
+				});
 			}
 			// console.log('Image Picker Response: ', response);
 
