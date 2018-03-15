@@ -102,7 +102,7 @@ class UserScreen extends Component {
 			imageElement = (
 				<Image 
 					source={{uri: imageUri + images}}
-					style={{ width: 50, height: 50 }} />
+					style={styles.thumbnail} />
 			);
 		}else if(imageCount > 1 ){
 			imageElement = [];
@@ -111,7 +111,7 @@ class UserScreen extends Component {
 					<Image
 						key={index} 
 						source={{uri: imageUri + image}}
-						style={{ width: 50, height: 50 }} 
+						style={styles.thumbnail} 
 					/>
 				);
 			});
@@ -129,7 +129,8 @@ class UserScreen extends Component {
 					</Text>
 				</View>
 					
-				<View>
+				<View style={styles.pictures}>
+                    
 					{imageElement}
 				</View> 
 
@@ -148,7 +149,16 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fff',
 		alignItems: 'center',
 		justifyContent: 'center',
-	}
+    },
+    
+    pictures: {
+        flex: 1, flexDirection: 'row',
+    },
+
+    thumbnail: {
+        width: 75,
+        height: 75,
+    }
 });
 
 module.exports = UserScreen;
