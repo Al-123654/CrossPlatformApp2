@@ -8,6 +8,8 @@ import RNFetchBlob from 'react-native-fetch-blob';
 
 
 class UserScreen extends Component {
+
+    
     constructor(props) {
         super(props);
     }
@@ -73,11 +75,11 @@ class UserScreen extends Component {
             .catch ((error) => {
                 console.error(error);
             });
-
-       
-    
-    
     }
+
+    
+
+    
     render() {
         const {params} = this.props.navigation.state;
         const username = params ? params.username : null;
@@ -86,10 +88,58 @@ class UserScreen extends Component {
         const email = params ? params.email : null;
         const _id = params ? params._id : null;
         const images = params ? params.images : null;
+        console.log('PICTURES', images);
+        console.log('PICLENGTH',images.length);
+
+       var imageArr = [];
+        images.forEach(function (image, index) {
+            console.log('PICARRAY', image);
+            console.log('INDARRAY', index);
+            var image = 0;
+
+            if (image <= index) {
+                <View>
+                    <Image
+                        source={{
+                            uri: 'https://app-api-testing.herokuapp.com/api/users/' + _id
+                                + '/images/' + [images]
+                        }}
+                        style={{ width: 50, height: 50 }}
+                    />
+                </View>
+               
+            }
+
+        })
+
+        // var imageArr = [];
+
+        // for (let i = 0; i < images.length; i++){
+        //     imageArr.push(
+
+        //         <View>
+        //             <Image
+        //                 source={{
+        //                     uri: 'https://app-api-testing.herokuapp.com/api/users/' + _id
+        //                         + '/images/' + [images]
+        //                 }}
+        //                 style={{ width: 50, height: 50 }}
+        //             />
+        //         </View>
+        //     )
+            
+        // }
+       
+        
+        
         console.log('IMAGE', 'https://app-api-testing.herokuapp.com/api/users/' + _id
             + '/images/' + images)
+        // console.log('IMAGEARRAY', 'https://app-api-testing.herokuapp.com/api/users/' + _id
+        //     + '/images/' + image)
         console.log('ID',_id )
-        
+
+
+ 
             return (
             <View style={styles.viewContainer}>
                 <Text>
@@ -99,16 +149,33 @@ class UserScreen extends Component {
                     email: {JSON.stringify(email)}
                     id: {JSON.stringify(_id)}
                 </Text>
-                <Image
-                        source={{ uri: 'https://app-api-testing.herokuapp.com/api/users/' + _id +
-                     '/images/' + images}}
-
-                    style={{width: 50, height: 50}}   
-                />
+                          
 				<Button title="Upload" onPress={this.onUploadPressHandler} />
 				<Button title="Logout" onPress={this.onLogoutPressHandler} />
+				{/* <Button title="Display Images" onPress={this.onDisplayPressHandler} /> */}
                 <Text>{this.state.message}</Text>
+                {/* <Image
+                        source={{
+                            uri: 'https://app-api-testing.herokuapp.com/api/users/' + _id
+                                + '/images/' + [image]
+                        }}
+                        style={{ width: 50, height: 50 }}
+                
+                /> */}
+                {/* <Image
+                        source={{
+                            uri: 'https://app-api-testing.herokuapp.com/api/users/' + _id
+                                + '/images/' + images[]
+                        }}
+                        style={{ width: 50, height: 50 }}
+                
+                /> */}
+                {imageArr}
+               
+                    
             </View>
+
+            
            
         );
     }
