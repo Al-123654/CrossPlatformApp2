@@ -102,7 +102,9 @@ class UserScreen extends Component {
 			imageElement = (
 				<Image 
 					source={{uri: imageUri + images}}
-					style={styles.thumbnail} />
+                    style={styles.thumbnail} 
+                    
+                    />
 			);
 		}else if(imageCount > 1 ){
 			imageElement = [];
@@ -120,13 +122,13 @@ class UserScreen extends Component {
         return (
             <View style={styles.viewContainer}>
 				<View>
-					<Text>
-						username: {JSON.stringify(username)}
-						fname: {JSON.stringify(fname)}
-						lname: {JSON.stringify(lname)}
-						email: {JSON.stringify(email)}
-						id: {JSON.stringify(_id)}
-					</Text>
+					<Text>username: {JSON.stringify(username)}</Text>
+					<Text>FEEDS</Text>
+                 {/* <Text>fname: {JSON.stringify(fname)}</Text>
+                    <Text>lname: {JSON.stringify(lname)}</Text>
+                    <Text>email: { JSON.stringify(email) }</Text >
+                    <Text>id: { JSON.stringify(_id) }</Text > */}
+				
 				</View>
 					
 				<View style={styles.pictures}>
@@ -153,6 +155,10 @@ const styles = StyleSheet.create({
     
     pictures: {
         flex: 1, flexDirection: 'row',
+        width: '80%',
+        flexWrap:'wrap',
+        justifyContent: 'center',
+        
     },
 
     thumbnail: {
