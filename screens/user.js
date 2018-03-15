@@ -89,98 +89,59 @@ class UserScreen extends Component {
         const _id = params ? params._id : null;
         const images = params ? params.images : null;
         console.log('PICTURES', images);
-        console.log('PICLENGTH',images.length);
+		console.log('PICLENGTH',images.length);
+		
+		// find out length of image array
+		let imageCount = images.length;
+		console.log("Image Count: ", imageCount);
 
-       var imageArr = [];
-        images.forEach(function (image, index) {
-            console.log('PICARRAY', image);
-            console.log('INDARRAY', index);
-            var image = 0;
+		// setup variable to contain Image element
+		let imageElement;
+		let imageUri = 'https://app-api-testing.herokuapp.com/api/users/' + _id + '/images/';
+		if(imageCount == 1){
+			imageElement = (
+				<Image 
+					source={{uri: imageUri + images}}
+					style={{ width: 50, height: 50 }} />
+			);
+		}else if(imageCount > 1 ){
+			imageElement = [];
+			images.forEach(function(image, index){
+				imageElement.push(
+					<Image
+						key={index} 
+						source={{uri: imageUri + image}}
+						style={{ width: 50, height: 50 }} 
+					/>
+				);
+			});
+		}
 
-            if (image <= index) {
-                <View>
-                    <Image
-                        source={{
-                            uri: 'https://app-api-testing.herokuapp.com/api/users/' + _id
-                                + '/images/' + [images]
-                        }}
-                        style={{ width: 50, height: 50 }}
-                    />
-                </View>
-               
-            }
-
-        })
-
-        // var imageArr = [];
-
-        // for (let i = 0; i < images.length; i++){
-        //     imageArr.push(
-
-        //         <View>
-        //             <Image
-        //                 source={{
-        //                     uri: 'https://app-api-testing.herokuapp.com/api/users/' + _id
-        //                         + '/images/' + [images]
-        //                 }}
-        //                 style={{ width: 50, height: 50 }}
-        //             />
-        //         </View>
-        //     )
-            
-        // }
-       
-        
-        
-        console.log('IMAGE', 'https://app-api-testing.herokuapp.com/api/users/' + _id
-            + '/images/' + images)
-        // console.log('IMAGEARRAY', 'https://app-api-testing.herokuapp.com/api/users/' + _id
-        //     + '/images/' + image)
-        console.log('ID',_id )
-
-
- 
-            return (
+        return (
             <View style={styles.viewContainer}>
-                <Text>
-                    username: {JSON.stringify(username)}
-                    fname: {JSON.stringify(fname)}
-                    lname: {JSON.stringify(lname)}
-                    email: {JSON.stringify(email)}
-                    id: {JSON.stringify(_id)}
-                </Text>
-                          
+				<View>
+					<Text>
+						username: {JSON.stringify(username)}
+						fname: {JSON.stringify(fname)}
+						lname: {JSON.stringify(lname)}
+						email: {JSON.stringify(email)}
+						id: {JSON.stringify(_id)}
+					</Text>
+				</View>
+					
+				<View>
+					{imageElement}
+				</View> 
+
 				<Button title="Upload" onPress={this.onUploadPressHandler} />
 				<Button title="Logout" onPress={this.onLogoutPressHandler} />
-				{/* <Button title="Display Images" onPress={this.onDisplayPressHandler} /> */}
+				
                 <Text>{this.state.message}</Text>
-                {/* <Image
-                        source={{
-                            uri: 'https://app-api-testing.herokuapp.com/api/users/' + _id
-                                + '/images/' + [image]
-                        }}
-                        style={{ width: 50, height: 50 }}
-                
-                /> */}
-                {/* <Image
-                        source={{
-                            uri: 'https://app-api-testing.herokuapp.com/api/users/' + _id
-                                + '/images/' + images[]
-                        }}
-                        style={{ width: 50, height: 50 }}
-                
-                /> */}
-                {imageArr}
-               
-                    
             </View>
-
-            
-           
         );
     }
 }
-// file ?\: \/\//i
+
 const styles = StyleSheet.create({
 	viewContainer: {
 		flex: 1,
