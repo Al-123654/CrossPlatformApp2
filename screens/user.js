@@ -162,9 +162,12 @@ class UserScreen extends Component {
         });
     }
 
-    onImageClicked = () => {
+    onImageClicked = (imageId, _id) => {
         console.log("IMAGE CLICKED" );
-        // this.props.navigation.navigate('Image',responseJson.data);
+        this.props.navigation.navigate('ImagePage', {
+            _id: _id,
+            imageId: imageId
+        });
 
     }
     onImageClicked2 = (imageId,_id) => {
@@ -195,12 +198,14 @@ class UserScreen extends Component {
 
 		// setup variable to contain Image element
 		let imageElement;
-		let imageUri = 'https://app-api-testing.herokuapp.com/api/users/' + _id + '/images/';
+        let imageUri = 'https://app-api-testing.herokuapp.com/api/users/' + _id + '/images/';
 		if(imageCount == 1){
-            // console.log("ON CLICK SINGLE", this.onImageClicked);
+            console.log("IMAGE", images[0]);
+            console.log("IMAGE URI", imageUri + images)
 			imageElement = (
                 <TouchableOpacity
-                    onPress={this.onImageClicked} 
+                    onPress={() => this.onImageClicked2(images, _id)}
+                    style={styles.thumbnail} 
                 >
                 <Image 
 					source={{uri: imageUri + images}}
