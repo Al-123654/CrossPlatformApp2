@@ -5,16 +5,24 @@ import { StackNavigator,  } from 'react-navigation';
 import RNFetchBlob from 'react-native-fetch-blob';
 import ImagePicker from 'react-native-image-picker';
 
-import GalleryImage from './../components/ImageComponent';
+
 
 
 
 
 class UserScreen extends Component {
+    state = {
+        username: "",
+        fname: "",
+        lname: "",
+        email: "",
+        _id: "",
+        imageSource: ""
+    };
 
-    
     constructor(props) {
         super(props);
+        
     }
     state = {
         message: ""
@@ -129,7 +137,7 @@ class UserScreen extends Component {
 
                 // save image
                 RNFetchBlob.fetch('POST', 'https://app-api-testing.herokuapp.com/upload',
-                    { 'Content-Type': 'multipart/form-data' },
+
                     [
                         {
                             name: 'sampleFile', filename: response.fileName,
@@ -156,21 +164,28 @@ class UserScreen extends Component {
 
     onImageClicked = () => {
         console.log("IMAGE CLICKED" );
+        // this.props.navigation.navigate('Image',responseJson.data);
 
     }
-    onImageClicked2 = (index) => {
-        console.log("IMAGE CLICKED 2: ", index );
-
+    onImageClicked2 = (imageId,_id) => {
+        console.log("IMAGE CLICKED 2 IMAGE ID: ", imageId );
+        console.log("IMAGE CLICKED 2 USER ID: ", _id );
+        this.props.navigation.navigate('ImagePage',{
+            _id: _id,
+            imageId: imageId
+        });
     }
     
     render() {
         const {params} = this.props.navigation.state;
+        console.log('PARAMS',params)
         const username = params ? params.username : null;
         const fname = params ? params.fname : null;
         const lname= params ? params.lname: null;
         const email = params ? params.email : null;
         const _id = params ? params._id : null;
         const images = params ? params.images : null;
+        
         console.log('PICTURES', images);
 		console.log('PICLENGTH',images.length);
 		
@@ -205,7 +220,7 @@ class UserScreen extends Component {
 
 				return (
 					<TouchableOpacity
-						onPress={() => this.onImageClicked2(image)}
+						onPress={() => this.onImageClicked2(image, _id)}
 						key={image} >
 
 						<Image  
@@ -215,29 +230,7 @@ class UserScreen extends Component {
 					</TouchableOpacity>
 				);
 			});
-            // imageElement = [];
-			// images.forEach(function(image, index){
-            //     console.log("IMAGES", image);
-            //     console.log("INDEX", index);
-			// 	imageElement.push(
-                    
-            //         <TouchableOpacity
-            //             onPress={this.onImageClicked2}
-            //             key={index}                         
-            //         >
-                        
-			// 		<Image  
-			// 			source={{uri: imageUri + image}}
-			// 			style={styles.thumbnail} 
-            //         />
-                    
-                    
-            //         </TouchableOpacity>
-                    
-                   
-
-			// 	);
-			// }); 
+            
 		}
 
         return (

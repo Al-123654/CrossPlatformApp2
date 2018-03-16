@@ -6,6 +6,7 @@ import RNFetchBlob from 'react-native-fetch-blob';
 
 var RegisterScreen = require('./screens/register.js');
 var UserScreen = require('./screens/user.js');
+var ImageScreen = require('./screens/images.js');
 
 class App extends Component {
 	state = {
@@ -353,10 +354,10 @@ const RootStack = StackNavigator(
 		  }
 	  },
 
-	//   ImagePage:{
-	// 	  screen:ImageScreen,
+	  ImagePage:{
+		  screen:ImageScreen,
 
-	//   }
+	  }
 	},
 	{
 	  initialRouteName: 'Home',
