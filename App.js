@@ -351,7 +351,12 @@ const RootStack = StackNavigator(
 			  title: "App",
 			  headerLeft: null
 		  }
-	  }
+	  },
+
+	//   ImagePage:{
+	// 	  screen:ImageScreen,
+
+	//   }
 	},
 	{
 	  initialRouteName: 'Home',

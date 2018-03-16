@@ -61,8 +61,8 @@ class RegisterScreen extends Component {
     }
 
     onRegisterFinishedHandler = () => {
-        return fetch('http://localhost:5000/api/users', {
-        // return fetch('https://app-api-testing.herokuapp.com/api/users', {
+        // return fetch('http://localhost:5000/api/users', {
+        return fetch('https://app-api-testing.herokuapp.com/api/users', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

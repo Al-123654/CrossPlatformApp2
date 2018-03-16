@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
-import { Text, TextInput, StyleSheet, View, Button, Image, Alert } from 'react-native';
+import { Platform, Text, TextInput, StyleSheet, View, Button, Image, Alert , TouchableOpacity, TouchableHighlight} from 'react-native';
 import { StackNavigator,  } from 'react-navigation';
 
 import RNFetchBlob from 'react-native-fetch-blob';
+import ImagePicker from 'react-native-image-picker';
+
+import GalleryImage from './../components/ImageComponent';
 
 
 
@@ -66,6 +69,7 @@ class UserScreen extends Component {
                         {
                             text: 'OK', onPress: () => {
                                 this.props.navigation.navigate('Home');
+                                console.log("LOGGED OUT")
 
                             }
                         }
@@ -76,6 +80,89 @@ class UserScreen extends Component {
                 console.error(error);
             });
     }
+
+    onImagePickerHandler = () => {
+
+        let imagePickerOptions = {
+            title: 'Select Image',
+
+            storageOptions: {
+                skipBackup: true,
+
+
+            }
+        };
+
+        ImagePicker.showImagePicker(imagePickerOptions, (response) => {
+
+            console.log('Image Picker Response: ', response);
+            if (response.didCancel) {
+                console.log('User cancelled the picker.');
+            } else if (response.error) {
+                console.log('ImagePicker Error:', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                let source = { uri: response.uri };
+                this.setState({
+                    imageSource: source,
+                    log: "Image chosen"
+                });
+
+                console.log('IMAGE CHOSEN: ', source);
+
+                let platformPath = '';
+                if (Platform.OS == 'ios') {
+                    console.log("PATH OF IMAGE SELECTED IOS: ", response.uri);
+                    platformPath = response.uri.replace(/^file?\:\/\//i, "");
+                    console.log('SPECIAL CHARACTERS REMOVED: ', platformPath);
+                } else if (Platform.OS == 'android') {
+                    console.log("PATH OF IMAGE SELECTED ANDROID: ", response.path);
+                    platformPath = response.path;
+                }
+
+                if (platformPath == '') {
+                    return this.setState({
+                        log: "Platform path empty"
+                    });
+                }
+
+                // save image
+                RNFetchBlob.fetch('POST', 'https://app-api-testing.herokuapp.com/upload',
+                    { 'Content-Type': 'multipart/form-data' },
+                    [
+                        {
+                            name: 'sampleFile', filename: response.fileName,
+                            // type: response.type, data: RNFetchBlob.wrap(response.path)
+                            data: RNFetchBlob.wrap(platformPath)
+                        }
+                    ]
+                ).then((res) => {
+                    console.log("TEST RESPONSE: " + res.text());
+                    this.setState({
+                        log: "Response from server",
+                        logDetails: "test" + res.text()
+                    });
+                }).catch((err) => {
+                    console.log("TEST ERROR: " + err);
+                    this.setState({
+                        log: "Error uploading",
+                        logDetails: err
+                    });
+                });
+            }
+        });
+    }
+
+    onImageClicked = () => {
+        console.log("IMAGE CLICKED" );
+
+    }
+    onImageClicked2 = () => {
+        console.log("IMAGE CLICKED" );
+
+    }
+
 
     
 
@@ -99,24 +186,49 @@ class UserScreen extends Component {
 		let imageElement;
 		let imageUri = 'https://app-api-testing.herokuapp.com/api/users/' + _id + '/images/';
 		if(imageCount == 1){
+            // console.log("ON CLICK SINGLE", this.onImageClicked);
 			imageElement = (
-				<Image 
+                <TouchableOpacity
+                    onPress={this.onImageClicked} 
+                >
+                <Image 
 					source={{uri: imageUri + images}}
                     style={styles.thumbnail} 
                     
                     />
+                
+                </TouchableOpacity>
 			);
 		}else if(imageCount > 1 ){
-			imageElement = [];
+            // var imageElement = imageCount.map(imageCount)
+            imageElement = [];
+            // console.log("CHECK MULTIPLE CLICK", this.onImageClicked2);
 			images.forEach(function(image, index){
+                console.log("IMAGES", image);
+                console.log("INDEX", index);
+                // console.log("ON CLICK MULTIPLE", this.onImageClicked2);
 				imageElement.push(
-					<Image
-						key={index} 
+                    
+                    <TouchableOpacity
+                        onPress={this.onImageClicked2}
+                        key={index}                         
+                    >
+                        
+					<Image  
 						source={{uri: imageUri + image}}
 						style={styles.thumbnail} 
-					/>
+                    />
+                    
+                    
+                    </TouchableOpacity>
+                    
+                   
+
 				);
-			});
+            });
+            // console.log('IMAGE ELEMENT', imageElement)
+            
+            
 		}
 
         return (
@@ -132,18 +244,21 @@ class UserScreen extends Component {
 				</View>
 					
 				<View style={styles.pictures}>
-                    
-					{imageElement}
+                    {imageElement}
 				</View> 
 
 				<Button title="Upload" onPress={this.onUploadPressHandler} />
+                <Button title="Image Picker" onPress={this.onImagePickerHandler} />
 				<Button title="Logout" onPress={this.onLogoutPressHandler} />
+                
 				
                 <Text>{this.state.message}</Text>
             </View>
         );
     }
 }
+
+
 
 const styles = StyleSheet.create({
 	viewContainer: {
@@ -167,4 +282,7 @@ const styles = StyleSheet.create({
     }
 });
 
+
+
 module.exports = UserScreen;
+// export default ImageGallery;
