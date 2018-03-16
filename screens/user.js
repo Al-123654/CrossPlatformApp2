@@ -158,14 +158,10 @@ class UserScreen extends Component {
         console.log("IMAGE CLICKED" );
 
     }
-    onImageClicked2 = () => {
-        console.log("IMAGE CLICKED" );
+    onImageClicked2 = (index) => {
+        console.log("IMAGE CLICKED 2: ", index );
 
     }
-
-
-    
-
     
     render() {
         const {params} = this.props.navigation.state;
@@ -200,35 +196,48 @@ class UserScreen extends Component {
                 </TouchableOpacity>
 			);
 		}else if(imageCount > 1 ){
-            // var imageElement = imageCount.map(imageCount)
-            imageElement = [];
-            // console.log("CHECK MULTIPLE CLICK", this.onImageClicked2);
-			images.forEach(function(image, index){
-                console.log("IMAGES", image);
-                console.log("INDEX", index);
-                // console.log("ON CLICK MULTIPLE", this.onImageClicked2);
-				imageElement.push(
+			imageElement = [];
+			imageElement = images.map((image, index) => {
+				console.log("TEST IMAGE ELEMENT");
+				console.log("IMAGE: ", image);
+				console.log("INDEX: ", index);
+				console.log("FUNCTION: ", this.onImageClicked2);
+
+				return (
+					<TouchableOpacity
+						onPress={() => this.onImageClicked2(image)}
+						key={image} >
+
+						<Image  
+							source={{uri: imageUri + image}}
+							style={styles.thumbnail} 
+						/>
+					</TouchableOpacity>
+				);
+			});
+            // imageElement = [];
+			// images.forEach(function(image, index){
+            //     console.log("IMAGES", image);
+            //     console.log("INDEX", index);
+			// 	imageElement.push(
                     
-                    <TouchableOpacity
-                        onPress={this.onImageClicked2}
-                        key={index}                         
-                    >
+            //         <TouchableOpacity
+            //             onPress={this.onImageClicked2}
+            //             key={index}                         
+            //         >
                         
-					<Image  
-						source={{uri: imageUri + image}}
-						style={styles.thumbnail} 
-                    />
+			// 		<Image  
+			// 			source={{uri: imageUri + image}}
+			// 			style={styles.thumbnail} 
+            //         />
                     
                     
-                    </TouchableOpacity>
+            //         </TouchableOpacity>
                     
                    
 
-				);
-            });
-            // console.log('IMAGE ELEMENT', imageElement)
-            
-            
+			// 	);
+			// }); 
 		}
 
         return (
