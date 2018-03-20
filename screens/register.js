@@ -61,8 +61,8 @@ class RegisterScreen extends Component {
     }
 
     onRegisterFinishedHandler = () => {
-        // return fetch('http://localhost:5000/api/users', {
-        return fetch('https://app-api-testing.herokuapp.com/api/users', {
+        return fetch('http://localhost:5000api/users', {
+        // return fetch('https://app-api-testing.herokuapp.com/api/users', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -165,15 +165,12 @@ class RegisterScreen extends Component {
 
     render() {
         return (
-            <View > 
-                {/* <Text>{
-                    this.state.username
-                }</Text> */}
-                <TextInput placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
-                <TextInput placeholder="Password" secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
-                <TextInput placeholder="First Name" onChangeText={(text) => this.onChangedFnameHandler(text)} />
-                <TextInput placeholder="Last Name" onChangeText={(text) => this.onChangedLnameHandler(text)} />
-                <TextInput placeholder="Email" onChangeText={(text) => this.onChangedEmailHandler(text)} />
+            <View style={styles.registrationFields}> 
+                <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
+                <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="Password" secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
+                <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="First Name" onChangeText={(text) => this.onChangedFnameHandler(text)} />
+                <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="Last Name" onChangeText={(text) => this.onChangedLnameHandler(text)} />
+                <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="Email" onChangeText={(text) => this.onChangedEmailHandler(text)} />
                 <Button
                     title="Register"
                     onPress={this.onRegisterFinishedHandler}
@@ -183,4 +180,15 @@ class RegisterScreen extends Component {
     }
 }
 
+const styles = StyleSheet.create({
+    registrationFields: {
+        flex:0.5,
+        // alignItems:'center',
+        justifyContent:'space-around',
+        // width: 20,
+        // borderColor: 'black',
+        // borderWidth: 50
+
+    }
+})
 module.exports = RegisterScreen;

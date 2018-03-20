@@ -6,10 +6,6 @@ import RNFetchBlob from 'react-native-fetch-blob';
 import ImagePicker from 'react-native-image-picker';
 
 
-
-
-
-
 class UserScreen extends Component {
     state = {
         username: "",
@@ -17,50 +13,20 @@ class UserScreen extends Component {
         lname: "",
         email: "",
         _id: "",
-        imageSource: ""
+        imageSource: "",
+        likes: "",
     };
 
     constructor(props) {
         super(props);
         
     }
-    state = {
-        message: ""
-    };
 
-    onUploadPressHandler = () =>{
-        RNFetchBlob
-        .config({
-            fileCache : true,
-        })
-        .fetch('GET', 'https://via.placeholder.com/200x150', {
-
-        })
-        .then((res) => {
-            console.log('The file saved to ', res.path());
-            test = res.path();
-            console.log("PATH to FILE: " + test);
-
-            RNFetchBlob.fetch('POST', 'https://app-api-testing.herokuapp.com/upload', {
-                'Content-Type': 'multipart/form-data',
-            }, [
-                    { name: 'sampleFile', filename: 'file.png', type: 'image/png', data: RNFetchBlob.wrap(test)},
-            ]).then((resp) => {
-                console.log("TEST RESPONSE" + resp.text());
-                this.setState({
-                    message: resp.text()
-                });
-            }).catch((err) => {
-                console.log("TEST ERROR: " + err);
-                this.setState({
-                    message: "ERROR"
-                });
-            });
-        });
-    }
+    
 
     onLogoutPressHandler = () => {
-        return fetch('https://app-api-testing.herokuapp.com/logout', {
+        // return fetch('https://app-api-testing.herokuapp.com/logout', {
+        return fetch('http://localhost:5000/logout', {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
@@ -136,12 +102,12 @@ class UserScreen extends Component {
                 }
 
                 // save image
-                RNFetchBlob.fetch('POST', 'https://app-api-testing.herokuapp.com/upload',
+                // RNFetchBlob.fetch('POST', 'https://app-api-testing.herokuapp.com/upload',
+                RNFetchBlob.fetch('POST', 'http://localhost:5000/upload',
 
                     [
                         {
                             name: 'sampleFile', filename: response.fileName,
-                            // type: response.type, data: RNFetchBlob.wrap(response.path)
                             data: RNFetchBlob.wrap(platformPath)
                         }
                     ]
@@ -166,19 +132,21 @@ class UserScreen extends Component {
         console.log("IMAGE CLICKED" );
         this.props.navigation.navigate('ImagePage', {
             _id: _id,
-            imageId: imageId
+            imageId: imageId,
+           
         });
 
     }
-    onImageClicked2 = (imageId,_id) => {
-        console.log("IMAGE CLICKED 2 IMAGE ID: ", imageId );
-        console.log("IMAGE CLICKED 2 USER ID: ", _id );
-        this.props.navigation.navigate('ImagePage',{
-            _id: _id,
-            imageId: imageId
-        });
-    }
-    
+    // onImageClicked2 = (imageId,_id) => {
+    //     console.log("IMAGE CLICKED 2 IMAGE ID: ", imageId );
+    //     console.log("IMAGE CLICKED 2 USER ID: ", _id );
+    //     this.props.navigation.navigate('ImagePage',{
+    //         _id: _id,
+    //         imageId: imageId,
+            
+    //     });
+    // }
+
     render() {
         const {params} = this.props.navigation.state;
         console.log('PARAMS',params)
@@ -198,13 +166,14 @@ class UserScreen extends Component {
 
 		// setup variable to contain Image element
 		let imageElement;
-        let imageUri = 'https://app-api-testing.herokuapp.com/api/users/' + _id + '/images/';
+        // let imageUri = 'https://app-api-testing.herokuapp.com/api/users/' + _id + '/images/';
+        let imageUri = 'http://localhost:5000/api/users/' + _id + '/images/';
 		if(imageCount == 1){
             console.log("IMAGE", images[0]);
             console.log("IMAGE URI", imageUri + images)
 			imageElement = (
                 <TouchableOpacity
-                    onPress={() => this.onImageClicked2(images, _id)}
+                    onPress={() => this.onImageClicked(images, _id)}
                     style={styles.thumbnail} 
                 >
                 <Image 
@@ -225,7 +194,7 @@ class UserScreen extends Component {
 
 				return (
 					<TouchableOpacity
-						onPress={() => this.onImageClicked2(image, _id)}
+						onPress={() => this.onImageClicked(image, _id)}
 						key={image} 
                         style={styles.thumbnail}
                         >
@@ -245,20 +214,17 @@ class UserScreen extends Component {
 				<View>
 					<Text>username: {JSON.stringify(username)}</Text>
 					<Text>FEEDS</Text>
-                 {/* <Text>fname: {JSON.stringify(fname)}</Text>
-                    <Text>lname: {JSON.stringify(lname)}</Text>
-                    <Text>email: { JSON.stringify(email) }</Text >
-                    <Text>id: { JSON.stringify(_id) }</Text > */}
-				
 				</View>
 					
 				<View style={styles.pictures}>
                     {imageElement}
 				</View> 
 
-				<Button title="Upload" onPress={this.onUploadPressHandler} />
+				
                 <Button title="Image Picker" onPress={this.onImagePickerHandler} />
 				<Button title="Logout" onPress={this.onLogoutPressHandler} />
+                {/* <Button title="Upload" onPress={this.onLogoutPressHandler} /> */}
+                
                 
 				
                 <Text>{this.state.message}</Text>
@@ -294,4 +260,3 @@ const styles = StyleSheet.create({
 
 
 module.exports = UserScreen;
-// export default ImageGallery;
