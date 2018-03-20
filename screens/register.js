@@ -17,6 +17,7 @@ class RegisterScreen extends Component {
         logDetails: "",
         isLoggedIn: false,
         id: "",
+        
     };
 
     
@@ -61,7 +62,7 @@ class RegisterScreen extends Component {
     }
 
     onRegisterFinishedHandler = () => {
-        return fetch('http://localhost:5000api/users', {
+        return fetch('http://localhost:5000/api/users', {
         // return fetch('https://app-api-testing.herokuapp.com/api/users', {
             method: 'POST',
             headers: {

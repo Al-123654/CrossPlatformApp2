@@ -14,7 +14,7 @@ class UserScreen extends Component {
         email: "",
         _id: "",
         imageSource: "",
-        likes: "",
+        // likes: "",
     };
 
     constructor(props) {
@@ -158,20 +158,19 @@ class UserScreen extends Component {
         const images = params ? params.images : null;
         
         console.log('PICTURES', images);
-		console.log('PICLENGTH',images.length);
-		
-		// find out length of image array
-		let imageCount = images.length;
-		console.log("Image Count: ", imageCount);
-
-		// setup variable to contain Image element
-		let imageElement;
-        // let imageUri = 'https://app-api-testing.herokuapp.com/api/users/' + _id + '/images/';
-        let imageUri = 'http://localhost:5000/api/users/' + _id + '/images/';
-		if(imageCount == 1){
-            console.log("IMAGE", images[0]);
-            console.log("IMAGE URI", imageUri + images)
-			imageElement = (
+        // console.log('PICLENGTH',images.length);
+        
+        if(images){
+            let imageCount = images.length;
+		    console.log("Image Count: ", imageCount);
+		    // setup variable to contain Image element
+		    let imageElement;
+            // let imageUri = 'https://app-api-testing.herokuapp.com/api/users/' + _id + '/images/';
+            let imageUri = 'http://localhost:5000/api/users/' + _id + '/images/';
+		    if(imageCount == 1){
+                console.log("IMAGE", images[0]);
+                console.log("IMAGE URI", imageUri + images)
+			    imageElement = (
                 <TouchableOpacity
                     onPress={() => this.onImageClicked(images, _id)}
                     style={styles.thumbnail} 
@@ -179,18 +178,16 @@ class UserScreen extends Component {
                 <Image 
 					source={{uri: imageUri + images}}
                     style={styles.thumbnail} 
-                    
-                    />
-                
+                />
                 </TouchableOpacity>
-			);
-		}else if(imageCount > 1 ){
-			imageElement = [];
-			imageElement = images.map((image, index) => {
-				console.log("TEST IMAGE ELEMENT");
-				console.log("IMAGE: ", image);
-				console.log("INDEX: ", index);
-				console.log("FUNCTION: ", this.onImageClicked2);
+			    );
+		    }else if(imageCount > 1 ){
+			    imageElement = [];
+			    imageElement = images.map((image, index) => {
+				    console.log("TEST IMAGE ELEMENT");
+				    console.log("IMAGE: ", image);
+				    console.log("INDEX: ", index);
+				    console.log("FUNCTION: ", this.onImageClicked2);
 
 				return (
 					<TouchableOpacity
@@ -204,10 +201,60 @@ class UserScreen extends Component {
 							style={styles.thumbnail} 
 						/>
 					</TouchableOpacity>
-				);
-			});
+				    );
+			    });
+
+		    }
+        }else {imageElement = <Text>"No images available"</Text>}
+		
+		// find out length of image array
+		// let imageCount = images.length;
+		// console.log("Image Count: ", imageCount);
+
+		// // setup variable to contain Image element
+		// let imageElement;
+        // // let imageUri = 'https://app-api-testing.herokuapp.com/api/users/' + _id + '/images/';
+        // let imageUri = 'http://localhost:5000/api/users/' + _id + '/images/';
+		// if(imageCount == 1){
+        //     console.log("IMAGE", images[0]);
+        //     console.log("IMAGE URI", imageUri + images)
+		// 	imageElement = (
+        //         <TouchableOpacity
+        //             onPress={() => this.onImageClicked(images, _id)}
+        //             style={styles.thumbnail} 
+        //         >
+        //         <Image 
+		// 			source={{uri: imageUri + images}}
+        //             style={styles.thumbnail} 
+                    
+        //             />
+                
+        //         </TouchableOpacity>
+		// 	);
+		// }else if(imageCount > 1 ){
+		// 	imageElement = [];
+		// 	imageElement = images.map((image, index) => {
+		// 		console.log("TEST IMAGE ELEMENT");
+		// 		console.log("IMAGE: ", image);
+		// 		console.log("INDEX: ", index);
+		// 		console.log("FUNCTION: ", this.onImageClicked2);
+
+		// 		return (
+		// 			<TouchableOpacity
+		// 				onPress={() => this.onImageClicked(image, _id)}
+		// 				key={image} 
+        //                 style={styles.thumbnail}
+        //                 >
+
+		// 				<Image  
+		// 					source={{uri: imageUri + image}}
+		// 					style={styles.thumbnail} 
+		// 				/>
+		// 			</TouchableOpacity>
+		// 		);
+		// 	});
             
-		}
+		// }
 
         return (
             <View style={styles.viewContainer}>

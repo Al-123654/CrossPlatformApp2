@@ -85,16 +85,25 @@ class App extends Component {
 		this.props.navigation.navigate('Register');
 	}
 
+	// onForgotHandler = () => {
+		
+	// }
+
+	
+
 	render() {
+		
 	
 		return (
 			<View style={styles.container}>
+			
 				<View style={styles.formContainer}>
 					<Text style={styles.appHeading}>Test App</Text>
-					<TextInput style={styles.entryFields} placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
-					<TextInput style={styles.entryFields} placeholder="Password" secureTextEntry ={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
+					<TextInput style={styles.platformBasedText} placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
+					<TextInput style={styles.platformBasedText} placeholder="Password" secureTextEntry ={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
 					<Button title="Login" onPress={this.onLoginPressHandler} />
 					<Text style={styles.registerLink} onPress={this.onRegisterPressHandler}>Register</Text>
+					{/* <Button title="Forgot password?" onPress={this.onForgotHandler} /> */}
 					<Text>{this.state.log}</Text>
 					<Text>{this.state.logDetails}</Text>
 					<Text>{this.state.imageSource.fileName}</Text>
@@ -161,12 +170,30 @@ const styles = StyleSheet.create({
 		width: '60%',
 		
 	},
-	entryFields:{
+	platformBasedText:{
+		...Platform.select({
+			ios:{
+					width: '50%',
+					height: '13%',
+					borderColor: 'grey',
+					justifyContent: 'space-around',
+				
+			},
+			android:{
+
+			}
+		})
+		
+
+	},
+
+	entryFields: {
 		width: '50%',
 		height: '13%',
-		borderColor:'grey',
+		borderColor: 'grey',
 		justifyContent: 'space-around',
 	},
+	
 	appHeading: {
 		fontSize: 30,
 		textAlign: 'center'
@@ -179,5 +206,7 @@ const styles = StyleSheet.create({
 	imageDimensions: {
 		width: 100,
 		height: 100
-	}
+	},
+	
+	
 });
