@@ -25,8 +25,8 @@ class UserScreen extends Component {
     
 
     onLogoutPressHandler = () => {
-        // return fetch('https://app-api-testing.herokuapp.com/logout', {
-        return fetch('http://localhost:5000/logout', {
+        return fetch('https://app-api-testing.herokuapp.com/logout', {
+        // return fetch('http://localhost:5000/logout', {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
@@ -103,34 +103,42 @@ class UserScreen extends Component {
                 console.log('TEST:',response.uri);
                 console.log("PLATFORM PATH ",platformPath);
                 // save image
-                // RNFetchBlob.fetch('POST', 'https://app-api-testing.herokuapp.com/upload',
-                RNFetchBlob.fetch('POST', 'http://localhost:5000/upload', {
-                    Authorization: 'application/json',
-                    'Content-Type': 'application/json'
-                    [
-                        {
-                            name: 'sampleFile', filename: response.fileName,
-                            data: RNFetchBlob.wrap(platformPath)
-                        }
-                    ]
-                }
-
-                  
-                ).then((res) => {
-                    console.log("TEST RESPONSE: " + res.text());
-                    this.setState({
-                        log: "Response from server",
-                        logDetails: "test" + res.text()
-                    });
-                }).catch((err) => {
-                    console.log("TEST ERROR: " + err);
-                    this.setState({
-                        log: "Error uploading",
-                        logDetails: err
-                    });
-                });
-
-              
+                // RNFetchBlob.fetch('POST', 'https://app-api-testing.herokuapp.com/upload', {
+                // // RNFetchBlob.fetch('POST', 'http://localhost:5000/upload', {
+                //     Authorization: 'application/json',
+                //     'Content-Type': 'application/json'
+                //     [
+                //         {
+                //             name: 'sampleFile', filename: response.fileName,
+                //             data: RNFetchBlob.wrap(platformPath)
+                //         }
+                //     ]
+                // }
+                // ).then((res) => {
+                //     console.log("TEST RESPONSE: " + res.text());
+                //     this.setState({
+                //         log: "Response from server",
+                //         logDetails: "test" + res.text()
+                //     });
+                // }).catch((err) => {
+                //     console.log("TEST ERROR: " + err);
+                //     this.setState({
+                //         log: "Error uploading",
+                //         logDetails: err
+                //     });
+				// });
+				RNFetchBlob.fetch('POST', 
+					'https://app-api-testing.herokuapp.com/upload',
+					{},
+					[
+						{name:'sampleFile', filename:response.fileName, data:RNFetchBlob.wrap(platformPath)}
+					])
+				.then((res) => {
+					console.log('[user js] Response from server - ', res);
+				})
+				.catch((err) => {
+					console.log('[user js] Error response - ', res);
+				});
                
             }
         });
@@ -175,8 +183,8 @@ class UserScreen extends Component {
             let imageCount = images.length;
 		    console.log("Image Count: ", imageCount);
 		    // setup variable to contain Image element
-            // let imageUri = 'https://app-api-testing.herokuapp.com/api/users/' + _id + '/images/';
-            let imageUri = 'http://localhost:5000/api/images/';
+            let imageUri = 'https://app-api-testing.herokuapp.com/api/images/';
+            // let imageUri = 'http://localhost:5000/api/images/';
 		    if(imageCount == 1){
                 console.log("IMAGE", images[0]);
                 console.log("IMAGE URI", imageUri + images)
