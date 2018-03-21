@@ -4,8 +4,6 @@ import { StackNavigator,  } from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
 
-
-
 class UserScreen extends Component {
     state = {
         username: "",
@@ -14,15 +12,12 @@ class UserScreen extends Component {
         email: "",
         _id: "",
         imageSource: "",
-        // likes: "",
+		log: "" 
     };
 
     constructor(props) {
-        super(props);
-        
+        super(props); 
     }
-
-    
 
     onLogoutPressHandler = () => {
         return fetch('https://app-api-testing.herokuapp.com/logout', {
@@ -69,7 +64,8 @@ class UserScreen extends Component {
 
         ImagePicker.showImagePicker(imagePickerOptions, (response) => {
 
-            console.log('Image Picker Response: ', response.fileSize);
+			console.log('Image Picker Response: ', response.fileSize);
+			this.setState({log:''});
             if (response.didCancel) {
                 console.log('User cancelled the picker.');
             } else if (response.error) {
@@ -134,7 +130,15 @@ class UserScreen extends Component {
 						{name:'sampleFile', filename:response.fileName, data:RNFetchBlob.wrap(platformPath)}
 					])
 				.then((res) => {
-					console.log('[user js] Response from server - ', res);
+					// console.log('[user js] Response from server - ', res);
+					console.log('[user js] Status code - ', res.respInfo.status);
+					if(res.respInfo.status == 200){
+						console.log('[user js] UPLOAD OK');
+						this.setState({log: 'Upload ok!'});
+					}else{
+						console.log('[user js] UPLOAD FAILED - ', res);
+						this.setState({log: 'Upload failed!'});
+					}
 				})
 				.catch((err) => {
 					console.log('[user js] Error response - ', res);
@@ -245,14 +249,10 @@ class UserScreen extends Component {
                     {imageElement}
 				</View> 
 
-				
                 <Button title="Image Picker" onPress={this.onImagePickerHandler} />
 				<Button title="Logout" onPress={this.onLogoutPressHandler} />
-                {/* <Button title="Upload" onPress={this.onLogoutPressHandler} /> */}
-                
-                
-				
-                <Text>{this.state.message}</Text>
+
+				<Text>{this.state.log}</Text>
             </View>
         );
     }
