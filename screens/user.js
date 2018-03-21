@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Platform, Text, TextInput, StyleSheet, View, Button, Image, Alert , TouchableOpacity, TouchableHighlight} from 'react-native';
 import { StackNavigator,  } from 'react-navigation';
-
-import RNFetchBlob from 'react-native-fetch-blob';
 import ImagePicker from 'react-native-image-picker';
+import RNFetchBlob from 'react-native-fetch-blob';
+
 
 
 class UserScreen extends Component {
@@ -69,7 +69,7 @@ class UserScreen extends Component {
 
         ImagePicker.showImagePicker(imagePickerOptions, (response) => {
 
-            console.log('Image Picker Response: ', response);
+            console.log('Image Picker Response: ', response.fileSize);
             if (response.didCancel) {
                 console.log('User cancelled the picker.');
             } else if (response.error) {
@@ -101,16 +101,21 @@ class UserScreen extends Component {
                     });
                 }
                 console.log('TEST:',response.uri);
+                console.log("PLATFORM PATH ",platformPath);
                 // save image
                 // RNFetchBlob.fetch('POST', 'https://app-api-testing.herokuapp.com/upload',
-                RNFetchBlob.fetch('POST', 'http://localhost:5000/upload',
-
+                RNFetchBlob.fetch('POST', 'http://localhost:5000/upload', {
+                    Authorization: 'application/json',
+                    'Content-Type': 'application/json'
                     [
                         {
                             name: 'sampleFile', filename: response.fileName,
                             data: RNFetchBlob.wrap(platformPath)
                         }
                     ]
+                }
+
+                  
                 ).then((res) => {
                     console.log("TEST RESPONSE: " + res.text());
                     this.setState({
@@ -124,14 +129,17 @@ class UserScreen extends Component {
                         logDetails: err
                     });
                 });
+
+              
+               
             }
         });
     }
 
-    onImageClicked = (imageId, _id) => {
+    onImageClicked = (imageId) => {
         console.log("IMAGE CLICKED" );
         this.props.navigation.navigate('ImagePage', {
-            _id: _id,
+           
             imageId: imageId,
            
         });
@@ -168,7 +176,7 @@ class UserScreen extends Component {
 		    console.log("Image Count: ", imageCount);
 		    // setup variable to contain Image element
             // let imageUri = 'https://app-api-testing.herokuapp.com/api/users/' + _id + '/images/';
-            let imageUri = 'http://localhost:5000/api/users/' + _id + '/images/';
+            let imageUri = 'http://localhost:5000/api/images/';
 		    if(imageCount == 1){
                 console.log("IMAGE", images[0]);
                 console.log("IMAGE URI", imageUri + images)
@@ -178,7 +186,7 @@ class UserScreen extends Component {
                     style={styles.thumbnail}    
                 >
                 <Image 
-					source={{uri: imageUri + images}}
+					source={{uri: imageUri + images + '/display'}}
                     style={styles.thumbnail} 
                 />
                 </TouchableOpacity>
@@ -199,7 +207,7 @@ class UserScreen extends Component {
                         >
 
 						<Image  
-							source={{uri: imageUri + image}}
+                            source={{ uri: imageUri + image + '/display'}}
 							style={styles.thumbnail} 
 						/>
 					</TouchableOpacity>

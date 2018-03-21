@@ -14,7 +14,7 @@ class ImageScreen extends Component{
         const _id = params ? params._id : null;
         const images = params ? params.imageId : null;
         
-        let imageUri = 'http://localhost:5000/api/users/' + _id + '/images/';
+        let imageUri = 'http://localhost:5000/api/images/';
         return fetch(imageUri + images, {
             method: 'POST',
             headers: {
@@ -39,7 +39,7 @@ class ImageScreen extends Component{
         
 
         // let imageUri = 'https://app-api-testing.herokuapp.com/api/users/' + _id + '/images/';
-        let imageUri = 'http://localhost:5000/api/users/' + _id + '/images/';
+        let imageUri = 'http://localhost:5000/api/images/';
         console.log("Image selected", imageUri)
         console.log('CURRENT ID',_id)
         console.log("CURRENT IMAGE",images)
@@ -50,7 +50,7 @@ class ImageScreen extends Component{
             <View style={styles.imageContainer}>
 
                 <Image
-                    source= {{uri: imageUri + images}}
+                    source= {{uri: imageUri + images + '/display'}}
                     style={{height:'90%', width: '98%'}}
                 />
 
