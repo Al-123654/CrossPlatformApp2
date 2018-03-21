@@ -51,7 +51,7 @@ class ImageScreen extends Component{
 
                 <Image
                     source= {{uri: imageUri + images}}
-                    style={{height:'85%', width: '85%'}}
+                    style={{height:'90%', width: '98%'}}
                 />
 
                 <Button

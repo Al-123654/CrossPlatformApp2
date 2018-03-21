@@ -80,6 +80,7 @@ class App extends Component {
 			});
 		}
 	}
+	
 
 	onRegisterPressHandler = () => {
 		this.props.navigation.navigate('Register');
@@ -88,6 +89,9 @@ class App extends Component {
 	// onForgotHandler = () => {
 		
 	// }
+
+	
+
 
 	
 
@@ -173,11 +177,10 @@ const styles = StyleSheet.create({
 	platformBasedText:{
 		...Platform.select({
 			ios:{
-					width: '50%',
-					height: '13%',
-					borderColor: 'grey',
-					justifyContent: 'space-around',
-				
+				width: '50%',
+				height: '13%',
+				borderColor: 'grey',
+				justifyContent: 'space-around',	
 			},
 			android:{
 

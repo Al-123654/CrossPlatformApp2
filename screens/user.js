@@ -100,7 +100,7 @@ class UserScreen extends Component {
                         log: "Platform path empty"
                     });
                 }
-
+                console.log('TEST:',response.uri);
                 // save image
                 // RNFetchBlob.fetch('POST', 'https://app-api-testing.herokuapp.com/upload',
                 RNFetchBlob.fetch('POST', 'http://localhost:5000/upload',
@@ -159,12 +159,14 @@ class UserScreen extends Component {
         
         console.log('PICTURES', images);
         // console.log('PICLENGTH',images.length);
-        
-        if(images){
+        let imageElement;
+        if(typeof images != undefined && images != null && images.length != null && images.length > 0){
+           console.log('IN THE IF STATEMENT');
+           console.log('IF STATEMENT',(images != undefined || images.length == 0)); 
+           // find out length of image array
             let imageCount = images.length;
 		    console.log("Image Count: ", imageCount);
 		    // setup variable to contain Image element
-		    let imageElement;
             // let imageUri = 'https://app-api-testing.herokuapp.com/api/users/' + _id + '/images/';
             let imageUri = 'http://localhost:5000/api/users/' + _id + '/images/';
 		    if(imageCount == 1){
@@ -173,7 +175,7 @@ class UserScreen extends Component {
 			    imageElement = (
                 <TouchableOpacity
                     onPress={() => this.onImageClicked(images, _id)}
-                    style={styles.thumbnail} 
+                    style={styles.thumbnail}    
                 >
                 <Image 
 					source={{uri: imageUri + images}}
@@ -205,56 +207,16 @@ class UserScreen extends Component {
 			    });
 
 		    }
-        }else {imageElement = <Text>"No images available"</Text>}
+        }else {
+            console.log("IN THE ELSE STATEMENT")
+            imageElement = 
+                <View style={styles.viewContainer}>
+                    <Text style={{justifyContent:'center', alignItems: 'center'}}>No images available
+                    </Text>
+                </View>}
 		
-		// find out length of image array
-		// let imageCount = images.length;
-		// console.log("Image Count: ", imageCount);
-
-		// // setup variable to contain Image element
-		// let imageElement;
-        // // let imageUri = 'https://app-api-testing.herokuapp.com/api/users/' + _id + '/images/';
-        // let imageUri = 'http://localhost:5000/api/users/' + _id + '/images/';
-		// if(imageCount == 1){
-        //     console.log("IMAGE", images[0]);
-        //     console.log("IMAGE URI", imageUri + images)
-		// 	imageElement = (
-        //         <TouchableOpacity
-        //             onPress={() => this.onImageClicked(images, _id)}
-        //             style={styles.thumbnail} 
-        //         >
-        //         <Image 
-		// 			source={{uri: imageUri + images}}
-        //             style={styles.thumbnail} 
-                    
-        //             />
-                
-        //         </TouchableOpacity>
-		// 	);
-		// }else if(imageCount > 1 ){
-		// 	imageElement = [];
-		// 	imageElement = images.map((image, index) => {
-		// 		console.log("TEST IMAGE ELEMENT");
-		// 		console.log("IMAGE: ", image);
-		// 		console.log("INDEX: ", index);
-		// 		console.log("FUNCTION: ", this.onImageClicked2);
-
-		// 		return (
-		// 			<TouchableOpacity
-		// 				onPress={() => this.onImageClicked(image, _id)}
-		// 				key={image} 
-        //                 style={styles.thumbnail}
-        //                 >
-
-		// 				<Image  
-		// 					source={{uri: imageUri + image}}
-		// 					style={styles.thumbnail} 
-		// 				/>
-		// 			</TouchableOpacity>
-		// 		);
-		// 	});
-            
-		// }
+		
+		
 
         return (
             <View style={styles.viewContainer}>

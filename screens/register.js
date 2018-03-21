@@ -92,6 +92,19 @@ class RegisterScreen extends Component {
                             ]
                         )
                     }
+                    if(responseJson.messageCode == 101){
+                       
+                        Alert.alert(
+                        'Registration',
+                            responseJson.message,
+                            [
+                                {
+                                    text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel'
+                                        // {this.props.navigation.navigate('Home')};   
+                                }
+                            ]
+                        )
+                    }
                     if(responseJson.messageCode == 102){
                        
                         Alert.alert(
