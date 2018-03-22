@@ -217,7 +217,7 @@ class UserScreen extends Component {
 				return (
 					<TouchableOpacity
 						onPress={() => this.onImageClicked2(imageId, likes)}
-						key={image} 
+						key={imageId} 
                         style={styles.thumbnail}
                         >
 
