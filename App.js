@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import { Platform, StyleSheet, Text, View, Image } from 'react-native';
+import { Platform, StyleSheet,  View, Image } from 'react-native';
 import { StackNavigator, navigationOptions} from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
-import { Button, FormInput, FormLabel, FormValidationMessage } from 'react-native-elements';
+import { Button, FormInput, FormLabel, Text,FormValidationMessage } from 'react-native-elements';
 
 var RegisterScreen = require('./screens/register.js');
 var UserScreen = require('./screens/user.js');
@@ -95,7 +95,7 @@ class App extends Component {
 					<FormInput style={styles.platformBasedText} placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
 					<FormInput style={styles.platformBasedText} placeholder="Password" secureTextEntry ={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
 					<Button title="Login" onPress={this.onLoginPressHandler} />
-					<FormLabel style={styles.registerLink} onPress={this.onRegisterPressHandler}>Register</FormLabel>
+					<Text style={styles.registerLink} onPress={this.onRegisterPressHandler}>Register</Text>
 					{/* <Button title="Forgot password?" onPress={this.onForgotHandler} /> */}
 					<FormLabel>{this.state.log}</FormLabel>
 					<FormLabel>{this.state.logDetails}</FormLabel>
