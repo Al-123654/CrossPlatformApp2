@@ -149,102 +149,6 @@ class RegisterScreen extends Component {
             .catch((error) => {
                 console.error(error);
             });
-          
-
-
-                    // if(responseJson.messageCode == 100){
-                       
-                    //     Alert.alert(
-                    //     'Registration',
-                    //         responseJson.message,
-                    //         [
-                    //             {
-                    //                 text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel'
-                    //                     // {this.props.navigation.navigate('Home')};   
-                    //             }
-                    //         ]
-                    //     )
-                    // }
-                    // if(responseJson.messageCode == 101){
-                       
-                    //     Alert.alert(
-                    //     'Registration',
-                    //         responseJson.message,
-                    //         [
-                    //             {
-                    //                 text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel'
-                    //                     // {this.props.navigation.navigate('Home')};   
-                    //             }
-                    //         ]
-                    //     )
-                    // }
-                    // if(responseJson.messageCode == 102){
-                       
-                    //     Alert.alert(
-                    //         'Registration',
-                    //         responseJson.message,
-                    //         [
-                    //             {
-                    //                 text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel'
-                    //             }
-                    //         ]
-                    //     )
-                    // }
-                    // if(responseJson.messageCode == 103){
-                       
-                    //     Alert.alert(
-                    //         'Registration',
-                    //         responseJson.message,
-                    //         [
-                    //             {
-                    //                 text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel'
-                    //             }
-                    //         ]
-                    //     )
-                    // }
-                    // if(responseJson.messageCode == 104){
-                        
-                    //     Alert.alert(
-                    //         'Registration',
-                    //         responseJson.message,
-                    //         [
-                    //             {
-                    //                 text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel'
-                    //             }
-                    //         ]
-                    //     )
-                    // }
-                    // if(responseJson.messageCode == 105){
-                        
-                    //     Alert.alert(
-                    //         'Registration',
-                    //         responseJson.message,
-                    //         [
-                    //             {
-                    //                 text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel',
-                                    
-                    //             }
-                    //         ]
-                    //     )
-                    // }
-                    // if(responseJson.messageCode == 106){
-                        
-                    //     Alert.alert(
-                    //         'Registration',
-                    //         responseJson.message,
-                    //         [
-                    //             {
-                    //                 text: 'OK', onPress: () =>  {
-                    //                     this.props.navigation.navigate('User',responseJson.data);
-                    //                 }
-                    //             }
-                    //         ]
-                    //     )
-                    // }
-                    
-                    
-                
-            
     }
 
     render() {
@@ -260,11 +164,7 @@ class RegisterScreen extends Component {
                 <FormValidationMessage >{this.state.log4}</FormValidationMessage> 
                 <FormInput placeholder="Email" onChangeText={(text) => this.onChangedEmailHandler(text)} />
                 <FormValidationMessage >{this.state.log5}</FormValidationMessage> 
-                {/* <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
-                <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="Password" secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
-                <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="First Name" onChangeText={(text) => this.onChangedFnameHandler(text)} />
-                <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="Last Name" onChangeText={(text) => this.onChangedLnameHandler(text)} />
-                <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="Email" onChangeText={(text) => this.onChangedEmailHandler(text)} /> */}
+              
                 <Button
                     raised
                     icon= {{name: 'code'}}
