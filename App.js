@@ -16,7 +16,6 @@ class App extends Component {
 		password: "",
 		log: "",
 		logDetails: "",
-		isLoggedIn: false,
 		id: "",
 		imageSource: "",
 	};
@@ -62,10 +61,6 @@ class App extends Component {
 
 						console.log('[explore js] componentDidMount json response: ', data);					
 						console.log("[app js] LOGGED IN!");
-						this.setState({
-							isLoggedIn: true,
-							log: "Logged in!"
-						});
 						// go to user page
 						console.log('[app js] Response', data);
 						this.props.navigation.navigate('User', data);

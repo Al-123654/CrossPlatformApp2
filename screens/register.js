@@ -17,13 +17,14 @@ class RegisterScreen extends Component {
         fname: "",
         lname: "",
         email: "",
+        log:"",
         logUsername: "",
         logFname: "",
         logLname: "",
         logPassword: "",
         logEmail: "",
         logDetails: "",
-        isLoggedIn: false,
+        
         id: "",
         
     };
@@ -129,104 +130,121 @@ class RegisterScreen extends Component {
                 email: this.state.email 
             }),
         })
-            .then((response) => response.json())
-            .then((responseJson) => {
-                    if(responseJson.messageCode == 100){
-                       
-                        Alert.alert(
-                        'Registration',
-                            responseJson.message,
-                            [
-                                {
-                                    text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel'
-                                        // {this.props.navigation.navigate('Home')};   
-                                }
-                            ]
-                        )
-                    }
-                    if(responseJson.messageCode == 101){
-                       
-                        Alert.alert(
-                        'Registration',
-                            responseJson.message,
-                            [
-                                {
-                                    text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel'
-                                        // {this.props.navigation.navigate('Home')};   
-                                }
-                            ]
-                        )
-                    }
-                    if(responseJson.messageCode == 102){
-                       
-                        Alert.alert(
-                            'Registration',
-                            responseJson.message,
-                            [
-                                {
-                                    text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel'
-                                }
-                            ]
-                        )
-                    }
-                    if(responseJson.messageCode == 103){
-                       
-                        Alert.alert(
-                            'Registration',
-                            responseJson.message,
-                            [
-                                {
-                                    text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel'
-                                }
-                            ]
-                        )
-                    }
-                    if(responseJson.messageCode == 104){
-                        
-                        Alert.alert(
-                            'Registration',
-                            responseJson.message,
-                            [
-                                {
-                                    text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel'
-                                }
-                            ]
-                        )
-                    }
-                    if(responseJson.messageCode == 105){
-                        
-                        Alert.alert(
-                            'Registration',
-                            responseJson.message,
-                            [
-                                {
-                                    text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel',
-                                    
-                                }
-                            ]
-                        )
-                    }
-                    if(responseJson.messageCode == 106){
-                        
-                        Alert.alert(
-                            'Registration',
-                            responseJson.message,
-                            [
-                                {
-                                    text: 'OK', onPress: () =>  {
-                                        this.props.navigation.navigate('User',responseJson.data);
-                                    }
-                                }
-                            ]
-                        )
-                    }
-                    
-                    
-                
+            .then((response) => {
+                console.log('[register.js] responseOnRegister: ', response);
+                if(response.status !== 200){
+                    console.log('[register js] responseOnLogin bad response: ', response);
+                    this.setState({log:"Cannot register"})
+                    return;
+                }
+                response.json().then(data => {
+                    console.log('[register js] componentDidMount json response: ', data);
+                    console.log("[register js] REGISTERED");
+                    // go to user page
+                    console.log('[register js] Response', data);
+                    this.props.navigation.navigate('User', data);
+                });
+
             })
             .catch((error) => {
                 console.error(error);
             });
+          
+
+
+                    // if(responseJson.messageCode == 100){
+                       
+                    //     Alert.alert(
+                    //     'Registration',
+                    //         responseJson.message,
+                    //         [
+                    //             {
+                    //                 text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel'
+                    //                     // {this.props.navigation.navigate('Home')};   
+                    //             }
+                    //         ]
+                    //     )
+                    // }
+                    // if(responseJson.messageCode == 101){
+                       
+                    //     Alert.alert(
+                    //     'Registration',
+                    //         responseJson.message,
+                    //         [
+                    //             {
+                    //                 text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel'
+                    //                     // {this.props.navigation.navigate('Home')};   
+                    //             }
+                    //         ]
+                    //     )
+                    // }
+                    // if(responseJson.messageCode == 102){
+                       
+                    //     Alert.alert(
+                    //         'Registration',
+                    //         responseJson.message,
+                    //         [
+                    //             {
+                    //                 text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel'
+                    //             }
+                    //         ]
+                    //     )
+                    // }
+                    // if(responseJson.messageCode == 103){
+                       
+                    //     Alert.alert(
+                    //         'Registration',
+                    //         responseJson.message,
+                    //         [
+                    //             {
+                    //                 text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel'
+                    //             }
+                    //         ]
+                    //     )
+                    // }
+                    // if(responseJson.messageCode == 104){
+                        
+                    //     Alert.alert(
+                    //         'Registration',
+                    //         responseJson.message,
+                    //         [
+                    //             {
+                    //                 text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel'
+                    //             }
+                    //         ]
+                    //     )
+                    // }
+                    // if(responseJson.messageCode == 105){
+                        
+                    //     Alert.alert(
+                    //         'Registration',
+                    //         responseJson.message,
+                    //         [
+                    //             {
+                    //                 text: 'OK', onPress: () => console.log(responseJson.message), style: 'cancel',
+                                    
+                    //             }
+                    //         ]
+                    //     )
+                    // }
+                    // if(responseJson.messageCode == 106){
+                        
+                    //     Alert.alert(
+                    //         'Registration',
+                    //         responseJson.message,
+                    //         [
+                    //             {
+                    //                 text: 'OK', onPress: () =>  {
+                    //                     this.props.navigation.navigate('User',responseJson.data);
+                    //                 }
+                    //             }
+                    //         ]
+                    //     )
+                    // }
+                    
+                    
+                
+            
     }
 
     render() {
