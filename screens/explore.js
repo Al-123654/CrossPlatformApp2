@@ -4,7 +4,27 @@ import { StackNavigator,  } from 'react-navigation';
 
 class ExploreScreen extends Component {
 
-	state = { log: "" };
+	state = { 
+		log: "",
+		listOfUsers: ""
+	};
+
+	componentDidMount(){
+		fetch('https://app-api-testing.herokuapp.com/api/users')
+		.then(response=>{
+			console.log('[explore js] componentDidMount response: ', response);
+			if(response.status !== 200){
+				console.log('[explore js] componentDidMount bad response: ', response);
+				return;
+			}
+			response.json().then(data=>{
+				console.log('[explore js] componentDidMount json response: ', data);
+				this.setState({listOfUsers:[...data]});
+				console.log('[explore js] componentDidMount listOfUsers state: ', this.state.listOfUsers);
+			});
+		})
+		.catch(err=>console.log('[explore js] componentDidMount error: ', err));
+	}
 
     onLogoutPressHandler = () => {
         return fetch('https://app-api-testing.herokuapp.com/logout', {
@@ -23,8 +43,7 @@ class ExploreScreen extends Component {
 					{
 						text: 'OK', onPress: () => {
 							this.props.navigation.navigate('Home');
-							console.log("LOGGED OUT")
-
+							console.log("[explore js] onLogoutPressHandler LOGGED OUT")
 						}
 					}
 				]
@@ -36,9 +55,17 @@ class ExploreScreen extends Component {
     }
 
     render() {
+		usersArray = [];
+		const listOfUsersCopy = [...this.state.listOfUsers];
+		usersArray = listOfUsersCopy.map((user, index) => {
+			return (
+				<Text key={user._id}>{user.username}</Text>
+			);
+		});
+
         return (
             <View style={styles.viewContainer}> 
-				<Text>List of Other Users</Text>
+				{usersArray}
 				<Text>{this.state.log}</Text>
 				<Button title="Logout" onPress={this.onLogoutPressHandler} />
             </View>
