@@ -7,6 +7,7 @@ import RNFetchBlob from 'react-native-fetch-blob';
 var RegisterScreen = require('./screens/register.js');
 var UserScreen = require('./screens/user.js');
 var ImageScreen = require('./screens/images.js');
+var ExploreScreen = require('./screens/explore.js');
 
 class App extends Component {
 	state = {
@@ -17,8 +18,6 @@ class App extends Component {
 		isLoggedIn: false,
 		id: "",
 		imageSource: "",
-		likes: "",
-		
 	};
 
 	onChangedUsernameHandler = (username) => {
@@ -37,7 +36,6 @@ class App extends Component {
 		}
 	}
 
-	
 	onLoginPressHandler = () => {
 		if(this.state.username.length > 1 && this.state.password.length > 1){
 			return fetch('https://app-api-testing.herokuapp.com/login', {
@@ -55,17 +53,17 @@ class App extends Component {
 				.then((response) => response.json())
 				.then((responseJson) => {
 					if(responseJson.data){
-						console.log("LOGGED IN!");
+						console.log("[app js] LOGGED IN!");
 						this.setState({ 
 							
 							isLoggedIn: true,
 							log: "Logged in!"
 						});
 						// go to user page
-						console.log('[app.js] Response',responseJson.data);
+						console.log('[app js] Response',responseJson.data);
 						this.props.navigation.navigate('User', responseJson.data);
 					}else{
-						console.log("NOT LOGGED IN!");
+						console.log("[app js] NOT LOGGED IN!");
 						this.setState({ 
 							log: "NOT LOGGED IN"
 						});
@@ -82,23 +80,12 @@ class App extends Component {
 		}
 	}
 	
-
 	onRegisterPressHandler = () => {
 		this.props.navigation.navigate('Register');
 	}
 
-	// onForgotHandler = () => {
-		
-	// }
-
-	
-
-
-	
-
 	render() {
 		
-	
 		return (
 			<View style={styles.container}>
 			
@@ -120,41 +107,42 @@ class App extends Component {
 
 const RootStack = StackNavigator(
 	{
-	  Home: {
-		screen: App,
-		navigationOptions: {
-			title: "App",
-			headerLeft: null,
-			gesturesEnabled:false
+		Home: {
+			screen: App,
+			navigationOptions: {
+				title: "App",
+				headerLeft: null,
+				gesturesEnabled:false
+			}
+		},
+		Register: {
+			screen: RegisterScreen,
+			navigationOptions:{
+				gesturesEnabled: false
+			}
+		},
+		User: {
+			screen: UserScreen,
+			navigationOptions: {
+				title: "User",
+				headerLeft: null,
+				gesturesEnabled:false
+			}
+		},
+		ImagePage:{
+			screen:ImageScreen,
+			navigationOptions:{
+				gesturesEnabled: false
+			} 
+		},
+		Explore:{
+			screen:ExploreScreen,
+			navigationOptions:{
+				gesturesEnabled: false
+			}
 		}
-		  
-	  },
-	  Register: {
-		screen: RegisterScreen,
-		navigationOptions:{
-			gesturesEnabled: false
-		}
-	  },
-	  User: {
-		screen: UserScreen,
-		  navigationOptions: {
-			  title: "User",
-			  headerLeft: null,
-			  gesturesEnabled:false
-		  }
-	  },
-
-	  ImagePage:{
-		  screen:ImageScreen,
-		  navigationOptions:{
-			  gesturesEnabled: false
-		  }
-		  
-	  }
 	},
-	{
-	  initialRouteName: 'Home',
-	}
+	{initialRouteName: 'Home'}
   );
 
   export default class Test extends Component {
@@ -187,17 +175,13 @@ const styles = StyleSheet.create({
 
 			}
 		})
-		
-
 	},
-
 	entryFields: {
 		width: '50%',
 		height: '13%',
 		borderColor: 'grey',
 		justifyContent: 'space-around',
 	},
-	
 	appHeading: {
 		fontSize: 30,
 		textAlign: 'center'
@@ -210,7 +194,5 @@ const styles = StyleSheet.create({
 	imageDimensions: {
 		width: 100,
 		height: 100
-	},
-	
-	
+	}
 });
