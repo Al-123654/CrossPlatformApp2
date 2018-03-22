@@ -51,24 +51,25 @@ class App extends Component {
 					password: this.state.password
 				}),
 			})
-				.then((response) => response.json())
-				.then((responseJson) => {
-					if(responseJson.data){
+				.then((response) => {
+					console.log('[app.js] responseOnLogin: ', response);
+					if (response.status !== 200){
+						console.log('[explore js] responseOnLogin bad response: ', response);
+						this.setState({log:"Cannot log in"})
+						return;
+					}
+					response.json().then(data => {
+
+						console.log('[explore js] componentDidMount json response: ', data);					
 						console.log("[app js] LOGGED IN!");
-						this.setState({ 
-							
+						this.setState({
 							isLoggedIn: true,
 							log: "Logged in!"
 						});
 						// go to user page
-						console.log('[app js] Response',responseJson.data);
-						this.props.navigation.navigate('User', responseJson.data);
-					}else{
-						console.log("[app js] NOT LOGGED IN!");
-						this.setState({ 
-							log: "NOT LOGGED IN"
-						});
-					}	
+						console.log('[app js] Response', data);
+						this.props.navigation.navigate('User', data);
+					});
 				})
 				.catch((error) => {
 					console.error(error);

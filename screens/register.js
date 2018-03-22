@@ -3,7 +3,7 @@ import { Text, TextInput, StyleSheet, View,  Image, Alert, FlatList } from 'reac
 import { StackNavigator, } from 'react-navigation';
 import validator from 'validator';
 import {Button, FormInput, FormLabel, FormValidationMessage} from 'react-native-elements';
-// import {Icon} from 'react-native-vector-icons/MaterialIcons';
+// import {Icon} from 'react-native-vector-icons;
 
 
 
