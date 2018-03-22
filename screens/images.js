@@ -36,7 +36,7 @@ class ImageScreen extends Component{
         // const _id = params ? params._id : null;
         const images = params ? params.imageId : null;
         // const likes = params ? params.likes : null;
-        console.log('LIKES: ', likes);
+        // console.log('LIKES: ', likes);
         console.log('IMAGE ID: ', images);
         
         // noOfLikes = likes.length;

@@ -149,25 +149,14 @@ class UserScreen extends Component {
         });
     }
 
-    onImageClicked = (imageId,likes) => {
+    onImageClicked = (imageId,) => {
         console.log("[user.js] IMAGE ID: ", imageId );
-        console.log("[user.js] LIKES: ", likes);
         this.props.navigation.navigate('ImagePage', {
             imageId: imageId,
-            likes: likes,
-            
         });
 
     }
-    onImageClicked2 = (imageId, likes) => {
-        console.log("[user.js] IMAGE ID: ", imageId);
-        console.log("[user.js] LIKES: ", likes);
-        this.props.navigation.navigate('ImagePage',{
-            imageId: imageId,
-            likes: likes,
-            
-        });
-    }
+  
 
     render() {
         const {params} = this.props.navigation.state;
@@ -197,7 +186,7 @@ class UserScreen extends Component {
                 console.log("IMAGE URI", imageUri + images[0])
 			    imageElement = (
                 <TouchableOpacity
-                    onPress={() => this.onImageClicked(images[0], likes)}
+                    onPress={() => this.onImageClicked(images[0] )}
                     style={styles.thumbnail}    
                 >
                 <Image 
@@ -212,11 +201,11 @@ class UserScreen extends Component {
 				    console.log("TEST IMAGE ELEMENT");
 				    console.log("[user.js]ARGRUMENT FOR MULTIPLE IMAGES: ", imageId);
 				    console.log("INDEX: ", index);
-				    console.log("FUNCTION: ", this.onImageClicked2);
+				    console.log("FUNCTION: ", this.onImageClicked);
 
 				return (
 					<TouchableOpacity
-						onPress={() => this.onImageClicked2(imageId, likes)}
+						onPress={() => this.onImageClicked(imageId)}
 						key={imageId} 
                         style={styles.thumbnail}
                         >
