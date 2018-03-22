@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Platform, Text, TextInput, StyleSheet, View, Button, Image, Alert , TouchableOpacity, TouchableHighlight} from 'react-native';
+import { Platform, FlatList, Text, TextInput, StyleSheet, View, Button, Image, Alert , TouchableOpacity, TouchableHighlight} from 'react-native';
 import { StackNavigator,  } from 'react-navigation';
+import { List, ListItem } from "react-native-elements";
 
 class ExploreScreen extends Component {
 
@@ -52,24 +53,38 @@ class ExploreScreen extends Component {
 		.catch ((error) => {
 			console.error(error);
 		});
-    }
+	}
 
     render() {
-		usersArray = [];
+		// usersArray = [];
 		const listOfUsersCopy = [...this.state.listOfUsers];
-		usersArray = listOfUsersCopy.map((user, index) => {
-			return (
-				<Text key={user._id}>{user.username}</Text>
-			);
-		});
+		// usersArray = listOfUsersCopy.map((user, index) => {
+		// 	return (
+		// 		<Text key={user._id}>{user.username}</Text>
+		// 	);
+		// });
 
-        return (
-            <View style={styles.viewContainer}> 
-				{usersArray}
-				<Text>{this.state.log}</Text>
-				<Button title="Logout" onPress={this.onLogoutPressHandler} />
-            </View>
-        );
+        // return (
+        //     <View style={styles.viewContainer}> 
+		// 		{usersArray}
+		// 		<Text>{this.state.log}</Text>
+		// 		<Button title="Logout" onPress={this.onLogoutPressHandler} />
+        //     </View>
+		// );
+		return(
+			<List>
+				<FlatList
+					data={listOfUsersCopy}
+					renderItem={ ({item}) => (
+						<ListItem
+							title={item.username}
+							subtitle={item.email}
+						/>
+					)}
+					keyExtractor={item => item._id}
+				/>
+			</List>
+		);
     }
 }
 
