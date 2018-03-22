@@ -55,6 +55,10 @@ class ExploreScreen extends Component {
 		});
 	}
 
+	onListItemPressed = (itemId) => {
+		console.log('[explore js] onListItemPressed: ', itemId);
+	}
+
     render() {
 		// usersArray = [];
 		const listOfUsersCopy = [...this.state.listOfUsers];
@@ -76,10 +80,14 @@ class ExploreScreen extends Component {
 				<FlatList
 					data={listOfUsersCopy}
 					renderItem={ ({item}) => (
-						<ListItem
-							title={item.username}
-							subtitle={item.email}
-						/>
+						<TouchableOpacity
+							onPress={()=>this.onListItemPressed(item._id)}
+						>
+							<ListItem
+								title={item.username}
+								subtitle={item.email}
+							/>
+						</TouchableOpacity>
 					)}
 					keyExtractor={item => item._id}
 				/>
