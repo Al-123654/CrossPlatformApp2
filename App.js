@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
-import { Platform, StyleSheet, Text, View, TextInput, Button, Image } from 'react-native';
+import { Platform, StyleSheet, Text, View, Image } from 'react-native';
 import { StackNavigator, navigationOptions} from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
+import { Button, FormInput, FormLabel, FormValidationMessage } from 'react-native-elements';
 
 var RegisterScreen = require('./screens/register.js');
 var UserScreen = require('./screens/user.js');
@@ -90,15 +91,15 @@ class App extends Component {
 			<View style={styles.container}>
 			
 				<View style={styles.formContainer}>
-					<Text style={styles.appHeading}>Test App</Text>
-					<TextInput style={styles.platformBasedText} placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
-					<TextInput style={styles.platformBasedText} placeholder="Password" secureTextEntry ={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
+					<FormLabel style={styles.appHeading}>Test App</FormLabel>
+					<FormInput style={styles.platformBasedText} placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
+					<FormInput style={styles.platformBasedText} placeholder="Password" secureTextEntry ={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
 					<Button title="Login" onPress={this.onLoginPressHandler} />
-					<Text style={styles.registerLink} onPress={this.onRegisterPressHandler}>Register</Text>
+					<FormLabel style={styles.registerLink} onPress={this.onRegisterPressHandler}>Register</FormLabel>
 					{/* <Button title="Forgot password?" onPress={this.onForgotHandler} /> */}
-					<Text>{this.state.log}</Text>
-					<Text>{this.state.logDetails}</Text>
-					<Text>{this.state.imageSource.fileName}</Text>
+					<FormLabel>{this.state.log}</FormLabel>
+					<FormLabel>{this.state.logDetails}</FormLabel>
+					<FormLabel>{this.state.imageSource.fileName}</FormLabel>
 				</View>
 			</View>
 		);

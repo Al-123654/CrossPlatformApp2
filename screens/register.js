@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Text, TextInput, StyleSheet, View,  Image, Alert, FlatList } from 'react-native';
 import { StackNavigator, } from 'react-navigation';
 import validator from 'validator';
-import {Button} from 'react-native-elements';
-
+import {Button, FormInput, FormLabel, FormValidationMessage} from 'react-native-elements';
+// import {Icon} from 'react-native-vector-icons/MaterialIcons';
 
 
 
@@ -17,7 +17,11 @@ class RegisterScreen extends Component {
         fname: "",
         lname: "",
         email: "",
-        log: "",
+        logUsername: "",
+        logFname: "",
+        logLname: "",
+        logPassword: "",
+        logEmail: "",
         logDetails: "",
         isLoggedIn: false,
         id: "",
@@ -29,13 +33,13 @@ class RegisterScreen extends Component {
         if (username) {
             console.log('Username Alphanumeric?',validator.isAlphanumeric(username))
             console.log('Username Length?',validator.isLength(username, {min: 5, max: 10}))
-            if (validator.isAlphanumeric(username) && validator.isLength(username, { min: 5, max :10})){
+            if (validator.isAlphanumeric(username) && validator.isLength(username, { min: 5, max :10}) ){
                     this.setState({
-                        username: username, log: ''
+                        username: username, logUsername: ''
                     });
             }else{
                 this.setState({
-                    log: 'Username not valid'
+                    logUsername: 'Username not valid'
                 })
             }
         }
@@ -44,13 +48,15 @@ class RegisterScreen extends Component {
     onChangedPasswordHandler = (password) => {
         if (password) {
             console.log('Password Length?', validator.isLength(password, { min: 8 }))
-            console.log('Password uppercase?', validator.isUppercase(password))
-            console.log('Password lowercase?', validator.isLowercase(password))
             if ( validator.isLength(password, { min: 8 })){
                     this.setState({
-                        password: password
+                        password: password, logPassword: ''
                     });
                 
+            }else{
+                this.setState({
+                    logPassword: 'Password not valid'
+                })
             }
         }
     }
@@ -60,7 +66,11 @@ class RegisterScreen extends Component {
             console.log('Firstname Alphabet?',validator.isAlpha(fname))
             if (validator.isAlpha(fname)){
                 this.setState({
-                    fname: fname
+                    fname: fname, logFname: ''
+                })
+            }else{
+                this.setState({
+                    logFname: 'Firstname not valid'
                 })
             }
             
@@ -72,9 +82,15 @@ class RegisterScreen extends Component {
             console.log('Lastname Alphabet?', validator.isAlpha(lname))
             if(validator.isAlpha(lname)){
                 this.setState({
-                    lname: lname
+                    lname: lname, logLname: ''
+                })
+            } else{
+
+                this.setState({
+                    logLname: 'Lastname not valid'
                 })
             }
+              
            
         }
     }
@@ -84,9 +100,14 @@ class RegisterScreen extends Component {
            console.log('Is email valid?',validator.isEmail(email))
            if (validator.isEmail(email)){ 
                this.setState({
-                   email: email
+                   email: email, logEmail: ''
                })
            
+           } else {
+
+               this.setState({
+                   logEmail: 'Email not valid'
+               })
            }
           
         }
@@ -211,21 +232,31 @@ class RegisterScreen extends Component {
     render() {
         return (
            <View style={styles.registrationFields}> 
-                <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
+                <FormInput placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
+                <FormValidationMessage >{this.state.log}</FormValidationMessage> 
+                <FormInput placeholder="Password" secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
+                <FormValidationMessage >{this.state.log2}</FormValidationMessage> 
+                <FormInput placeholder="First Name" onChangeText={(text) => this.onChangedFnameHandler(text)} />
+                <FormValidationMessage >{this.state.log3}</FormValidationMessage> 
+                <FormInput placeholder="Last Name" onChangeText={(text) => this.onChangedLnameHandler(text)} />
+                <FormValidationMessage >{this.state.log4}</FormValidationMessage> 
+                <FormInput placeholder="Email" onChangeText={(text) => this.onChangedEmailHandler(text)} />
+                <FormValidationMessage >{this.state.log5}</FormValidationMessage> 
+                {/* <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
                 <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="Password" secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
                 <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="First Name" onChangeText={(text) => this.onChangedFnameHandler(text)} />
                 <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="Last Name" onChangeText={(text) => this.onChangedLnameHandler(text)} />
-                <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="Email" onChangeText={(text) => this.onChangedEmailHandler(text)} />
+                <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="Email" onChangeText={(text) => this.onChangedEmailHandler(text)} /> */}
                 <Button
+                    raised
+                    icon= {{name: 'code'}}
                     title="Register"
                     onPress={this.onRegisterFinishedHandler}
                 />
                
-                <Text >{this.state.log}</Text> 
+                
 
-                {/* <Button
-                    title='BUTTON'
-                /> */}
+              
             </View>   
             
             
