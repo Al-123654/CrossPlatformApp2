@@ -220,6 +220,7 @@ class RegisterScreen extends Component {
                     title="Register"
                     onPress={this.onRegisterFinishedHandler}
                 />
+               
                 <Text >{this.state.log}</Text> 
 
                 {/* <Button
