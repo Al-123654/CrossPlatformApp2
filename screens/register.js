@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { Text, TextInput, StyleSheet, View, Button, Image, Alert } from 'react-native';
+import { Text, TextInput, StyleSheet, View,  Image, Alert, FlatList } from 'react-native';
 import { StackNavigator, } from 'react-navigation';
 import validator from 'validator';
+import {Button} from 'react-native-elements';
+
 
 
 
@@ -208,7 +210,7 @@ class RegisterScreen extends Component {
 
     render() {
         return (
-            <View style={styles.registrationFields}> 
+           <View style={styles.registrationFields}> 
                 <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
                 <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="Password" secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
                 <TextInput  style={{ borderColor: 'grey', borderWidth: 4}} placeholder="First Name" onChangeText={(text) => this.onChangedFnameHandler(text)} />
@@ -218,10 +220,14 @@ class RegisterScreen extends Component {
                     title="Register"
                     onPress={this.onRegisterFinishedHandler}
                 />
-                <Text style={{ fontSize: 10 }}>{this.state.log}</Text>
-                
-                
-            </View>
+                <Text >{this.state.log}</Text> 
+
+                {/* <Button
+                    title='BUTTON'
+                /> */}
+            </View>   
+            
+            
         );
     }
 }
