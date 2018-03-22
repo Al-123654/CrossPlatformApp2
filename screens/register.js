@@ -4,6 +4,7 @@ import { StackNavigator, } from 'react-navigation';
 import validator from 'validator';
 
 
+
 class RegisterScreen extends Component {
     constructor(props) {
         super(props);
@@ -24,23 +25,37 @@ class RegisterScreen extends Component {
     
     onChangedUsernameHandler = (username) => {
         if (username) {
-            this.setState({
-                username: username
-            });
+            console.log('Username Alphanumeric?',validator.isAlphanumeric(username))
+            console.log('Username Length?',validator.isLength(username, {min: 5, max: 10}))
+            if (validator.isAlphanumeric(username) && validator.isLength(username, { min: 5, max :10})){
+                    this.setState({
+                        username: username, log: ''
+                    });
+            }else{
+                this.setState({
+                    log: 'Username not valid'
+                })
+            }
         }
     }
 
     onChangedPasswordHandler = (password) => {
         if (password) {
-            this.setState({
-                password: password
-            });
+            console.log('Password Length?', validator.isLength(password, { min: 8 }))
+            console.log('Password uppercase?', validator.isUppercase(password))
+            console.log('Password lowercase?', validator.isLowercase(password))
+            if ( validator.isLength(password, { min: 8 })){
+                    this.setState({
+                        password: password
+                    });
+                
+            }
         }
     }
 
     onChangedFnameHandler = (fname) => {
         if (fname){
-            console.log('Firstname?',validator.isAlpha(fname))
+            console.log('Firstname Alphabet?',validator.isAlpha(fname))
             if (validator.isAlpha(fname)){
                 this.setState({
                     fname: fname
@@ -52,19 +67,24 @@ class RegisterScreen extends Component {
 
     onChangedLnameHandler = (lname) => {
         if (lname){
-            this.setState({
-                lname:lname
-            })
+            console.log('Lastname Alphabet?', validator.isAlpha(lname))
+            if(validator.isAlpha(lname)){
+                this.setState({
+                    lname: lname
+                })
+            }
+           
         }
     }
 
     onChangedEmailHandler = (email) => {
         if (email){
-           console.log('Is email?',validator.isEmail(email))
-           if (validator.isEmail(email)){
+           console.log('Is email valid?',validator.isEmail(email))
+           if (validator.isEmail(email)){ 
                this.setState({
                    email: email
                })
+           
            }
           
         }
@@ -198,6 +218,9 @@ class RegisterScreen extends Component {
                     title="Register"
                     onPress={this.onRegisterFinishedHandler}
                 />
+                <Text style={{ fontSize: 10 }}>{this.state.log}</Text>
+                
+                
             </View>
         );
     }

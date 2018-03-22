@@ -25,14 +25,17 @@ class ImageScreen extends Component{
 
         }).then((response) => response.json())
             .then((responseJson) => {
-                console.log("LIKED:", responseJson)
+                // console.log("LIKED:", responseJson)
                 // console.log("IMAGE LIKED:", this.imageLiked)
+                likes = (responseJson.likes);
+                console.log('[user.js] LIKES', likes)
+                // noOfLikes = likes.length;
             })                  
     }
 
     render(){
         const { params } = this.props.navigation.state;
-        // console.log('PARAMS',params)
+        console.log('PARAMS',params)
         // const _id = params ? params._id : null;
         const images = params ? params.imageId : null;
         // const likes = params ? params.likes : null;
