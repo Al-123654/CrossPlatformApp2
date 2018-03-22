@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Text, TextInput, StyleSheet, View, Button, Image, Alert } from 'react-native';
 import { StackNavigator, } from 'react-navigation';
+import validator from 'validator';
 
 
 class RegisterScreen extends Component {
@@ -39,9 +40,13 @@ class RegisterScreen extends Component {
 
     onChangedFnameHandler = (fname) => {
         if (fname){
-            this.setState({
-                fname:fname
-            })
+            console.log('Firstname?',validator.isAlpha(fname))
+            if (validator.isAlpha(fname)){
+                this.setState({
+                    fname: fname
+                })
+            }
+            
         }
     }
 
@@ -55,15 +60,19 @@ class RegisterScreen extends Component {
 
     onChangedEmailHandler = (email) => {
         if (email){
-            this.setState({
-                email:email
-            })
+           console.log('Is email?',validator.isEmail(email))
+           if (validator.isEmail(email)){
+               this.setState({
+                   email: email
+               })
+           }
+          
         }
     }
 
     onRegisterFinishedHandler = () => {
-        return fetch('http://localhost:5000/api/users', {
-        // return fetch('https://app-api-testing.herokuapp.com/api/users', {
+        // return fetch('http://localhost:5000/api/users', {
+        return fetch('https://app-api-testing.herokuapp.com/api/users', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

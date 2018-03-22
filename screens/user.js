@@ -125,6 +125,7 @@ class UserScreen extends Component {
 				// });
 				RNFetchBlob.fetch('POST', 
 					'https://app-api-testing.herokuapp.com/upload',
+					// 'http://localhost:5000/upload',
 					{},
 					[
 						{name:'sampleFile', filename:response.fileName, data:RNFetchBlob.wrap(platformPath)}
@@ -148,24 +149,25 @@ class UserScreen extends Component {
         });
     }
 
-    onImageClicked = (imageId) => {
-        console.log("IMAGE CLICKED" );
+    onImageClicked = (imageId,likes) => {
+        console.log("[user.js] IMAGE ID: ", imageId );
+        console.log("[user.js] LIKES: ", likes);
         this.props.navigation.navigate('ImagePage', {
-           
             imageId: imageId,
-           
+            likes: likes,
+            
         });
 
     }
-    // onImageClicked2 = (imageId,_id) => {
-    //     console.log("IMAGE CLICKED 2 IMAGE ID: ", imageId );
-    //     console.log("IMAGE CLICKED 2 USER ID: ", _id );
-    //     this.props.navigation.navigate('ImagePage',{
-    //         _id: _id,
-    //         imageId: imageId,
+    onImageClicked2 = (imageId, likes) => {
+        console.log("[user.js] IMAGE ID: ", imageId);
+        console.log("[user.js] LIKES: ", likes);
+        this.props.navigation.navigate('ImagePage',{
+            imageId: imageId,
+            likes: likes,
             
-    //     });
-    // }
+        });
+    }
 
     render() {
         const {params} = this.props.navigation.state;
@@ -176,6 +178,7 @@ class UserScreen extends Component {
         const email = params ? params.email : null;
         const _id = params ? params._id : null;
         const images = params ? params.images : null;
+        // const likes = params ? params.likes : null;
         
         console.log('PICTURES', images);
         // console.log('PICLENGTH',images.length);
@@ -190,36 +193,36 @@ class UserScreen extends Component {
             let imageUri = 'https://app-api-testing.herokuapp.com/api/images/';
             // let imageUri = 'http://localhost:5000/api/images/';
 		    if(imageCount == 1){
-                console.log("IMAGE", images[0]);
-                console.log("IMAGE URI", imageUri + images)
+                console.log("[user.js] IMAGE ID", images[0]);
+                console.log("IMAGE URI", imageUri + images[0])
 			    imageElement = (
                 <TouchableOpacity
-                    onPress={() => this.onImageClicked(images, _id)}
+                    onPress={() => this.onImageClicked(images[0], likes)}
                     style={styles.thumbnail}    
                 >
                 <Image 
-					source={{uri: imageUri + images + '/display'}}
+					source={{uri: imageUri + images[0] + '/display'}}
                     style={styles.thumbnail} 
                 />
                 </TouchableOpacity>
 			    );
 		    }else if(imageCount > 1 ){
 			    imageElement = [];
-			    imageElement = images.map((image, index) => {
+			    imageElement = images.map((imageId, index) => {
 				    console.log("TEST IMAGE ELEMENT");
-				    console.log("IMAGE: ", image);
+				    console.log("[user.js]ARGRUMENT FOR MULTIPLE IMAGES: ", imageId);
 				    console.log("INDEX: ", index);
 				    console.log("FUNCTION: ", this.onImageClicked2);
 
 				return (
 					<TouchableOpacity
-						onPress={() => this.onImageClicked(image, _id)}
+						onPress={() => this.onImageClicked2(imageId, likes)}
 						key={image} 
                         style={styles.thumbnail}
                         >
 
 						<Image  
-                            source={{ uri: imageUri + image + '/display'}}
+                            source={{ uri: imageUri + imageId + '/display'}}
 							style={styles.thumbnail} 
 						/>
 					</TouchableOpacity>

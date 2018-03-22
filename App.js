@@ -62,6 +62,7 @@ class App extends Component {
 							log: "Logged in!"
 						});
 						// go to user page
+						console.log('[app.js] Response',responseJson.data);
 						this.props.navigation.navigate('User', responseJson.data);
 					}else{
 						console.log("NOT LOGGED IN!");

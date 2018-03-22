@@ -11,10 +11,11 @@ class ImageScreen extends Component{
 
     onLikePressHandler = () => {
         const { params } = this.props.navigation.state;
-        const _id = params ? params._id : null;
+        // const _id = params ? params._id : null;
         const images = params ? params.imageId : null;
         
-        let imageUri = 'http://localhost:5000/api/images/';
+        // let imageUri = 'http://localhost:5000/api/images/';
+        let imageUri = 'https://app-api-testing.herokuapp.com/api/images/';
         return fetch(imageUri + images, {
             method: 'POST',
             headers: {
@@ -24,24 +25,25 @@ class ImageScreen extends Component{
 
         }).then((response) => response.json())
             .then((responseJson) => {
-                console.log("NUMBER OF LIKES:", responseJson.likes)
-                imageLiked = true;
+                console.log("LIKED:", responseJson)
                 // console.log("IMAGE LIKED:", this.imageLiked)
             })                  
     }
 
     render(){
         const { params } = this.props.navigation.state;
-        console.log('PARAMS',params)
-        const _id = params ? params._id : null;
+        // console.log('PARAMS',params)
+        // const _id = params ? params._id : null;
         const images = params ? params.imageId : null;
-        const likes = params ? params.likes : null;
+        // const likes = params ? params.likes : null;
+        console.log('LIKES: ', likes);
+        console.log('IMAGE ID: ', images);
         
+        // noOfLikes = likes.length;
 
-        // let imageUri = 'https://app-api-testing.herokuapp.com/api/users/' + _id + '/images/';
-        let imageUri = 'http://localhost:5000/api/images/';
+        let imageUri = 'https://app-api-testing.herokuapp.com/api/images/';
+        // let imageUri = 'http://localhost:5000/api/images/';
         console.log("Image selected", imageUri)
-        console.log('CURRENT ID',_id)
         console.log("CURRENT IMAGE",images)
         // console.log("IMAGE LIKED:", this.imageLiked)
         // console.log("NO. OF LIKES:",responeseJson.likes)
@@ -57,6 +59,7 @@ class ImageScreen extends Component{
                 <Button
                     title= "Like" onPress={this.onLikePressHandler}
                 />
+                {/* <Text>No of likes = {{ noOfLikes}} </Text>  */}
             </View>
         )
     }
