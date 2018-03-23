@@ -51,9 +51,11 @@ class UserScreen extends Component {
 	}
 	
 	// when Explore btn is clicked
-	onExplorePressedHandler = () => {
+	onExplorePressedHandler = (currentUserId) => {
 		console.log('[user js] onExplorePressedHandler clicked!');
-		this.props.navigation.navigate('Explore');
+		// this.props.navigation.navigate('User', data);
+		console.log('[user js] ID passed by app js: ', currentUserId);
+		this.props.navigation.navigate('Explore', {currentUserId:currentUserId});
 	};
 
     onImagePickerHandler = () => {
@@ -143,12 +145,12 @@ class UserScreen extends Component {
     render() {
         const {params} = this.props.navigation.state;
         console.log('[user js] render PARAMS: ',params)
-        const username = params ? params.username : null;
-        const fname = params ? params.fname : null;
-        const lname= params ? params.lname: null;
-        const email = params ? params.email : null;
-        const _id = params ? params._id : null;
-        const images = params ? params.images : null;
+        const passedUsername = params ? params.data.username : null;
+        const fname = params ? params.data.fname : null;
+        const lname= params ? params.data.lname: null;
+        const email = params ? params.data.email : null;
+        const passedId = params ? params.data._id : null;
+        const images = params ? params.data.images : null;
         // const likes = params ? params.likes : null;
         
         console.log('[user js] render PICTURES: ', images);
@@ -214,16 +216,16 @@ class UserScreen extends Component {
         return (
             <View style={styles.viewContainer}>
 				<View>
-					<Text>username: {JSON.stringify(username)}</Text>
+					<Text>username: {JSON.stringify(passedUsername)}</Text>
 					<Text>FEEDS</Text>
 				</View>
 					
 				<View style={styles.pictures}>
                     {imageElement}
 				</View> 
-
+				
                 <Button title="Image Picker" onPress={this.onImagePickerHandler} />
-                <Button title="Explore" onPress={this.onExplorePressedHandler} />
+                <Button title="Explore" onPress={()=>{this.onExplorePressedHandler(passedId)}} />
 				<Button title="Logout" onPress={this.onLogoutPressHandler} />
 
 				<Text>{this.state.log}</Text>
