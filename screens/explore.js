@@ -62,7 +62,7 @@ class ExploreScreen extends Component {
 
 		return fetch('https://app-api-testing.herokuapp.com/api/users/' + userId,
 		{
-			method: 'PUT',
+			method: 'POST',
 			headers: {
 				'content-type': 'application/json'
 			},
