@@ -82,22 +82,34 @@ class RegisterScreen extends Component {
         });
         
         
-        if (!validator.isAlphanumeric(this.state.username) || !validator.isLength(this.state.username,{min: 5, max: 10})) {
-            this.setState({ logUsername: "Invalid username" });
+        if (!validator.isAlphanumeric(this.state.username) ) {
+            this.setState({ logUsername: "Username only allows numbers and letters" });
+            return;
+        }
+        if (!validator.isLength(this.state.username, { min: 5, max: 10 })){
+            this.setState({ logUsername: "Username too short/too long" });
             return;
         }
         if(!validator.isLength(this.state.password,{min:8})){
-            this.setState({logPassword: "Invalid password"});
+            this.setState({logPassword: "Password to short"});
             return;
         }
-        if(!validator.isAlpha(this.state.fname) || !validator.isLength(this.state.fname, {min:2})){
-            this.setState({logFname: "Invalid Firstname"});
+        if(!validator.isAlpha(this.state.fname)){
+            this.setState({logFname: "Firstname letters only"});
+            return;
+        }
+        if (!validator.isLength(this.state.fname, { min: 2 })){
+            this.setState({ logFname: "Firstname too short" });
             return;
         }        
-        if (!validator.isAlpha(this.state.lname) || !validator.isLength(this.state.lname, { min: 2 })){
-            this.setState({logLname: "Invalid Lastname"});
+        if (!validator.isAlpha(this.state.lname)){
+            this.setState({logLname: "Lastname letters only"});
             return;
-        }        
+        } 
+        if (!validator.isLength(this.state.lname, { min: 2 })){
+            this.setState({ logLname: "Lastname too short" });
+            return;
+        }       
         if(!validator.isEmail(this.state.email)){
             this.setState({logEmail: "Invalid Email"});
             return;
