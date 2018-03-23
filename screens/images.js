@@ -25,10 +25,8 @@ class ImageScreen extends Component{
 
         }).then((response) => response.json())
             .then((responseJson) => {
-                // console.log("LIKED:", responseJson)
+                console.log("[image js]responseJson:", responseJson)
                 // console.log("IMAGE LIKED:", this.imageLiked)
-                likes = (responseJson.likes);
-                console.log('[user.js] LIKES', likes)
                 // noOfLikes = likes.length;
             })                  
     }
@@ -49,7 +47,22 @@ class ImageScreen extends Component{
         console.log("Image selected", imageUri)
         console.log("CURRENT IMAGE",images)
         // console.log("IMAGE LIKED:", this.imageLiked)
-        // console.log("NO. OF LIKES:",responeseJson.likes)
+        // console.log("NO. OF LIKES:",responeseJson.likes)]
+        var noOfLikes;
+        fetch(imageUri + images, {
+            method: 'GET',
+            headers:{
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then((response) => response.json())
+            .then((responseJson) => {
+                console.log("[image js]Likes array:", responseJson)
+                let likes = responseJson.likes
+                var noOfLikes = likes.length
+                console.log("NO OF LIKES: ", noOfLikes);
+                    < Text > { noOfLikes }</Text > 
+            })
 
         return (
             <View style={styles.imageContainer}>
@@ -62,7 +75,7 @@ class ImageScreen extends Component{
                 <Button
                     title= "Like" onPress={this.onLikePressHandler}
                 />
-                {/* <Text>No of likes = {{ noOfLikes}} </Text>  */}
+                <Text>{noOfLikes}</Text> 
             </View>
         )
     }
