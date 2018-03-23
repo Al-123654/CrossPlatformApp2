@@ -173,6 +173,7 @@ const styles = StyleSheet.create({
 			}
 		})
 	},
+
 	entryFields: {
 		width: '50%',
 		height: '13%',
