@@ -55,33 +55,40 @@ class ExploreScreen extends Component {
 		});
 	}
 
-	onListItemPressed = (itemId) => {
-		console.log('[explore js] onListItemPressed: ', itemId);
+	onListItemPressed = (itemId, userId) => {
+		console.log('[explore js] onListItemPressed itemID: ', itemId);
+		console.log('[explore js] onListItemPressed userID: ', userId);
 	}
 
     render() {
-		// usersArray = [];
-		const listOfUsersCopy = [...this.state.listOfUsers];
-		// usersArray = listOfUsersCopy.map((user, index) => {
-		// 	return (
-		// 		<Text key={user._id}>{user.username}</Text>
-		// 	);
-		// });
+		// get passed data from previous screen
+		const {params} = this.props.navigation.state;
+		console.log('[explore js] render PARAMS: ',params);
+		const passedUserId = params.currentUserId;
+		console.log('[explore js] render passedUserId: ',passedUserId);
+		
+		let listOfUsersCopy = [...this.state.listOfUsers];
 
-        // return (
-        //     <View style={styles.viewContainer}> 
-		// 		{usersArray}
-		// 		<Text>{this.state.log}</Text>
-		// 		<Button title="Logout" onPress={this.onLogoutPressHandler} />
-        //     </View>
-		// );
+		// remove currently logged in user from list
+		let indexToRemove = "";
+		listOfUsersCopy.forEach((user,index)=>{
+			if(user._id == passedUserId){
+				console.log("[explore js] Found a match at index: ", index);
+				indexToRemove = index;
+			}
+		});
+		console.log("[explore js] indexToRemove type: ", typeof indexToRemove);
+		if(typeof indexToRemove == 'number'){
+			listOfUsersCopy.splice(indexToRemove, 1);
+		}
+
 		return(
 			<List>
 				<FlatList
 					data={listOfUsersCopy}
 					renderItem={ ({item}) => (
 						<TouchableOpacity
-							onPress={()=>this.onListItemPressed(item._id)}
+							onPress={()=>this.onListItemPressed(item._id, passedUserId)}
 						>
 							<ListItem
 								title={item.username}
