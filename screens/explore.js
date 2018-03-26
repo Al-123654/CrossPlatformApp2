@@ -148,6 +148,7 @@ class ExploreScreen extends Component {
 								title={item.username}
 								subtitle={item.email}
 								rightIcon={item.isFollowed ? <Icon name='remove'/> : <Icon name='add'/>}
+								rightTitle={item.isFollowed ? 'Unfollow' : 'Follow'}
 							/>
 						</TouchableOpacity>
 						
