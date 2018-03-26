@@ -57,16 +57,19 @@ class ExploreScreen extends Component {
 
 	onListItemPressed = (itemId, userId) => {
 		console.log('[explore js] onListItemPressed itemID: ', itemId);
+		console.log('[explore js] onListItemPressed itemID type: ', typeof itemId);
 		console.log('[explore js] onListItemPressed userID: ', userId);
-		console.log('[explore js] onListItemPressed url: ', 'https://app-api-testing.herokuapp.com/api/users/' + userId);
 
-		return fetch('https://app-api-testing.herokuapp.com/api/users/' + userId,
+		return fetch('https://app-api-testing.herokuapp.com/api/users/',
 		{
-			method: 'POST',
+			method: 'PUT',
 			headers: {
 				'content-type': 'application/json'
 			},
-			body: JSON.stringify({following:itemId})
+			body: JSON.stringify({
+				email:'app@mail.com',
+				following:itemId
+			})
 		})
 		.then(response=>{
 			console.log('[explore js] onListItemPressed response: ', response);
