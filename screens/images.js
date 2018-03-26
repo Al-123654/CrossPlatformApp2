@@ -1,12 +1,17 @@
 import React, { Component } from 'react';
-import { Platform, Text, TextInput, StyleSheet, View, Button, Image, Alert, TouchableOpacity } from 'react-native';
+import { Platform, Text, TextInput, StyleSheet, View, Image, Alert, TouchableOpacity } from 'react-native';
 import { StackNavigator, } from 'react-navigation';
+import { Header, Button} from 'react-native-elements'
 
 class ImageScreen extends Component{
     constructor(props) {
         super(props);
         
     }
+
+    state = {
+        noOfLikes: ""
+    };
     
 
     onLikePressHandler = () => {
@@ -59,23 +64,54 @@ class ImageScreen extends Component{
             .then((responseJson) => {
                 console.log("[image js]Likes array:", responseJson)
                 let likes = responseJson.likes
-                var noOfLikes = likes.length
-                console.log("NO OF LIKES: ", noOfLikes);
-                    < Text > { noOfLikes }</Text > 
+                console.log("NO OF LIKES: ", likes.length);
+                this.setState({noOfLikes: likes.length});
             })
 
         return (
-            <View style={styles.imageContainer}>
+            // <View style={styles.imageContainer}>
+            //     <Header
+            //         leftComponent={{ icon: 'menu', color: '#fff' }}
+            //         centerComponent={{ text: "IMAGES", style: { color: "#fff" } }}
+            //         rightComponent={{ icon: 'home', color: '#fff' }}
+            //     />
+
+            //     <Image
+            //         source= {{uri: imageUri + images + '/display'}}
+            //         style={{height:'90%', width: '98%'}}
+            //     />
+
+            //     <Button
+            //         title= "Like" onPress={this.onLikePressHandler}
+            //     />
+            //     <Text>{this.state.noOfLikes}</Text> 
+            // </View>
+
+            <View style={{
+                flex: 1,
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+            }}>
+                <Header
+                    leftComponent={{ icon: 'menu', color: '#fff' }}
+                    centerComponent={{ text: "IMAGES", style: { color: "#fff" } }}
+                    rightComponent={{ icon: 'home', color: '#fff' }}
+                />
 
                 <Image
                     source= {{uri: imageUri + images + '/display'}}
-                    style={{height:'90%', width: '98%'}}
+                    style={{height:'80%', width: '100%'}}
+                    alignItems='center'
+                    justifyContent='center'
                 />
 
                 <Button
                     title= "Like" onPress={this.onLikePressHandler}
                 />
-                <Text>{noOfLikes}</Text> 
+                <View style= {styles.textContainer}>
+                    <Text >{this.state.noOfLikes}</Text> 
+                </View>
+                
             </View>
         )
     }
@@ -90,6 +126,11 @@ const styles = StyleSheet.create({
         height: '100%',
         width: '100%',
 
+    },
+
+    textContainer: {
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 
 })

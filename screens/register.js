@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, TextInput, StyleSheet, View,  Image, Alert, FlatList } from 'react-native';
 import { StackNavigator, } from 'react-navigation';
 import validator from 'validator';
-import {Button, FormInput, FormLabel, FormValidationMessage} from 'react-native-elements';
+import {Button, FormInput, FormLabel, FormValidationMessage, Header} from 'react-native-elements';
 // import {Icon} from 'react-native-vector-icons;
 
 
@@ -154,6 +154,11 @@ class RegisterScreen extends Component {
     render() {
         return (
            <View style={styles.registrationFields}> 
+                <Header
+                    leftComponent={{ icon: 'menu', color: '#fff' }}
+                    centerComponent={{ text: "REGISTER", style: { color: "#fff" } }}
+                    rightComponent={{ icon: 'home', color: '#fff' }}
+                />
                 <FormInput placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
                 <FormValidationMessage >{this.state.logUsername}</FormValidationMessage> 
                 <FormInput placeholder="Password" secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
@@ -172,10 +177,13 @@ class RegisterScreen extends Component {
                     onPress={this.onRegisterFinishedHandler}
                 />
                
+               
                 
 
               
-            </View>   
+            </View>
+            
+            
             
             
         );

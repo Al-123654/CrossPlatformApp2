@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Platform, Text, TextInput, StyleSheet, View, Button, Image, Alert , TouchableOpacity, TouchableHighlight} from 'react-native';
+import { Platform, Text, TextInput, StyleSheet, View, Image, Alert , TouchableOpacity, TouchableHighlight} from 'react-native';
 import { StackNavigator,  } from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
+import { Header, Button} from 'react-native-elements';
 
 class UserScreen extends Component {
     state = {
@@ -62,11 +63,8 @@ class UserScreen extends Component {
 
         let imagePickerOptions = {
             title: 'Select Image',
-
             storageOptions: {
                 skipBackup: true,
-
-
             }
         };
 
@@ -128,7 +126,6 @@ class UserScreen extends Component {
 				.catch((err) => {
 					console.log('[user js] showImagePicker: ', res);
 				});
-               
             }
         });
     }
@@ -173,10 +170,10 @@ class UserScreen extends Component {
                     onPress={() => this.onImageClicked(images[0] )}
                     style={styles.thumbnail}    
                 >
-                <Image 
-					source={{uri: imageUri + images[0] + '/display'}}
-                    style={styles.thumbnail} 
-                />
+                    <Image 
+					    source={{uri: imageUri + images[0] + '/display'}}
+                        style={styles.thumbnail} 
+                    />
                 </TouchableOpacity>
 			    );
 		    }else if(imageCount > 1 ){
@@ -187,18 +184,18 @@ class UserScreen extends Component {
 				    console.log("[user js] render INDEX: ", index);
 				    console.log("[user js] render FUNCTION: ", this.onImageClicked);
 
-				return (
-					<TouchableOpacity
-						onPress={() => this.onImageClicked(imageId)}
-						key={imageId} 
-                        style={styles.thumbnail}
+				    return (
+					    <TouchableOpacity
+                            onPress={() => this.onImageClicked(imageId)}
+                            key={imageId} 
+                            style={styles.thumbnail}
                         >
 
-						<Image  
-                            source={{ uri: imageUri + imageId + '/display'}}
-							style={styles.thumbnail} 
-						/>
-					</TouchableOpacity>
+                            <Image  
+                                source={{ uri: imageUri + imageId + '/display'}}
+                                style={styles.thumbnail} 
+                            />
+					    </TouchableOpacity>
 				    );
 			    });
 
@@ -214,22 +211,50 @@ class UserScreen extends Component {
 		}
 		
         return (
-            <View style={styles.viewContainer}>
-				<View>
-					<Text>username: {JSON.stringify(passedUsername)}</Text>
-					<Text>FEEDS</Text>
-				</View>
+            // <View style={styles.viewContainer}>
+			// 	<View>
+			// 		<Text>username: {JSON.stringify(passedUsername)}</Text>
+			// 		<Text>FEEDS</Text>
+			// 	</View>
 					
-				<View style={styles.pictures}>
-                    {imageElement}
-				</View> 
+			// 	<View style={styles.pictures}>
+            //         {imageElement}
+			// 	</View> 
 				
+            //     <Button title="Image Picker" onPress={this.onImagePickerHandler} />
+            //     <Button title="Explore" onPress={()=>{this.onExplorePressedHandler(passedId)}} />
+			// 	<Button title="Logout" onPress={this.onLogoutPressHandler} />
+
+			// 	<Text>{this.state.log}</Text>
+            // </View>
+
+            <View style={{
+                flex: 1,
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+            }}>
+                {/* <View style={{ width: 50, height: 50,  }} />
+				<View style={{ width: 50, height: 50, }} />
+				<View style={{ width: 50, height: 50,  }} /> */}
+
+                <Header
+                    leftComponent={{ icon: 'menu', color: '#fff' }}
+                    centerComponent={{ text: "USER", style: { color: "#fff" } }}
+                    rightComponent={{ icon: 'home', color: '#fff' }}
+                />
+                <Text>username: {JSON.stringify(passedUsername)}</Text>
+                <Text>FEEDS</Text>
+                <View style= {styles.pictures}>
+                    {imageElement}
+                </View>
                 <Button title="Image Picker" onPress={this.onImagePickerHandler} />
                 <Button title="Explore" onPress={()=>{this.onExplorePressedHandler(passedId)}} />
-				<Button title="Logout" onPress={this.onLogoutPressHandler} />
-
-				<Text>{this.state.log}</Text>
+                <Button title="Logout" onPress={this.onLogoutPressHandler} />
+                <Text>{this.state.log}</Text>
+                
             </View>
+
+           
         );
     }
 }
