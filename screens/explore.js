@@ -88,6 +88,7 @@ class ExploreScreen extends Component {
 			}
 			response.json().then(data=>{
 				console.log('[explore js] onListItemPressed json response: ', data);
+				this.fetchListofUsers();
 			});
 		})
 		.catch(err=>console.log('[explore js] onListItemPressed error: ', err));
