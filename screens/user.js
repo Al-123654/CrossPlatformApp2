@@ -279,13 +279,8 @@ class UserScreen extends Component {
                         </TouchableOpacity>
                     );
                 });
-
             }
-            
-            
-
-          
-        // }
+        }
 		
         return (
             // <View style={styles.viewContainer}>
