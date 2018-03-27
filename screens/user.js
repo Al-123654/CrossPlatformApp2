@@ -144,9 +144,8 @@ class UserScreen extends Component {
         }).then (response => response.json())
         .catch(error => console.error('Error: ', error))
         .then(response => {
-            console.log('[user js] TEST ', response)
+            console.log('[user js] IMAGE DETAILS TRANSFER ', response)
             this.props.navigation.navigate('Image', {
-                imageId: imageId,
                 data: response
             });
         });
@@ -253,6 +252,9 @@ class UserScreen extends Component {
         if(follows > 0){
             console.log("[user js] FOLLOWS FOUND")
             this.followID();
+            <Image
+                source={{uri; followUri + following}}
+            />
 
            
         }
