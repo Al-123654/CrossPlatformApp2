@@ -249,16 +249,16 @@ class UserScreen extends Component {
 				</View>
 			);
         }
-        if(follows > 0){
-            console.log("[user js] FOLLOWS FOUND")
-            this.followID();
-            <Image
-                source={{uri: followUri + following}}
-                styles={styles.thumbnail}
-            />
+        // if(follows > 0){
+        //     console.log("[user js] FOLLOWS FOUND")
+        //     this.followID();
+        //     <Image
+        //         source={{uri: followUri + following}}
+        //         styles={styles.thumbnail}
+        //     />
 
            
-        }
+        // }
 		
         return (
             // <View style={styles.viewContainer}>
