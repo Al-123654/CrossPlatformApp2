@@ -5,6 +5,7 @@ import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
 import { Header, Button} from 'react-native-elements';
 
+
 class UserScreen extends Component {
     state = {
         username: "",
@@ -13,12 +14,35 @@ class UserScreen extends Component {
         email: "",
         _id: "",
         imageSource: "",
-		log: "" 
+        log: "",
+        followIDs: ""
+        
     };
 
     constructor(props) {
         super(props); 
     }
+
+    followID = () => {
+        
+        fetch('https://app-api-testing.herokuapp.com/api/users')
+            .then(response => {
+                console.log('[user js] fetchListofUsers response: ', response.following);
+                if (response.status !== 200) {
+                    console.log('[user js] fetchListofUsers bad response: ', response.following);
+                    return;
+                }
+                response.json().then(data => {
+                    console.log('[user js] fetchListofUsers json response: ', data);
+                    this.setState({ followIDs: [...data] });
+                    console.log('[user js] fetchListofUsers listOfUsers state: ', this.state.listOfUsers);
+                });
+            })
+            .catch(err => console.log('[user js] fetchListofUsers error: ', err));
+
+    }
+
+
 
     onLogoutPressHandler = () => {
         return fetch('https://app-api-testing.herokuapp.com/logout', {
@@ -132,7 +156,7 @@ class UserScreen extends Component {
 
     onImageClicked = (imageId,) => {
         console.log("[user.js] onImageClicked: ", imageId );
-        this.props.navigation.navigate('ImagePage', {
+        this.props.navigation.navigate('Image', {
             imageId: imageId,
         });
 
@@ -148,11 +172,16 @@ class UserScreen extends Component {
         const email = params ? params.data.email : null;
         const passedId = params ? params.data._id : null;
         const images = params ? params.data.images : null;
+        const following = params ? params.data.following : null;
+
+        
         // const likes = params ? params.likes : null;
         
         console.log('[user js] render PICTURES: ', images);
         // console.log('PICLENGTH',images.length);
         let imageElement;
+        let followImageElement;
+        let follows = following.length
         if(typeof images != undefined && images != null && images.length != null && images.length > 0){
            console.log('[user js] render IN THE IF STATEMENT');
            console.log('[user js] render IF STATEMENT',(images != undefined || images.length == 0)); 
@@ -208,7 +237,55 @@ class UserScreen extends Component {
                     </Text>
 				</View>
 			);
-		}
+        }
+        if(follows > 0){
+            console.log("[user js] FOLLOWS FOUND")
+            this.followID();
+            let followImageCount = images.length;
+            let followImageUri = 'https://app-api-testing.herokuapp.com/api/images/';
+            if (followImageCount == 1) {
+                console.log("[user.js] render IMAGE ID", images[0]);
+                console.log("[user js] render IMAGE URI", followImageUri + images[0])
+                followImageElement = (
+                    <TouchableOpacity
+                        onPress={() => this.onImageClicked(images[0])}
+                        style={styles.thumbnail}
+                    >
+                        <Image
+                            source={{ uri: followImageUri + images[0] + '/display' }}
+                            style={styles.thumbnail}
+                        />
+                    </TouchableOpacity>
+                );
+            } else if (followImageCount > 1) {
+                followImageElement = [];
+                followImageElement = images.map((imageId, index) => {
+                    console.log("[user js] render TEST IMAGE ELEMENT");
+                    console.log("[user.js] render ARGUMENT FOR MULTIPLE IMAGES: ", imageId);
+                    console.log("[user js] render INDEX: ", index);
+                    console.log("[user js] render FUNCTION: ", this.onImageClicked);
+
+                    return (
+                        <TouchableOpacity
+                            onPress={() => this.onImageClicked(imageId)}
+                            key={imageId}
+                            style={styles.thumbnail}
+                        >
+
+                            <Image
+                                source={{ uri: followImageUri + imageId + '/display' }}
+                                style={styles.thumbnail}
+                            />
+                        </TouchableOpacity>
+                    );
+                });
+
+            }
+            
+            
+
+          
+        // }
 		
         return (
             // <View style={styles.viewContainer}>
@@ -239,13 +316,17 @@ class UserScreen extends Component {
 
                 <Header
                     leftComponent={{ icon: 'menu', color: '#fff' }}
-                    centerComponent={{ text: "USER", style: { color: "#fff" } }}
+                    centerComponent={{ text: (passedUsername) , style: { color: "#fff" } }}
                     rightComponent={{ icon: 'home', color: '#fff' }}
                 />
-                <Text>username: {JSON.stringify(passedUsername)}</Text>
+                {/* <Text>username: {JSON.stringify(passedUsername)}</Text> */}
                 <Text>FEEDS</Text>
                 <View style= {styles.pictures}>
                     {imageElement}
+                </View>
+                <Text>Following: {JSON.stringify(following.username)}</Text>
+                <View style= {styles.pictures}>
+                    {followImageElement}
                 </View>
                 <Button title="Image Picker" onPress={this.onImagePickerHandler} />
                 <Button title="Explore" onPress={()=>{this.onExplorePressedHandler(passedId)}} />
