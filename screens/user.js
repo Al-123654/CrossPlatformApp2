@@ -253,7 +253,8 @@ class UserScreen extends Component {
             console.log("[user js] FOLLOWS FOUND")
             this.followID();
             <Image
-                source={{uri; followUri + following}}
+                source={{uri: followUri + following}}
+                styles={styles.thumbnail}
             />
 
            
