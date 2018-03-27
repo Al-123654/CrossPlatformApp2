@@ -1,18 +1,33 @@
 import React, { Component } from 'react';
 import { Platform, Text, TextInput, StyleSheet, View, Image, Alert, TouchableOpacity } from 'react-native';
 import { StackNavigator, } from 'react-navigation';
-import { Header, Button, Tile} from 'react-native-elements'
+import { Header, Button, Tile, Icon} from 'react-native-elements';
 
 class ImageScreen extends Component{
     constructor(props) {
         super(props);
     }
 
-    state = {
-        noOfLikes: ""
-    };
+    state = { noOfLikes: "" };
+	
+	fetchImageDetails = (imageUri, imageId) => {
+        return fetch(imageUri + imageId, {
+            method: 'GET',
+            headers:{
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+		})
+		.then((response) => response.json())
+		.then((responseJson) => {
+			console.log("[images js] Likes array:", responseJson);
+			console.log("[images js] NO OF LIKES: ", responseJson.likes.length);
+		})
+		.catch(error => console.log('[images js] Error:', error));
+	}
     
     onLikePressHandler = () => {
+		console.log('[images js] Like btn Pressed!');
         const { params } = this.props.navigation.state;
         const images = params ? params.imageId : null;
         
@@ -26,65 +41,55 @@ class ImageScreen extends Component{
 		})
 		.then((response) => response.json())
 		.then((responseJson) => {
-			console.log("[images js] responseJson:", responseJson)
-			// console.log("IMAGE LIKED:", this.imageLiked)
-			// noOfLikes = likes.length;
+			console.log("[images js] responseJson:", responseJson);
+			this.setState({noOfLikes: responseJson.likes.length});
 		})
 		.catch(error => console.log('[images js] Error:', error));    
-    }
+	}
 
     render(){
         const { params } = this.props.navigation.state;
-        console.log('[images js] PARAMS',params)
-        const images = params ? params.imageId : null;
-        console.log('[images js] IMAGE ID: ', images);
+        console.log('[images js] PARAMS',params);
+        const imageId = params ? params.data._id : "";
+		console.log('[images js] IMAGE ID: ', imageId);
+		const imageLikes = params ? params.data.likes : "";
+        console.log('[images js] IMAGE LIKES: ', imageLikes);
 
         let imageUri = 'https://app-api-testing.herokuapp.com/api/images/';
-        console.log("[images js] Image selected", imageUri)
-        console.log("[images js] CURRENT IMAGE",images)
+        console.log("[images js] Image path: ", imageUri);
+        console.log("[images js] CURRENT IMAGE ID: ",imageId);
         
-        var noOfLikes;
-        fetch(imageUri + images, {
-            method: 'GET',
-            headers:{
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-		})
-		.then((response) => response.json())
-		.then((responseJson) => {
-			console.log("[images js]Likes array:", responseJson)
-			let likes = responseJson.likes
-			console.log("[images js] NO OF LIKES: ", likes.length);
-			this.setState({noOfLikes: likes.length});
-		})
-		.catch(error => console.log('[images js] Error:', error));
-
+		this.fetchImageDetails(imageUri, imageId);
+		
         return (
 			
             <View>
 				<Header centerComponent={{ text: "IMAGES", style: { color: "#fff" } }} />
 
 				<Tile
-					imageSrc={{uri: imageUri + images + '/display'}}
-					title="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolores dolore exercitationem"
-					featured
-					caption="Some Caption Text"
+					imageSrc={{uri: imageUri + imageId + '/display'}}
+					title="Random titletext"
 				/>
 
-                {/* <Image
-                    source= {{uri: imageUri + images + '/display'}}
-                    style={{height:'80%', width: '100%'}}
-                    alignItems='center'
-                    justifyContent='center'
-                /> */}
-
-                <Button
+                {/* <Button
                     title= "Like" onPress={this.onLikePressHandler}
-                />
+                /> */}
                 <View style= {styles.textContainer}>
                     <Text >{this.state.noOfLikes}</Text> 
                 </View>
+
+				<TouchableOpacity
+					onPress={this.onLikePressHandler}
+				>
+					<Icon
+						reverse
+						name='heart'
+						type='font-awesome'
+						color='#f50'
+					/>
+				</TouchableOpacity>
+
+					
             </View>
         )
     }
