@@ -164,7 +164,12 @@ const styles = StyleSheet.create({
 	},
 	formContainer: {
 		width:'95%',
-		alignSelf: 'center'
+		alignSelf: 'center',
+		...Platform.select({
+			ios: {
+				marginBottom: 10
+			}
+		})
 	},
 	logContainer: {
 		width:'95%',
