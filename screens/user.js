@@ -23,27 +23,6 @@ class UserScreen extends Component {
         super(props); 
     }
 
-    followID = () => {
-        
-        fetch('https://app-api-testing.herokuapp.com/api/users')
-            .then(response => {
-                console.log('[user js] fetchListofUsers response: ', response.following);
-                if (response.status !== 200) {
-                    console.log('[user js] fetchListofUsers bad response: ', response.following);
-                    return;
-                }
-                response.json().then(data => {
-                    console.log('[user js] fetchListofUsers json response: ', data);
-                    this.setState({ followIDs: [...data] });
-                    console.log('[user js] fetchListofUsers listOfUsers state: ', this.state.listOfUsers);
-                });
-            })
-            .catch(err => console.log('[user js] fetchListofUsers error: ', err));
-
-    }
-
-
-
     onLogoutPressHandler = () => {
         return fetch('https://app-api-testing.herokuapp.com/logout', {
         // return fetch('http://localhost:5000/logout', {
@@ -156,10 +135,43 @@ class UserScreen extends Component {
 
     onImageClicked = (imageId,) => {
         console.log("[user.js] onImageClicked: ", imageId );
-        this.props.navigation.navigate('Image', {
-            imageId: imageId,
+        return fetch('https://app-api-testing.herokuapp.com/api/images/' + imageId, {
+            method: 'GET',
+            headers:{
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then (response => response.json())
+        .catch(error => console.error('Error: ', error))
+        .then(response => {
+            console.log('[user js] TEST ', response)
+            this.props.navigation.navigate('Image', {
+                imageId: imageId,
+                data: response
+            });
         });
+        
 
+    }
+
+    followID = () => {
+        const { params } = this.props.navigation.state;
+        const following = params ? params.data.following : null;
+
+        let noOfFollows = following.length;
+        let followUri = 'https://app-api-testing.herokuapp.com/api/users/'
+        if (noOfFollows > 0) {
+            console.log('[user js] FOLLOW URI:', followUri + following)
+            fetch(followUri + following, {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }).then (res => res.json())
+            .catch(error => console.error('Error:', error))
+            .then(response => console.log('Success:', response));
+        }
+        
     }
   
 
@@ -241,45 +253,8 @@ class UserScreen extends Component {
         if(follows > 0){
             console.log("[user js] FOLLOWS FOUND")
             this.followID();
-            let followImageCount = images.length;
-            let followImageUri = 'https://app-api-testing.herokuapp.com/api/images/';
-            if (followImageCount == 1) {
-                console.log("[user.js] render IMAGE ID", images[0]);
-                console.log("[user js] render IMAGE URI", followImageUri + images[0])
-                followImageElement = (
-                    <TouchableOpacity
-                        onPress={() => this.onImageClicked(images[0])}
-                        style={styles.thumbnail}
-                    >
-                        <Image
-                            source={{ uri: followImageUri + images[0] + '/display' }}
-                            style={styles.thumbnail}
-                        />
-                    </TouchableOpacity>
-                );
-            } else if (followImageCount > 1) {
-                followImageElement = [];
-                followImageElement = images.map((imageId, index) => {
-                    console.log("[user js] render TEST IMAGE ELEMENT");
-                    console.log("[user.js] render ARGUMENT FOR MULTIPLE IMAGES: ", imageId);
-                    console.log("[user js] render INDEX: ", index);
-                    console.log("[user js] render FUNCTION: ", this.onImageClicked);
 
-                    return (
-                        <TouchableOpacity
-                            onPress={() => this.onImageClicked(imageId)}
-                            key={imageId}
-                            style={styles.thumbnail}
-                        >
-
-                            <Image
-                                source={{ uri: followImageUri + imageId + '/display' }}
-                                style={styles.thumbnail}
-                            />
-                        </TouchableOpacity>
-                    );
-                });
-            }
+           
         }
 		
         return (
