@@ -5,12 +5,11 @@ import validator from 'validator';
 import {Button, FormInput, FormLabel, FormValidationMessage, Header} from 'react-native-elements';
 // import {Icon} from 'react-native-vector-icons;
 
-
-
 class RegisterScreen extends Component {
     constructor(props) {
         super(props);
-    }
+	}
+	
     state = {
         username: "",
         password: "",
@@ -24,9 +23,6 @@ class RegisterScreen extends Component {
         logPassword: "",
         logEmail: "",
         logDetails: "",
-        
-        id: "",
-        
     };
 
     
@@ -72,7 +68,6 @@ class RegisterScreen extends Component {
     }
 
     onRegisterFinishedHandler = () => {
-        // return fetch('http://localhost:5000/api/users', {
         
         this.setState({
             logFname: "",
@@ -80,7 +75,6 @@ class RegisterScreen extends Component {
             logPassword: "",
             logEmail: "",
         });
-        
         
         if (!validator.isAlphanumeric(this.state.username) ) {
             this.setState({ logUsername: "Username only allows numbers and letters" });
@@ -153,52 +147,45 @@ class RegisterScreen extends Component {
 
     render() {
         return (
-           <View style={styles.registrationFields}> 
-                <Header
-                    leftComponent={{ icon: 'menu', color: '#fff' }}
-                    centerComponent={{ text: "REGISTER", style: { color: "#fff" } }}
-                    rightComponent={{ icon: 'home', color: '#fff' }}
-                />
-                <FormInput placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
-                <FormValidationMessage >{this.state.logUsername}</FormValidationMessage> 
-                <FormInput placeholder="Password" secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
-                <FormValidationMessage >{this.state.logPassword}</FormValidationMessage> 
-                <FormInput placeholder="First Name" onChangeText={(text) => this.onChangedFnameHandler(text)} />
-                <FormValidationMessage >{this.state.logFname}</FormValidationMessage> 
-                <FormInput placeholder="Last Name" onChangeText={(text) => this.onChangedLnameHandler(text)} />
-                <FormValidationMessage >{this.state.logLname}</FormValidationMessage> 
-                <FormInput placeholder="Email" onChangeText={(text) => this.onChangedEmailHandler(text)} />
-                <FormValidationMessage >{this.state.logEmail}</FormValidationMessage> 
-              
-                <Button
-                    raised
-                    icon= {{name: 'code'}}
-                    title="Register"
-                    onPress={this.onRegisterFinishedHandler}
-                />
-               
-               
-                
+           <View style={styles.outerContainer}> 
+                <Header centerComponent={{ text: "REGISTER", style: { color: "#fff" } }} />
 
-              
-            </View>
-            
-            
-            
-            
+				<View style={styles.formContainer}>
+					<FormInput placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
+					<FormValidationMessage >{this.state.logUsername}</FormValidationMessage> 
+					<FormInput placeholder="Password" secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
+					<FormValidationMessage >{this.state.logPassword}</FormValidationMessage> 
+					<FormInput placeholder="First Name" onChangeText={(text) => this.onChangedFnameHandler(text)} />
+					<FormValidationMessage >{this.state.logFname}</FormValidationMessage> 
+					<FormInput placeholder="Last Name" onChangeText={(text) => this.onChangedLnameHandler(text)} />
+					<FormValidationMessage >{this.state.logLname}</FormValidationMessage> 
+					<FormInput placeholder="Email" onChangeText={(text) => this.onChangedEmailHandler(text)} />
+					<FormValidationMessage >{this.state.logEmail}</FormValidationMessage>
+				</View>
+				<View style={styles.btnContainer}>
+					<Button
+						raised
+						title="Register"
+						onPress={this.onRegisterFinishedHandler}
+					/>
+				</View>	
+            </View>    
         );
     }
 }
 
 const styles = StyleSheet.create({
-    registrationFields: {
-        flex:0.5,
-        // alignItems:'center',
-        justifyContent:'space-around',
-        // width: 20,
-        // borderColor: 'black',
-        // borderWidth: 50
-
-    }
-})
+    outerContainer: {
+		flex:1,
+		flexDirection: 'column',
+		justifyContent: 'space-between'
+	},
+	formContainer: {
+		width:'95%',
+		alignSelf: 'center'
+	},
+	btnContainer: {
+		marginBottom: 20
+	}
+});
 module.exports = RegisterScreen;
