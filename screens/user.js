@@ -133,7 +133,7 @@ class UserScreen extends Component {
         });
     }
 
-    onImageClicked = (imageId,) => {
+    onImageClicked = (imageId,passedId) => {
         console.log("[user.js] onImageClicked: ", imageId );
         return fetch('https://app-api-testing.herokuapp.com/api/images/' + imageId, {
             method: 'GET',
@@ -146,7 +146,8 @@ class UserScreen extends Component {
         .then(response => {
             console.log('[user js] IMAGE DETAILS TRANSFER ', response)
             this.props.navigation.navigate('Image', {
-                data: response
+                data: response,
+                userId: passedId
             });
         });
         
@@ -158,6 +159,7 @@ class UserScreen extends Component {
         const following = params ? params.data.following : null;
 
         let noOfFollows = following.length;
+        let followImageElement = [];
         let followUri = 'https://app-api-testing.herokuapp.com/api/users/'
         if (noOfFollows > 0) {
             console.log('[user js] FOLLOW URI:', followUri + following)
@@ -168,7 +170,7 @@ class UserScreen extends Component {
                 }
             }).then (res => res.json())
             .catch(error => console.error('Error:', error))
-            .then(response => console.log('Success:', response));
+            .then(response => console.log('Success:', response));   
         }
         
     }
@@ -191,7 +193,6 @@ class UserScreen extends Component {
         console.log('[user js] render PICTURES: ', images);
         // console.log('PICLENGTH',images.length);
         let imageElement;
-        let followImageElement;
         let follows = following.length
         if(typeof images != undefined && images != null && images.length != null && images.length > 0){
            console.log('[user js] render IN THE IF STATEMENT');
@@ -226,7 +227,7 @@ class UserScreen extends Component {
 
 				    return (
 					    <TouchableOpacity
-                            onPress={() => this.onImageClicked(imageId)}
+                            onPress={() => this.onImageClicked(imageId, passedId)}
                             key={imageId} 
                             style={styles.thumbnail}
                         >
@@ -249,16 +250,11 @@ class UserScreen extends Component {
 				</View>
 			);
         }
-        // if(follows > 0){
-        //     console.log("[user js] FOLLOWS FOUND")
-        //     this.followID();
-        //     <Image
-        //         source={{uri: followUri + following}}
-        //         styles={styles.thumbnail}
-        //     />
-
-           
-        // }
+        if(follows > 0){
+            console.log("[user js] FOLLOWS FOUND")
+            this.followID;
+            
+        }
 		
         return (
             // <View style={styles.viewContainer}>
@@ -299,7 +295,7 @@ class UserScreen extends Component {
                 </View>
                 <Text>Following: {JSON.stringify(following.username)}</Text>
                 <View style= {styles.pictures}>
-                    {followImageElement}
+                    {/* {followImageElement} */}
                 </View>
                 <Button title="Image Picker" onPress={this.onImagePickerHandler} />
                 <Button title="Explore" onPress={()=>{this.onExplorePressedHandler(passedId)}} />
