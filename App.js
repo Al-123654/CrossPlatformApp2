@@ -11,7 +11,7 @@ var UserScreen = require('./screens/user.js');
 var ImageScreen = require('./screens/images.js');
 var ExploreScreen = require('./screens/explore.js');
 
-class App extends Component {
+class HomeScreen extends Component {
 	state = {
 		username: "",
 		password: "",
@@ -85,82 +85,25 @@ class App extends Component {
 	render() {
 		
 		return (
-			
-			// <View style={styles.container}>
-			
-			// 	<View style={styles.formContainer}>
-			// 		<Header 
-			// 			leftComponent={{ icon: 'menu', color: '#fff' }}
-			// 			centerComponent={{ text: "HOME", style: { color: "#fff" } }}
-			// 			rightComponent={{ icon: 'home', color: '#fff' }}
-			// 		/>
-			// 		<FormLabel style={styles.appHeading}>Test App</FormLabel>
-			// 		<FormInput style={styles.platformBasedText} placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
-			// 		<FormInput style={styles.platformBasedText} placeholder="Password" secureTextEntry ={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
-			// 		<Button title="Login" onPress={this.onLoginPressHandler} />
-			// 		<Text style={styles.registerLink} onPress={this.onRegisterPressHandler}>Register</Text>
-			// 		{/* <Button title="Forgot password?" onPress={this.onForgotHandler} /> */}
-			// 		<FormLabel>{this.state.log}</FormLabel>
-			// 		<FormLabel>{this.state.logDetails}</FormLabel>
-			// 		<FormLabel>{this.state.imageSource.fileName}</FormLabel>
-			// 	</View>
-			// </View>
 
-			<View style={{
-				flex: 1,
-				flexDirection: 'column',
-				justifyContent: 'space-between',
-			}}>
-				{/* <View style={{ width: 50, height: 50,  }} />
-				<View style={{ width: 50, height: 50, }} />
-				<View style={{ width: 50, height: 50,  }} /> */}
+			<View style={styles.outerContainer}>
 
-				<Header
-						leftComponent={{ icon: 'menu', color: '#fff' }}
-						centerComponent={{ text: "HOME", style: { color: "#fff" } }}
-						rightComponent={{ icon: 'home', color: '#fff' }}
-					/>
-					<FormLabel style={styles.appHeading}>Test App</FormLabel>
-					<FormInput style={styles.platformBasedText} placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
-					<FormInput style={styles.platformBasedText} placeholder="Password" secureTextEntry ={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
-					<Button	
-							icon={
-								<Icon
-								// alignItems='center'
-								// reverse
-								iconStyle={styles.loginButton}
-								name='login'
-								type='material-community'
-								size={15}
-								color='red'
-								/>
-							}	
-					title="Login" onPress={this.onLoginPressHandler}
-						
+				<Header centerComponent={{ text: "TEST APP", style: { color: "#fff" } }} />
+
+				<View style={styles.formContainer}>
+					<FormLabel>Login</FormLabel>
+					<FormInput style={styles.input} placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
+					<FormInput style={styles.input} placeholder="Password" secureTextEntry ={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
+					<Button	title="Login" onPress={this.onLoginPressHandler} /> 
+				</View>
+
+				<Text style={styles.registerLink} onPress={this.onRegisterPressHandler}>Register</Text>
 					
-					/> 
-					
-					{/* <Icon 
-						// alignItems='center'
-						reverse
-						iconStyle={styles.loginButton}
-						name='login'
-						type='material-community'
-						onPress={this.onLoginPressHandler}
-					/> */}
-					<Text style={styles.registerLink} onPress={this.onRegisterPressHandler}>Register</Text>
-					{/* <Button title="Forgot password?" onPress={this.onForgotHandler} /> */}
+				<View style={styles.logContainer}>
 					<FormLabel>{this.state.log}</FormLabel>
 					<FormLabel>{this.state.logDetails}</FormLabel>
-					<FormLabel>{this.state.imageSource.fileName}</FormLabel>
-					<Icon
-						name='key'
-						type='font-awesome'
-					/>
-					<Icon
-						name='login'
-						type='material-community'
-					/>
+				</View>
+					
 			</View>
 		);
 	}
@@ -169,50 +112,64 @@ class App extends Component {
 const RootStack = StackNavigator(
 	{
 		Home: {
-			screen: App,
+			screen: HomeScreen,
 			navigationOptions: {
-				title: "App",
-				headerLeft: null,
+				header: null,
 				gesturesEnabled:false
 			}
 		},
 		Register: {
 			screen: RegisterScreen,
 			navigationOptions:{
+				header: null,
 				gesturesEnabled: false
 			}
 		},
 		User: {
 			screen: UserScreen,
 			navigationOptions: {
-				title: "User",
-				headerLeft: null,
+				header: null,
 				gesturesEnabled:false
 			}
 		},
-		ImagePage:{
+		Image:{
 			screen:ImageScreen,
 			navigationOptions:{
+				header: null,
 				gesturesEnabled: false
 			} 
 		},
 		Explore:{
 			screen:ExploreScreen,
 			navigationOptions:{
+				header: null,
 				gesturesEnabled: false
 			}
 		}
 	},
 	{initialRouteName: 'Home'}
-  );
+);
 
-  export default class Test extends Component {
+export default class App extends Component {
 	render() {
-	  return <RootStack />;
+		return <RootStack />;
 	}
-  }
+}
 
 const styles = StyleSheet.create({
+	outerContainer: {
+		flex:1,
+		flexDirection: 'column',
+		justifyContent: 'space-between'
+	},
+	formContainer: {
+		width:'95%',
+		alignSelf: 'center'
+	},
+	logContainer: {
+		width:'95%',
+		alignSelf: 'center'
+	},
 	container: {
 		flex: 1,
 		backgroundColor: '#fff',
@@ -221,16 +178,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		height: '10%'
 	},
-
-
-	formContainer: {
-		
-		width: '60%',
-		alignItems: 'center',
-		// justifyContent: 'space-around',
-		
-	},
-	platformBasedText:{
+	input:{
 		...Platform.select({
 			ios:{
 				width: '50%',
@@ -238,21 +186,14 @@ const styles = StyleSheet.create({
 				borderColor: 'grey',
 				justifyContent: 'space-around',	
 			},
-			android:{
-
-			}
+			android:{}
 		})
 	},
-
 	entryFields: {
 		width: '50%',
 		height: '13%',
 		borderColor: 'grey',
 		justifyContent: 'space-around',
-	},
-	appHeading: {
-		fontSize: 30,
-		textAlign: 'center'
 	},
 	registerLink: {
 		color: 'blue',
@@ -263,13 +204,10 @@ const styles = StyleSheet.create({
 		width: 100,
 		height: 100
 	},
-
 	headerContainer: {
-		// alignItems: ,
 		width: '100%',
 		height:'100%'
 	},
-
 	loginButton:{
 		alignItems: 'center',
 		justifyContent: 'space-between',
