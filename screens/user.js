@@ -30,8 +30,8 @@ class UserScreen extends Component {
              images : props.navigation.state.params.data.images ,
              following : props.navigation.state.params.data.following ,
              followImageElement: [],
-
         }
+        console.log('[user js] state FOLLOWS:', this.state.following.length)
     }
 
     onLogoutPressHandler = () => {
@@ -203,7 +203,7 @@ class UserScreen extends Component {
             console.log('[user js] RES.IMAGES.LENGTH ', followImageID.length);
             noOfFollows = followImageID.length;
             console.log('[user js] NO OF FOLLOWS: ', noOfFollows);
-            let followImageUri2 = 'http://app-api-testing.herokuapp.com/images/'
+            const followImageUri2 = 'https://app-api-testing.herokuapp.com/api/images/'
             if(noOfFollows== 1){
                 console.log("[user.js] render FOLLOW IMAGE ID", followImageID[0]);
                 console.log("[user js] render FOLLOW IMAGE URI", followImageUri2 + followImageID[0])
@@ -221,6 +221,30 @@ class UserScreen extends Component {
                     )
                 });
                console.log('[user js] FOLLOW IMAGE ELEMENT IN FOLLOW ID()', this.state.followImageElement);
+            }
+            if(noOfFollows > 1){
+                followImageArray = [];
+                
+                this.setState({
+                    followImageElement : (
+                        followImageArray = followImageID.map((imageId, index) => {
+                            console.log("[user.js] FOLLOWIMAGES() ARGUMENT FOR MULTIPLE IMAGES: ", imageId);
+                            return (
+                                <TouchableOpacity
+                                    onPress={() => this.onImageClicked2(imageId, this.state.passedId)}
+                                    key={imageId}
+                                    style={styles.thumbnail}
+                                >
+                                    <Image
+                                        source={{ uri: followImageUri2 + imageId + '/display' }}
+                                        style={styles.thumbnail}
+                                    />
+                                </TouchableOpacity>
+                            );
+
+                        })
+                    )
+                });
             }
         })
         .catch((error) =>{
@@ -247,7 +271,7 @@ class UserScreen extends Component {
             let imageUri = 'https://app-api-testing.herokuapp.com/api/images/';
             // let imageUri = 'http://localhost:5000/api/images/';
 		    if(imageCount == 1){
-                console.log("[user.js] render IMAGE ID", this.state.images[0]);
+                console.log("[user.js] render IMAGE ID", this.state.images);
                 console.log("[user js] render IMAGE URI", imageUri + this.state.images[0])
 			    imageElement = (
                 <TouchableOpacity
