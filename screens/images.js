@@ -24,6 +24,7 @@ class ImageScreen extends Component{
 
 		// initialize state
 		this.state = {
+			IMAGE_ROOT_URI: 'https://app-api-testing.herokuapp.com/api/images/',
 			imageId: props.navigation.state.params.data._id,
 			imageLikesArray: props.navigation.state.params.data.likes,
 			userId: props.navigation.state.params.userId,
@@ -40,13 +41,13 @@ class ImageScreen extends Component{
 		console.log('[images js] constructor - noOfLikes: ', this.state.noOfLikes);
     }
     
-    onLikePressHandler = (imageUri,imageId) => {
+    onLikePressHandler = (imageId) => {
 		console.log('[images js] onLikePressHandler - Like btn Pressed!');
-		console.log('[images js] onLikePressHandler - imageUri: ', imageUri);
+		console.log('[images js] onLikePressHandler - imageUri: ', this.state.IMAGE_ROOT_URI);
 		console.log('[images js] onLikePressHandler - imageId: ', imageId);
 		
 		// send request to API
-        return fetch(imageUri + imageId, {
+        return fetch(this.state.IMAGE_ROOT_URI + imageId, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -55,7 +56,7 @@ class ImageScreen extends Component{
 		})
 		.then((response) => response.json())
 		.then((responseJson) => {
-			console.log("[images js] onLikePressHandler - responseJson:", responseJson);
+			console.log("[images js] onLikePressHandler - responseJson: ", responseJson);
 
 			// check if image liked
 			let isLiked = false;
@@ -80,8 +81,7 @@ class ImageScreen extends Component{
 	}
 
     render(){
-        const imageUri = 'https://app-api-testing.herokuapp.com/api/images/';
-        console.log("[images js] render - Image path: ", imageUri);
+        console.log("[images js] render - Image path: ", this.state.IMAGE_ROOT_URI);
         console.log("[images js] render - CURRENT IMAGE ID: ",this.state.imageId);
 		
         return (
@@ -90,12 +90,12 @@ class ImageScreen extends Component{
 
 				<View style={styles.imageContainer}>
 					<Tile
-						imageSrc={{uri: imageUri + this.state.imageId + '/display'}}
+						imageSrc={{uri: this.state.IMAGE_ROOT_URI + this.state.imageId + '/display'}}
 					/>
 					<View style={styles.imageBar}>
 						<Text style={styles.likesCount}>{this.state.noOfLikes} likes</Text>
 						<TouchableOpacity
-							onPress={()=>{this.onLikePressHandler(imageUri,this.state.imageId)}}
+							onPress={()=>{this.onLikePressHandler(this.state.imageId)}}
 							style={styles.icon}
 						>
 							<Icon
