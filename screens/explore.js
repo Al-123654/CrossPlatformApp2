@@ -5,15 +5,34 @@ import {
 	Button, Image, Alert , 
 	TouchableOpacity, TouchableHighlight
 } from 'react-native';
-import { StackNavigator,  } from 'react-navigation';
-import { List, ListItem, Icon } from "react-native-elements";
+import { StackNavigator } from 'react-navigation';
+import { List, ListItem, Icon, Header } from "react-native-elements";
 
 class ExploreScreen extends Component {
 
-	state = { 
-		log: "",
-		listOfUsers: ""
-	};
+	// state = { 
+	// 	log: "",
+	// 	listOfUsers: ""
+	// };
+
+	constructor(props) {
+		super(props);
+		//TODO: check if props.navigation.state.params exists
+		console.log('[images js] constructor - passedParams: ', props.navigation.state.params);
+
+		// initialize state
+		this.state = {
+			listOfUsers: "",
+			passedUserId: props.navigation.state.params.currentUserId,
+			log: ""
+		};
+
+		// logs
+		console.log('[images js] constructor - After init.');
+		console.log('[images js] constructor - listOfUsers: ', this.state.listOfUsers);
+		console.log('[images js] constructor - passedUserId: ', this.state.passedUserId);
+		console.log('[images js] constructor - log: ', this.state.log);
+    }
 
 	componentDidMount(){
 		this.fetchListofUsers();
@@ -22,18 +41,18 @@ class ExploreScreen extends Component {
 	fetchListofUsers = () => {
 		fetch('https://app-api-testing.herokuapp.com/api/users')
 		.then(response=>{
-			console.log('[explore js] fetchListofUsers response: ', response);
+			console.log('[explore js] fetchListofUsers - response: ', response);
 			if(response.status !== 200){
-				console.log('[explore js] fetchListofUsers bad response: ', response);
+				console.log('[explore js] fetchListofUsers - bad response: ', response);
 				return;
 			}
 			response.json().then(data=>{
-				console.log('[explore js] fetchListofUsers json response: ', data);
+				console.log('[explore js] fetchListofUsers - json response: ', data);
 				this.setState({listOfUsers:[...data]});
-				console.log('[explore js] fetchListofUsers listOfUsers state: ', this.state.listOfUsers);
+				console.log('[explore js] fetchListofUsers - listOfUsers state: ', this.state.listOfUsers);
 			});
 		})
-		.catch(err=>console.log('[explore js] fetchListofUsers error: ', err));
+		.catch(err=>console.log('[explore js] fetchListofUsers - error: ', err));
 	}
 
     onLogoutPressHandler = () => {
@@ -53,7 +72,7 @@ class ExploreScreen extends Component {
 					{
 						text: 'OK', onPress: () => {
 							this.props.navigation.navigate('Home');
-							console.log("[explore js] onLogoutPressHandler LOGGED OUT")
+							console.log("[explore js] onLogoutPressHandler - LOGGED OUT")
 						}
 					}
 				]
@@ -96,10 +115,10 @@ class ExploreScreen extends Component {
 
     render() {
 		// get passed data from previous screen
-		const {params} = this.props.navigation.state;
-		console.log('[explore js] render PARAMS: ',params);
-		const passedUserId = params.currentUserId;
-		console.log('[explore js] render passedUserId: ',passedUserId);
+		// const {params} = this.props.navigation.state;
+		// console.log('[explore js] render PARAMS: ',params);
+		// const passedUserId = params.currentUserId;
+		// console.log('[explore js] render passedUserId: ',passedUserId);
 		
 		let listOfUsersCopy = [...this.state.listOfUsers];
 		let currentlyFollowingList = [];
@@ -107,7 +126,7 @@ class ExploreScreen extends Component {
 		// remove currently logged in user from list
 		let indexToRemove = "";
 		listOfUsersCopy.forEach((user,index)=>{
-			if(user._id == passedUserId){
+			if(user._id == this.state.passedUserId){
 				console.log("[explore js] Found a match at index: ", index);
 				indexToRemove = index;
 				// save currently following list
@@ -137,37 +156,43 @@ class ExploreScreen extends Component {
 		console.log("[explore js] List of Users after looping: ", listOfUsersCopy);
 
 		return(
-			<List>
-				<FlatList
-					data={listOfUsersCopy}
-					renderItem={ ({item}) => (
-						<TouchableOpacity
-							onPress={()=>this.onListItemPressed(item._id, passedUserId)}
-						>
-							<ListItem
-								title={item.username}
-								subtitle={item.email}
-								rightIcon={item.isFollowed ? <Icon name='remove'/> : <Icon name='add'/>}
-								rightTitle={item.isFollowed ? 'Unfollow' : 'Follow'}
-							/>
-						</TouchableOpacity>
-						
-					)}
-					keyExtractor={item => item._id}
-				/>
-			</List>
+			<View>
+				<Header centerComponent={{ text: "EXPLORE", style: { color: "#fff" } }} />
+				<List containerStyle={styles.outerList}>
+					<FlatList
+						data={listOfUsersCopy}
+						renderItem={ ({item}) => (
+							<TouchableOpacity
+								onPress={()=>this.onListItemPressed(item._id, this.state.passedUserId)}
+							>
+								<ListItem
+									title={item.username}
+									subtitle={item.email}
+									rightIcon={item.isFollowed ? <Icon name='remove'/> : <Icon name='add'/>}
+									rightTitle={item.isFollowed ? 'Unfollow' : 'Follow'}
+								/>
+							</TouchableOpacity>
+							
+						)}
+						keyExtractor={item => item._id}
+					/>
+				</List>
+			</View>
+				
 		);
     }
 }
 
 const styles = StyleSheet.create({
+	outerList : {
+		marginTop: 0
+	},
 	viewContainer: {
 		flex: 1,
 		backgroundColor: '#fff',
 		alignItems: 'center',
 		justifyContent: 'center',
     },
-    
     pictures: {
         flex: 1, flexDirection: 'row',
         width: '80%',
