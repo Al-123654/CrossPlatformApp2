@@ -154,26 +154,48 @@ class UserScreen extends Component {
 
     }
 
-    followID = () => {
-        const { params } = this.props.navigation.state;
-        const following = params ? params.data.following : null;
+    // followID = () => {
+    //     const { params } = this.props.navigation.state;
+    //     const following = params ? params.data.following : null;
 
-        let noOfFollows = following.length;
-        let followImageElement = [];
-        let followUri = 'https://app-api-testing.herokuapp.com/api/users/'
-        if (noOfFollows > 0) {
-            console.log('[user js] FOLLOW URI:', followUri + following)
-            fetch(followUri + following, {
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            }).then (res => res.json())
-            .catch(error => console.error('Error:', error))
-            .then(response => console.log('Success:', response));   
-        }
-        
-    }
+    //     let noOfFollows = following.length;
+    //     let followImageElement
+    //     let followUri = 'https://app-api-testing.herokuapp.com/api/users/'
+
+    //     console.log('[user js] FOLLOW URI:', followUri + following)
+    //     fetch(followUri + following, {
+    //         headers: {
+    //             Accept: 'application/json',
+    //             'Content-Type': 'application/json'
+    //         }
+    //     }).then(res => res.json())
+    //         .catch(error => console.error('Error:', error))
+    //         .then(response => console.log('Success:', response));
+    //     console.log('[user js] followID success? ', )
+
+    //     if (noOfFollows == 1){
+    //         fetch(followUri)
+
+    //     }else{
+    //         followImageElement = [];
+    //         followImageElement = images.map((imageId, index) => {
+    //             return(
+    //                 <TouchableOpacity
+    //                     onPress={() => this.onImageClicked(imageId, passedId)}
+    //                     key={imageId}
+    //                     style={styles.thumbnail}
+    //                 >
+
+    //                     <Image
+    //                         source={{ uri: followUri + following }}
+    //                         style={styles.thumbnail}
+    //                     />
+    //                 </TouchableOpacity>
+    //             )
+
+    //         })
+    //     }
+    // }
   
 
     render() {
@@ -208,7 +230,7 @@ class UserScreen extends Component {
                 console.log("[user js] render IMAGE URI", imageUri + images[0])
 			    imageElement = (
                 <TouchableOpacity
-                    onPress={() => this.onImageClicked(images[0] )}
+                    onPress={() => this.onImageClicked(images[0], passedId )}
                     style={styles.thumbnail}    
                 >
                     <Image 
@@ -250,11 +272,11 @@ class UserScreen extends Component {
 				</View>
 			);
         }
-        if(follows > 0){
-            console.log("[user js] FOLLOWS FOUND")
-            this.followID;
+        // if(follows > 0){
+        //     console.log("[user js] FOLLOWS FOUND")
+        //     this.followID;
             
-        }
+        // }
 		
         return (
             // <View style={styles.viewContainer}>
