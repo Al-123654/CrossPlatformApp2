@@ -88,47 +88,48 @@ class ImageScreen extends Component{
             <View>
 				<Header centerComponent={{ text: "IMAGES", style: { color: "#fff" } }} />
 
-				<Tile
-					imageSrc={{uri: imageUri + this.state.imageId + '/display'}}
-					title="Random titletext"
-				/>
-				
-                <View style= {styles.textContainer}>
-                    <Text >{this.state.noOfLikes}</Text> 
-                </View>
-
-				<TouchableOpacity
-					onPress={()=>{this.onLikePressHandler(imageUri,this.state.imageId)}}
-				>
-					<Icon
-						reverse
-						name={this.state.isImageLiked ? 'heart-o':'heart'}
-						type='font-awesome'
-						color='#f50'
+				<View style={styles.imageContainer}>
+					<Tile
+						imageSrc={{uri: imageUri + this.state.imageId + '/display'}}
 					/>
-				</TouchableOpacity>
+					<View style={styles.imageBar}>
+						<Text style={styles.likesCount}>{this.state.noOfLikes} likes</Text>
+						<TouchableOpacity
+							onPress={()=>{this.onLikePressHandler(imageUri,this.state.imageId)}}
+							style={styles.icon}
+						>
+							<Icon
+								reverse
+								name={this.state.isImageLiked ? 'heart-o':'heart'}
+								type='font-awesome'
+								color='#f50'
+							/>
+						</TouchableOpacity>
+					</View>
+				</View>	
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-	outerContainer: {
-		flex:1,
-		flexDirection: 'column',
-		justifyContent: 'space-between'
-	},
     imageContainer: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-		width: '100%',
-    },
-    textContainer: {
-        alignItems: 'center',
-        justifyContent: 'center'
-    }
+		flex: 1,
+		flexDirection: 'column',
+	},
+	imageBar: {
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		paddingLeft: 10,
+		paddingRight: 10
+	},
+	icon: {
+		width: 59,
+		height: 59
+	},
+	likesCount: {
+	}
 })
 module.exports = ImageScreen;
