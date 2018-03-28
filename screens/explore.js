@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import { List, ListItem, Icon, Header } from "react-native-elements";
+import CustomBackBtn from './../components/CustomBackBtn/CustomBackBtn';
 
 class ExploreScreen extends Component {
 
@@ -157,7 +158,10 @@ class ExploreScreen extends Component {
 
 		return(
 			<View>
-				<Header centerComponent={{ text: "EXPLORE", style: { color: "#fff" } }} />
+				<Header 
+					leftComponent={<CustomBackBtn clicked={()=>console.log('Pressed custom back btn!')} />} 
+					centerComponent={{ text: "EXPLORE", style: { color: "#fff" } }} 
+				/>
 				<List containerStyle={styles.outerList}>
 					<FlatList
 						data={listOfUsersCopy}
