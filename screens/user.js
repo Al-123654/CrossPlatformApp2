@@ -11,14 +11,12 @@ class UserScreen extends Component {
 
     constructor(props) {
         super(props);
-        // check if props.navigation.state.params exists
+        // call props.navigation.state.params here
         const { params } = this.props.navigation.state;
-        console.log('[user js] constructor: ', props.navigation.state.params)
         //setup image arrays here
         props.navigation.state.params.data.images.forEach(function () {
             
         });
-        // this.followImages();
 
         //initialize states
         this.state = {
@@ -30,9 +28,71 @@ class UserScreen extends Component {
              images : props.navigation.state.params.data.images ,
              following : props.navigation.state.params.data.following ,
              followImageElement: [],
+             followedUsername: "",
+             FOLLOWS : props.navigation.state.params.data.following.length,
+             followIDArray: [],
+             IMAGEURI: 'https://app-api-testing.herokuapp.com/api/images/'
+
         }
-        console.log('[user js] state FOLLOWS:', this.state.following.length)
+        
+        // number of users followed
+        // FOLLOWS = this.state.following.length
+        console.log('[user js] in CONSTRUCTOR FOLLOWS', this.state.FOLLOWS)
+        console.log('[user js] MORE THAN ONE FOLLOW:', this.state.following);
+
     }
+
+    componentDidMount(){
+        
+        let followIDArray = [];
+        let followImageUri = ""
+        this.state.following.forEach((followedID) => {
+            console.log('[user js] FOLLOWEDID IN COMPONENTDIDMOUNT:', followedID);
+            fetch('https://app-api-testing.herokuapp.com/api/users/' + followedID, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            }).then(res => res.json())
+                .then(res => {
+                    console.log('[user js] RESPONSE AT COMPONENT DID MOUNT', res);
+                    let followedImageID = res.images;
+                    console.log('[user js] FOLLOWEDIMAGEID AT COMPONENTDIDMOUNT', followedImageID);
+
+                    followIDArray.push({
+                        followedID: followedID,
+                        images: followedImageID,
+                    });
+                    this.setState({ followIDArray: [...followIDArray] });
+                    console.log('[user js] FOLLOWIDARRAY', this.state.followIDArray);
+                    console.log('[user js] FOLLOWIDARRAY IMAGES', this.state.followIDArray[0].images);
+                    followImageUri = this.state.IMAGEURI + this.state.followIDArray[0].images + '/display';
+                    console.log('[user js] FOLLOWIMAGEURI AT COMPONENT:', followImageUri);
+                    this.setState({
+                        followImageElement:(
+                            <TouchableOpacity
+                                onPress={() => this.onImageClicked2(followedImageID, this.state.passedId)}
+                                style={styles.thumbnail}
+                            >
+                                <Image
+                                    source={{ uri: followImageUri }}
+                                    style={styles.thumbnail}
+                                />
+                                
+                            </TouchableOpacity>
+                            // <Text>followImageElement Test</Text>
+                        )
+                    });
+                    
+
+                }).catch((error) => {
+                    console.log('[user js] COMPONENTDIDMOUNT ERROR', error)
+                })
+        });
+    }
+
+    
 
     onLogoutPressHandler = () => {
         return fetch('https://app-api-testing.herokuapp.com/logout', {
@@ -163,7 +223,7 @@ class UserScreen extends Component {
         });
     }
     onImageClicked2 = (imageId,passedId) => {
-        console.log("[user.js] onImageClicked: ", imageId );
+        
         return fetch('https://app-api-testing.herokuapp.com/api/images/' + imageId, {
             method: 'GET',
             headers:{
@@ -173,7 +233,6 @@ class UserScreen extends Component {
         }).then (response => response.json())
         .catch(error => console.error('Error: ', error))
         .then(response => {
-            console.log('[user js] IMAGE DETAILS TRANSFER ', response)
             this.props.navigation.navigate('Image', {
                 data: response,
                 following: passedId
@@ -182,85 +241,103 @@ class UserScreen extends Component {
     }
 
     //get images of followed users
-    followImages = () => {
-        //check if following can be called here
-        console.log('[user js] THIS.STATE.FOLLOWING', this.state.following);
-        //use following to get followedUserUri
-        let followedUserUri = 'https://app-api-testing.herokuapp.com/api/users/';
+    // followImages = () => {
+    //     // console.log('[user js] state FOLLOWS:', FOLLOWS)
+    //     // console.log('[user js] FOLLOWS > 1? TEST ', FOLLOWS > 1)
         
-        console.log('[user js] FOLLOW URI:', followedUserUri + '/');
-        let followID;
-        fetch(followedUserUri + this.state.following, {
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            }
-        }).then(res => res.json())
-        .then(res => {
-            console.log('[user js] RES.JSON ', res);
-            console.log('[user js] RES.IMAGE: ', res.images);
-            followImageID = res.images;
-            console.log('[user js] RES.IMAGES.LENGTH ', followImageID.length);
-            noOfFollows = followImageID.length;
-            console.log('[user js] NO OF FOLLOWS: ', noOfFollows);
-            const followImageUri2 = 'https://app-api-testing.herokuapp.com/api/images/'
-            if(noOfFollows== 1){
-                console.log("[user.js] render FOLLOW IMAGE ID", followImageID[0]);
-                console.log("[user js] render FOLLOW IMAGE URI", followImageUri2 + followImageID[0])
-                this.setState({
-                    followImageElement : (
-                        <TouchableOpacity
-                            onPress={() => this.onImageClicked2(followImageID[0], this.state.passedId)}
-                            style={styles.thumbnail}
-                        >
-                            <Image
-                                source={{ uri: followImageUri2 + followImageID[0] + '/display' }}
-                                style={styles.thumbnail}
-                            />
-                        </TouchableOpacity>
-                    )
-                });
-               console.log('[user js] FOLLOW IMAGE ELEMENT IN FOLLOW ID()', this.state.followImageElement);
-            }
-            if(noOfFollows > 1){
-                followImageArray = [];
-                
-                this.setState({
-                    followImageElement : (
-                        followImageArray = followImageID.map((imageId, index) => {
-                            console.log("[user.js] FOLLOWIMAGES() ARGUMENT FOR MULTIPLE IMAGES: ", imageId);
-                            return (
-                                <TouchableOpacity
-                                    onPress={() => this.onImageClicked2(imageId, this.state.passedId)}
-                                    key={imageId}
-                                    style={styles.thumbnail}
-                                >
-                                    <Image
-                                        source={{ uri: followImageUri2 + imageId + '/display' }}
-                                        style={styles.thumbnail}
-                                    />
-                                </TouchableOpacity>
-                            );
+    //     let followedUserUri = 'https://app-api-testing.herokuapp.com/api/users/';
+    //     let followedUserID;//ID of followed users
+    //     followedUserID = this.state.following;
+    //     //fetch images of followed users from api
+    //     // console.log('[user js] THIS.STATE.FOLLOWING', followedUserUri + followedUserID)
+    //     //if only one user followed
+    //     if (this.state.FOLLOWS == 1){
+    //         // get details of followed Users from api
+    //         fetch(followedUserUri + followedUserID, {
+    //             headers: {
+    //                 Accept: 'application/json',
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         }).then(res => res.json())
+    //             .then(res => {
+    //                 this.setState({ followedUsername: res.username })
+    //                 // console.log('[user js]  FOLLOWED USERNAMES: ', this.state.followedUsername)
+    //                 // console.log('[user js] RES.IMAGE: ', res.images);
+    //                 followImageID = res.images;//ID of images of followed users
+                    
+    //                 noOfFollows = followImageID.length;
+                    
+    //                 // console.log('[user js] NO OF FOLLOWS: ', noOfFollows);
+    //                 const followImageUri2 = 'https://app-api-testing.herokuapp.com/api/images/'
+    //                 //if followed user only has one image
+    //                 if (noOfFollows == 1) {
+    //                     // console.log("[user.js] render FOLLOW IMAGE ID", followImageID[0]);
+    //                     // console.log("[user js] render FOLLOW IMAGE URI", followImageUri2 + followImageID[0])
+    //                     this.setState({
+    //                         followImageElement: (
+    //                             <TouchableOpacity
+    //                                 onPress={() => this.onImageClicked2(followImageID[0], this.state.passedId)}
+    //                                 style={styles.thumbnail}
+    //                             >
+    //                                 <Image
+    //                                     source={{ uri: followImageUri2 + followImageID[0] + '/display' }}
+    //                                     style={styles.thumbnail}
+    //                                 />
+    //                             </TouchableOpacity>
+    //                         )
+    //                     });
+    //                     // console.log('[user js] FOLLOW IMAGE ELEMENT IN FOLLOW ID()', this.state.followImageElement);
+    //                 }
+    //                 //if followed user more than one image
+    //                 if (noOfFollows > 1) {
+    //                     followImageArray = [];
 
-                        })
-                    )
-                });
-            }
-        })
-        .catch((error) =>{
-            console.log('ERROR' ,error);
-        })
-    }
+    //                     this.setState({
+    //                         followImageElement: (
+    //                             followImageArray = followImageID.map((imageId, index) => {
+    //                                 // console.log('[user js] IMAGE ID: ', imageId);
+    //                                 // console.log('[user js] FOLLOW IMAGE ID: ', followImageID);
+    //                                 return (
+    //                                     <TouchableOpacity
+    //                                         onPress={() => this.onImageClicked2(imageId, this.state.passedId)}
+    //                                         key={imageId}
+    //                                         style={styles.thumbnail}
+    //                                     >
+    //                                         <Image
+    //                                             source={{ uri: followImageUri2 + imageId + '/display' }}
+    //                                             style={styles.thumbnail}
+    //                                         />
+    //                                     </TouchableOpacity>
+    //                                 );
+
+    //                             })
+    //                         )
+    //                     });
+    //                 }
+
+
+    //             })
+    //             .catch((error) => {
+    //                 console.log('ERROR', error);
+    //             })
+    //     }
+    //     //if more than one user followed
+    //     if (this.state.FOLLOWS > 1){
+    //         console.log('[user js] MORE THAN ONE FOLLOW:', this.state.following);
+         
+    //     }
+    // }
   
 
     render() {
-        // check for images
-        console.log('[user js] render PICTURES: ', this.state.images);
-        // console.log('PICLENGTH',images.length);
-        let imageElement;
-        // let followImageElement;
-        let follows = this.state.following.length
+        // console.log('[user js] render PICTURES: ', this.state.images);
+        console.log('[user js] render ID OF FOLLOWED IMAGES:', this.state.followIDArray)
+        console.log('[user js] FOLLOWIMAGEELEMENT:', this.state.followImageElement)
+       
         
+        
+        let imageElement;
+        //check if user have images and display them
         if(typeof this.state.images != undefined && this.state.images != null && this.state.images.length != null && this.state.images.length > 0){
            console.log('[user js] render IN THE IF STATEMENT');
            console.log('[user js] render IF STATEMENT',(this.state.images != undefined || this.state.images.length == 0)); 
@@ -270,6 +347,7 @@ class UserScreen extends Component {
 		    // setup variable to contain Image element
             let imageUri = 'https://app-api-testing.herokuapp.com/api/images/';
             // let imageUri = 'http://localhost:5000/api/images/';
+            //if user has only one image
 		    if(imageCount == 1){
                 console.log("[user.js] render IMAGE ID", this.state.images);
                 console.log("[user js] render IMAGE URI", imageUri + this.state.images[0])
@@ -287,12 +365,7 @@ class UserScreen extends Component {
                 
 		    }else if(imageCount > 1 ){
 			    imageElement = [];
-			    imageElement = images.map((imageId, index) => {
-				    console.log("[user js] render TEST IMAGE ELEMENT");
-				    console.log("[user.js] render ARGUMENT FOR MULTIPLE IMAGES: ", imageId);
-				    console.log("[user js] render INDEX: ", index);
-				    console.log("[user js] render FUNCTION: ", this.onImageClicked);
-
+			    imageElement = this.state.images.map((imageId, index) => {
 				    return (
 					    <TouchableOpacity
                             onPress={() => this.onImageClicked(imageId, this.state.passedId)}
@@ -310,7 +383,7 @@ class UserScreen extends Component {
 
 		    }
         }else {
-            console.log("[user js] render IN THE ELSE STATEMENT");
+            // console.log("[user js] render IN THE ELSE STATEMENT");
             imageElement = (
 				<View style={styles.viewContainer}>
                     <Text style={{justifyContent:'center', alignItems: 'center'}}>No images available
@@ -320,10 +393,9 @@ class UserScreen extends Component {
         }
     
 
-        if(follows > 0){
-            this.followImages();
-
-        }
+        // if(this.state.FOLLOWS > 0){
+        //     this.followImages();
+        // }
 		
         return (
             <View style={{
@@ -342,11 +414,11 @@ class UserScreen extends Component {
                 <View style= {styles.pictures}>
                     {imageElement}
                 </View>
-                <Text>Following: {JSON.stringify(this.state.following)}</Text>
+                <Text>Following: {JSON.stringify(this.state.followedUsername)}</Text>
                 <View style= {styles.pictures}>
-                    {console.log('[user js] FOLLOW IMAGE ELEMENT ' ,this.state.followImageElement)}
                     {this.state.followImageElement}
                 </View>
+                
                 <Button title="Image Picker" onPress={this.onImagePickerHandler} />
                 <Button title="Explore" onPress={()=>{this.onExplorePressedHandler(this.state.passedId)}} />
                 <Button title="Logout" onPress={this.onLogoutPressHandler} />
