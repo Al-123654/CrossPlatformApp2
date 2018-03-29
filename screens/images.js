@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Platform, Text, TextInput, StyleSheet, View, Image, Alert, TouchableOpacity } from 'react-native';
 import { StackNavigator, } from 'react-navigation';
 import { Header, Button, Tile, Icon} from 'react-native-elements';
+import CustomBackBtn from './../components/CustomBackBtn/CustomBackBtn';
 
 class ImageScreen extends Component{
     constructor(props) {
@@ -39,7 +40,12 @@ class ImageScreen extends Component{
 		console.log('[images js] constructor - userId: ', this.state.userId);
 		console.log('[images js] constructor - isImageLiked: ', this.state.isImageLiked);
 		console.log('[images js] constructor - noOfLikes: ', this.state.noOfLikes);
-    }
+	}
+	
+	onBackBtnPressed = () => {
+		console.log('[explore js] onBackBtnPressed');
+		this.props.navigation.goBack();
+	}
     
     onLikePressHandler = (imageId) => {
 		console.log('[images js] onLikePressHandler - Like btn Pressed!');
@@ -86,7 +92,10 @@ class ImageScreen extends Component{
 		
         return (
             <View>
-				<Header centerComponent={{ text: "IMAGES", style: { color: "#fff" } }} />
+				<Header 
+					leftComponent={<CustomBackBtn clicked={this.onBackBtnPressed} />} 
+					centerComponent={{ text: "IMAGES", style: { color: "#fff" } }} 
+				/>
 
 				<View style={styles.imageContainer}>
 					<Tile
