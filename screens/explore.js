@@ -8,6 +8,7 @@ import {
 import { StackNavigator } from 'react-navigation';
 import { List, ListItem, Icon, Header } from "react-native-elements";
 import CustomBackBtn from './../components/CustomBackBtn/CustomBackBtn';
+import CustomLogoutBtn from './../components/CustomLogoutBtn/CustomLogoutBtn';
 
 class ExploreScreen extends Component {
 
@@ -61,7 +62,12 @@ class ExploreScreen extends Component {
 		this.props.navigation.goBack();
 	}
 
-    onLogoutPressHandler = () => {
+	onLogoutBtnPressed = () => {
+		console.log('[explore js] onLogoutBtnPressed');
+		this.onLogoutHandler();
+	}
+
+    onLogoutHandler = () => {
         return fetch('https://app-api-testing.herokuapp.com/logout', {
         // return fetch('http://localhost:5000/logout', {
             method: 'GET',
@@ -159,8 +165,9 @@ class ExploreScreen extends Component {
 		return(
 			<View>
 				<Header 
-					leftComponent={<CustomBackBtn clicked={this.onBackBtnPressed} />} 
-					centerComponent={{ text: "EXPLORE", style: { color: "#fff" } }} 
+					leftComponent={<CustomBackBtn clicked={this.onBackBtnPressed} />}
+					centerComponent={{ text: "EXPLORE", style: { color: "#fff" } }}
+					rightComponent={<CustomLogoutBtn clicked={this.onLogoutBtnPressed} />}
 				/>
 				<List containerStyle={styles.outerList}>
 					<FlatList
