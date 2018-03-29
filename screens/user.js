@@ -35,10 +35,9 @@ class UserScreen extends Component {
 
         }
         
-        // number of users followed
-        // FOLLOWS = this.state.following.length
-        console.log('[user js] in CONSTRUCTOR FOLLOWS', this.state.FOLLOWS)
-        console.log('[user js] MORE THAN ONE FOLLOW:', this.state.following);
+        //check for number of follows and who
+        console.log('[user js] NUMBER OF FOLLOWS', this.state.FOLLOWS)
+        console.log('[user js] FOLLOWSs:', this.state.following);
 
     }
 
@@ -47,6 +46,7 @@ class UserScreen extends Component {
         let followIDArray = [];
         let followImageUri = ""
         this.state.following.forEach((followedID) => {
+            //get followed users data
             console.log('[user js] FOLLOWEDID IN COMPONENTDIDMOUNT:', followedID);
             fetch('https://app-api-testing.herokuapp.com/api/users/' + followedID, {
                 method: 'GET',
@@ -59,31 +59,67 @@ class UserScreen extends Component {
                     console.log('[user js] RESPONSE AT COMPONENT DID MOUNT', res);
                     let followedImageID = res.images;
                     console.log('[user js] FOLLOWEDIMAGEID AT COMPONENTDIDMOUNT', followedImageID);
-
+                    //push the followed users data into array
                     followIDArray.push({
                         followedID: followedID,
                         images: followedImageID,
                     });
                     this.setState({ followIDArray: [...followIDArray] });
                     console.log('[user js] FOLLOWIDARRAY', this.state.followIDArray);
-                    console.log('[user js] FOLLOWIDARRAY IMAGES', this.state.followIDArray[0].images);
-                    followImageUri = this.state.IMAGEURI + this.state.followIDArray[0].images + '/display';
-                    console.log('[user js] FOLLOWIMAGEURI AT COMPONENT:', followImageUri);
-                    this.setState({
-                        followImageElement:(
-                            <TouchableOpacity
-                                onPress={() => this.onImageClicked2(followedImageID, this.state.passedId)}
-                                style={styles.thumbnail}
-                            >
-                                <Image
-                                    source={{ uri: followImageUri }}
-                                    style={styles.thumbnail}
-                                />
-                                
-                            </TouchableOpacity>
-                            // <Text>followImageElement Test</Text>
-                        )
-                    });
+                    //check for multiple followed users
+                    if(this.state.followIDArray.length == 1){
+                        //check for multiple images
+                        if(this.state.followIDArray[0].images.length ==1){
+                            console.log('[user js] FOLLOWIDARRAY IMAGES', this.state.followIDArray[0].images);
+                            followImageUri = this.state.IMAGEURI + this.state.followIDArray[0].images + '/display';
+                            console.log('[user js] FOLLOWIMAGEURI AT COMPONENT:', followImageUri);
+                            this.setState({
+                                followImageElement: (
+                                    <TouchableOpacity
+                                        onPress={() => this.onImageClicked2(followedImageID, this.state.passedId)}
+                                        style={styles.thumbnail}
+                                    >
+                                        <Image
+                                            source={{ uri: followImageUri }}
+                                            style={styles.thumbnail}
+                                        />
+
+                                    </TouchableOpacity>
+                                    // <Text>followImageElement Test</Text>
+                                )
+                            });
+                        }else if(this.state.followIDArray[0].images.length > 1){
+                            
+                            followImageArray = [];
+                            this.setState({
+                                followImageElement: (
+                                    followImageArray = this.state.followIDArray[0].images.map((imageId, index) => {
+                                        // console.log('[user js] IMAGE ID AT COMPONENT: ', imageId);
+                                        // console.log('[user js] FOLLOW IMAGE ID: ', followImageID);
+                                        followImageUri = this.state.IMAGEURI + imageId+ '/display';
+                                        console.log('[user js] FOLLOWIMAGEURI if more than one image for one followed user', followImageUri)
+                                        return (
+                                            <TouchableOpacity
+                                                onPress={() => this.onImageClicked2(imageId, this.state.passedId)}
+                                                key={imageId}
+                                                style={styles.thumbnail}
+                                            >
+                                                <Image
+                                                    source={{ uri: followImageUri }}
+                                                    style={styles.thumbnail}
+                                                />
+                                            </TouchableOpacity>
+                                        );
+
+                                    })
+                                )
+                            });
+                        }
+                      
+                    }else if (this.state.followIDArray.length > 1){
+                        // followImageUri
+                    }
+                    
                     
 
                 }).catch((error) => {
