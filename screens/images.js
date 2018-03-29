@@ -3,6 +3,7 @@ import { Platform, Text, TextInput, StyleSheet, View, Image, Alert, TouchableOpa
 import { StackNavigator, } from 'react-navigation';
 import { Header, Button, Tile, Icon} from 'react-native-elements';
 import CustomBackBtn from './../components/CustomBackBtn/CustomBackBtn';
+import CustomLogoutBtn from './../components/CustomLogoutBtn/CustomLogoutBtn';
 
 class ImageScreen extends Component{
     constructor(props) {
@@ -45,6 +46,34 @@ class ImageScreen extends Component{
 	onBackBtnPressed = () => {
 		console.log('[images js] onBackBtnPressed');
 		this.props.navigation.goBack();
+	}
+
+	onLogoutHandler = () => {
+        return fetch('https://app-api-testing.herokuapp.com/logout', {
+        // return fetch('http://localhost:5000/logout', {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then((response) => response.json())
+		.then((responseJson) => {
+			Alert.alert(
+				'Logging out',
+				"",
+				[
+					{
+						text: 'OK', onPress: () => {
+							this.props.navigation.navigate('Home');
+							console.log("[explore js] onLogoutPressHandler - LOGGED OUT")
+						}
+					}
+				]
+			) 
+		})
+		.catch ((error) => {
+			console.error(error);
+		});
 	}
     
     onLikePressHandler = (imageId) => {
@@ -94,7 +123,8 @@ class ImageScreen extends Component{
             <View>
 				<Header 
 					leftComponent={<CustomBackBtn clicked={this.onBackBtnPressed} />} 
-					centerComponent={{ text: "IMAGES", style: { color: "#fff" } }} 
+					centerComponent={{ text: "IMAGES", style: { color: "#fff" } }}
+					rightComponent={<CustomLogoutBtn clicked={this.onLogoutHandler} />} 
 				/>
 
 				<View style={styles.imageContainer}>

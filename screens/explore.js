@@ -62,11 +62,6 @@ class ExploreScreen extends Component {
 		this.props.navigation.goBack();
 	}
 
-	onLogoutBtnPressed = () => {
-		console.log('[explore js] onLogoutBtnPressed');
-		this.onLogoutHandler();
-	}
-
     onLogoutHandler = () => {
         return fetch('https://app-api-testing.herokuapp.com/logout', {
         // return fetch('http://localhost:5000/logout', {
@@ -167,7 +162,7 @@ class ExploreScreen extends Component {
 				<Header 
 					leftComponent={<CustomBackBtn clicked={this.onBackBtnPressed} />}
 					centerComponent={{ text: "EXPLORE", style: { color: "#fff" } }}
-					rightComponent={<CustomLogoutBtn clicked={this.onLogoutBtnPressed} />}
+					rightComponent={<CustomLogoutBtn clicked={this.onLogoutHandler} />}
 				/>
 				<List containerStyle={styles.outerList}>
 					<FlatList
