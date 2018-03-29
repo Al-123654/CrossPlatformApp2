@@ -56,6 +56,11 @@ class ExploreScreen extends Component {
 		.catch(err=>console.log('[explore js] fetchListofUsers - error: ', err));
 	}
 
+	onBackBtnPressed = () => {
+		console.log('[explore js] onBackBtnPressed');
+		this.props.navigation.goBack();
+	}
+
     onLogoutPressHandler = () => {
         return fetch('https://app-api-testing.herokuapp.com/logout', {
         // return fetch('http://localhost:5000/logout', {
@@ -115,12 +120,7 @@ class ExploreScreen extends Component {
 	}
 
     render() {
-		// get passed data from previous screen
-		// const {params} = this.props.navigation.state;
-		// console.log('[explore js] render PARAMS: ',params);
-		// const passedUserId = params.currentUserId;
-		// console.log('[explore js] render passedUserId: ',passedUserId);
-		
+		// copy list of users from state
 		let listOfUsersCopy = [...this.state.listOfUsers];
 		let currentlyFollowingList = [];
 
@@ -159,7 +159,7 @@ class ExploreScreen extends Component {
 		return(
 			<View>
 				<Header 
-					leftComponent={<CustomBackBtn clicked={()=>console.log('Pressed custom back btn!')} />} 
+					leftComponent={<CustomBackBtn clicked={this.onBackBtnPressed} />} 
 					centerComponent={{ text: "EXPLORE", style: { color: "#fff" } }} 
 				/>
 				<List containerStyle={styles.outerList}>
