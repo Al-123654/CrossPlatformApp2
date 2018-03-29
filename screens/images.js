@@ -43,7 +43,7 @@ class ImageScreen extends Component{
 	}
 	
 	onBackBtnPressed = () => {
-		console.log('[explore js] onBackBtnPressed');
+		console.log('[images js] onBackBtnPressed');
 		this.props.navigation.goBack();
 	}
     

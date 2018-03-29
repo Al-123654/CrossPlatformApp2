@@ -3,6 +3,7 @@ import { Text, TextInput, StyleSheet, View,  Image, Alert, FlatList } from 'reac
 import { StackNavigator, } from 'react-navigation';
 import validator from 'validator';
 import {Button, FormInput, FormLabel, FormValidationMessage, Header} from 'react-native-elements';
+import CustomBackBtn from './../components/CustomBackBtn/CustomBackBtn';
 // import {Icon} from 'react-native-vector-icons;
 
 class RegisterScreen extends Component {
@@ -65,7 +66,12 @@ class RegisterScreen extends Component {
                 email: email, logEmail: ''
             });
         }
-    }
+	}
+	
+	onBackBtnPressed = () => {
+		console.log('[register js] onBackBtnPressed');
+		this.props.navigation.goBack();
+	}
 
     onRegisterFinishedHandler = () => {
         
@@ -148,7 +154,10 @@ class RegisterScreen extends Component {
     render() {
         return (
            <View style={styles.outerContainer}> 
-                <Header centerComponent={{ text: "REGISTER", style: { color: "#fff" } }} />
+				<Header 
+					leftComponent={<CustomBackBtn clicked={this.onBackBtnPressed} />}
+					centerComponent={{ text: "REGISTER", style: { color: "#fff" } }} 
+				/>
 
 				<View style={styles.formContainer}>
 					<FormInput placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
