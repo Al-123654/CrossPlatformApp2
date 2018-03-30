@@ -42,9 +42,23 @@ class UserScreen extends Component {
     }
 
     componentDidMount(){
+
+		// check if one or more following
+			// if one following
+				// if one image
+					// display the image
+				// if multiple images
+					// lop through images and display them
+			// if multiple following
+				// loop through following
+					// for each following
+						// if one image
+							// display the image
+						// if multiple images
+							// loop through images and display them
         
         let followIDArray = [];
-        let followImageUri = ""
+        let followImageUri = "";
         this.state.following.forEach((followedID) => {
             //get followed users data
             console.log('[user js] FOLLOWEDID IN COMPONENTDIDMOUNT:', followedID);
