@@ -177,7 +177,10 @@ class UserScreen extends Component {
 						});
 						console.log('[user js] componentDidMount - MULTIPLE fetch tempImageContainer: ', tempImageContainer);
 						return (
-							<View>
+
+							<View
+                                key = {item._id}
+                            >
 								{[...tempImageContainer]}
 							</View>
 						);
