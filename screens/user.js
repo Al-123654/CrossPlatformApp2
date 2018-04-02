@@ -147,8 +147,26 @@ class UserScreen extends Component {
 			.then(response => {
 				console.log('[user js] componentDidMount - MULTIPLE fetch response: ', response);
 				let tempImageElement = response.data.map((item, index) => {
-					console.log('[user js] componentDidMount - MULTIPLE fetch map: ', item);
-				});
+                    console.log('[user js] componentDidMount - MULTIPLE fetch map: ', item);
+                    console.log('[user js] componentDidMount - MULTIPLE fetch image arrays: ', item.images);
+                   let tempImageUri =GET_IMAGES_URI + item.images + '/display';
+                   console.log('[user js] tempImageUri when followed users > 1:', tempImageUri)
+                    return (
+                        <TouchableOpacity
+                            key={item.images + index}
+                            onPress={() => this.onImageClicked2(item.images, this.state.passedId)}
+                        >
+                            <Image
+                                key={item.images}
+                                source={{ uri: tempImageUri }}
+                                style={styles.thumbnail}
+                            />
+                        </TouchableOpacity>
+                    );
+                });
+                this.setState({
+                    followImageElement: [...tempImageElement]
+                });
 			})
 			.catch(error => console.log('[user js] componentDidMount - MULTIPLE fetch error: ', error));
 
@@ -574,19 +592,19 @@ class UserScreen extends Component {
             let imageCount = this.state.images.length;
 		    console.log("[user js] render Image Count: ", imageCount);
 		    // setup variable to contain Image element
-            let imageUri = 'https://app-api-testing.herokuapp.com/api/images/';
+            // let imageUri = 'https://app-api-testing.herokuapp.com/api/images/';
             // let imageUri = 'http://localhost:5000/api/images/';
             //if user has only one image
 		    if(imageCount == 1){
                 console.log("[user.js] render IMAGE ID", this.state.images);
-                console.log("[user js] render IMAGE URI", imageUri + this.state.images[0])
+                console.log("[user js] render IMAGE URI", GET_IMAGES_URI + this.state.images[0])
 			    imageElement = (
                 <TouchableOpacity
                     onPress={() => this.onImageClicked(this.state.images[0], this.state.passedId )}
                     style={styles.thumbnail}    
                 >
                     <Image 
-					    source={{uri: imageUri + this.state.images[0] + '/display'}}
+					    source={{uri: GET_IMAGES_URI + this.state.images[0] + '/display'}}
                         style={styles.thumbnail} 
                     />
                 </TouchableOpacity>
@@ -603,7 +621,7 @@ class UserScreen extends Component {
                         >
 
                             <Image  
-                                source={{ uri: imageUri + imageId + '/display'}}
+                                source={{ uri: GET_IMAGES_URI + imageId + '/display'}}
                                 style={styles.thumbnail} 
                             />
 					    </TouchableOpacity>
