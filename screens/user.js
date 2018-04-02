@@ -141,29 +141,49 @@ class UserScreen extends Component {
 			// MULTIPLE following
 			console.log('[user js] componentDidMount - Multiple Following: ', this.state.following);
 			this.setState({ hasMultipleFollowing: true });
-			
+
 			fetch(GET_USERS_FOLLOWED_URI)
 			.then(response => response.json())
 			.then(response => {
 				console.log('[user js] componentDidMount - MULTIPLE fetch response: ', response);
+				// assume multiple followers
+				// map response data to tempImageElement
+				// 
+				let tempImageContainer = [];
 				let tempImageElement = response.data.map((item, index) => {
-                    console.log('[user js] componentDidMount - MULTIPLE fetch map: ', item);
-                    console.log('[user js] componentDidMount - MULTIPLE fetch image arrays: ', item.images);
-                   let tempImageUri =GET_IMAGES_URI + item.images + '/display';
-                   console.log('[user js] tempImageUri when followed users > 1:', tempImageUri)
-                    return (
-                        <TouchableOpacity
-                            key={item.images + index}
-                            onPress={() => this.onImageClicked2(item.images, this.state.passedId)}
-                        >
-                            <Image
-                                key={item.images}
-                                source={{ uri: tempImageUri }}
-                                style={styles.thumbnail}
-                            />
-                        </TouchableOpacity>
-                    );
-                });
+					console.log('[user js] componentDidMount - MULTIPLE fetch map: ', item);
+					console.log('[user js] componentDidMount - MULTIPLE fetch image arrays: ', item.images);
+					console.log('[user js] componentDidMount - MULTIPLE fetch image arrays length: ', item.images.length);
+					// let tempImageUri =GET_IMAGES_URI + item.images + '/display';
+					// console.log('[user js] tempImageUri when followed users > 1:', tempImageUri);
+
+					if(item.images.length <= 0){
+
+					}else if(item.images.length >= 1){
+						let tempImageContainer = item.images.map((item,index) => {
+							let tempImageUri =GET_IMAGES_URI + item + '/display';
+							return (
+								<TouchableOpacity
+									key={item + index}
+									onPress={() => this.onImageClicked2(item, this.state.passedId)}
+								>
+									<Image
+										key={item}
+										source={{ uri: tempImageUri }}
+										style={styles.thumbnail}
+									/>
+								</TouchableOpacity>
+							);
+						});
+						console.log('[user js] componentDidMount - MULTIPLE fetch tempImageContainer: ', tempImageContainer);
+						return (
+							<View>
+								{[...tempImageContainer]}
+							</View>
+						);
+					}
+				});
+				
                 this.setState({
                     followImageElement: [...tempImageElement]
                 });
