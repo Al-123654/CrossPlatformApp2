@@ -28,7 +28,8 @@ class UserScreen extends Component {
              followed : props.navigation.state.params.data.following,
              followImageHeading: [],
              followedImagesContainer: [],
-             followIDArray: [],
+			 followIDArray: [],
+			 oneFollowMultiImageFlag: false
         }
         
         //check for number of follows and who
@@ -68,6 +69,7 @@ class UserScreen extends Component {
 						let tempImageElement = [( 
 							<TouchableOpacity
 								key={response.images[0]}
+								style={styles.thumbnail}
 								onPress={() => this.onImageClicked2(response.images[0], this.state.passedId)}
 							>
 								<Image
@@ -84,13 +86,13 @@ class UserScreen extends Component {
 					}else if(response.images.length > 1){
 						// multiple images
 						console.log('[user js] componentDidMount - fetch response images length: MORE THAN ONE');
-						let tempImageHeading = [( <Text key={response.username}>{response.username}</Text> )];
 						// map
 						let tempImageElement = response.images.map((imageId, index) => {
 							let tempImageUri = GET_IMAGES_URI + imageId + '/display';
 							return (
 								<TouchableOpacity
 									key={imageId + index}
+									style={styles.thumbnail}
 									onPress={() => this.onImageClicked2(imageId, this.state.passedId)}
 								>
 									<Image
@@ -102,7 +104,7 @@ class UserScreen extends Component {
 							);
 						});
 						this.setState({
-							followImageHeading: [...tempImageHeading], 
+							oneFollowMultiImageFlag: true, 
 							followedImagesContainer: [...tempImageElement] 
 						});
 					}
@@ -134,6 +136,7 @@ class UserScreen extends Component {
 								return (
 									<TouchableOpacity
 										key={item + index}
+										style={styles.thumbnail}
 										onPress={() => this.onImageClicked2(item, this.state.passedId)}
 									>
 										<Image
@@ -148,10 +151,14 @@ class UserScreen extends Component {
 							console.log('[user js] componentDidMount - MULTIPLE fetch tempImageElements: ', tempImageElements);
 							// return View element containing tempImageElements 
 							return (
-								<View style={styles.imagesContainer}
+								<View style={styles.followedImagesOuter}
 									key = {item._id}
 								>
-									{[...tempImageElements]}
+									<Text>{item._id}</Text>
+									<View style={styles.followedImagesInner}>
+										{[...tempImageElements]}
+									</View>
+									
 								</View>
 							);
 						}
@@ -164,7 +171,7 @@ class UserScreen extends Component {
 		}
 	}
 	
-	onLogoutPressHandler = () => {
+	onLogoutHandler = () => {
         return fetch('https://app-api-testing.herokuapp.com/logout', {
         // return fetch('http://localhost:5000/logout', {
             method: 'GET',
@@ -363,65 +370,113 @@ class UserScreen extends Component {
         }else {
             // console.log("[user js] render IN THE ELSE STATEMENT");
             imageElement = (
-				<View style={styles.viewContainer}>
-                    <Text style={{justifyContent:'center', alignItems: 'center'}}>No images available
-                    </Text>
-				</View>
+				<Text>No images available.</Text>
 			);
         }
 		
         return (
-            <View style={{
-                flex: 1,
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-            }}>
-				<Header 
+            <View style={styles.page}>
+				<Header
 					centerComponent={{ text: this.state.passedUsername, style: { color: "#fff" } }}
 					rightComponent={<CustomLogoutBtn clicked={this.onLogoutHandler} />}
+					outerContainerStyles={styles.outerHeader}
 				/>
-                
-                <View style= {styles.pictures}>
-                    {imageElement}
-                </View>
 
-                <View style= {styles.pictures}>
-                    {this.state.followImageHeading}
-                    {this.state.followedImagesContainer}
-                </View>
-                
-                <Button title="Image Picker" onPress={this.onImagePickerHandler} />
-                <Button title="Explore" onPress={()=>{this.onExplorePressedHandler(this.state.passedId)}} />
-                <Button title="Logout" onPress={this.onLogoutPressHandler} />
-                <Text>{this.state.log}</Text>
-                
+				<View style={styles.body}>
+
+					<View style={styles.imagesContainer}>
+
+						<View style={styles.currentUserOuter}>
+							<Text>{this.state.passedUsername}</Text>
+							<View style={styles.currentUserInner}>
+								{imageElement}
+							</View>
+						</View>
+
+						<View style={ this.state.oneFollowMultiImageFlag ? styles.followedUsersOuterSingle : styles.followedUsersOuterMulti}>
+							{this.state.followedImagesContainer}
+						</View>
+
+					</View>
+
+					<View style={styles.buttonsContainer}>
+						<Button title="Image Picker" onPress={this.onImagePickerHandler} />
+						<Button title="Explore" onPress={()=>{this.onExplorePressedHandler(this.state.passedId)}} />
+						<Text>{this.state.log}</Text>
+					</View>
+
+				</View>
             </View>
-           
         );
     }
 }
 
 const styles = StyleSheet.create({
+	page: {
+		width: window.width,
+		height: window.height,
+		flex: 1,
+		flexDirection:'column',
+		justifyContent: 'space-between'
+	},
+	outerHeader:{},
+	body: {
+		flex:1,
+		// width:'100%',
+		// height:'100%',
+		flexDirection:'column',
+		justifyContent: 'space-between'
+	},
+	imagesContainer: {
+		flex: 1,
+		flexDirection: 'column',
+		width: '100%',
+		height: '100%'
+	},
+	currentUserOuter: {
+		flex: 1,
+		flexDirection:'column',
+		width: '100%',
+		height: '100%'
+	},
+	currentUserInner: {
+		flexDirection:'row',
+		flexWrap:'wrap'
+	},
+	buttonsContainer: {
+		width: '100%',
+		height: '100%',
+		flex: 1
+	},
+	followedImagesOuter: {
+		flex:1,
+		flexDirection:'column'
+	},
+	followedImagesInner: {
+		flex:1,
+		flexDirection:'row',
+		flexWrap:'wrap'
+	},
+	followedUsersOuterSingle: {
+		flex:1,
+		flexDirection: 'row'
+	},
+	followedUsersOuterMulti: {
+		flex:1,
+		flexDirection: 'column'
+	},
 	viewContainer: {
 		flex: 1,
 		backgroundColor: '#fff',
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
-	imagesContainer: {
-		flex:1,
-		flexDirection: 'row',
-		flexWrap: 'wrap',
-		width: '100%'
-	},
     pictures: {
         flex: 1, flexDirection: 'row',
         width: '80%',
         flexWrap:'wrap',
         justifyContent: 'center',
-        
     },
-
     thumbnail: {
         width: 75,
         height: 75,
