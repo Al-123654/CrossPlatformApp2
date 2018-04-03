@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Platform, Text, TextInput, StyleSheet, View, Image, Alert, TouchableOpacity } from 'react-native';
 import { StackNavigator, } from 'react-navigation';
-import { Header, Button, Tile, Icon} from 'react-native-elements';
+import { Header, Button, Tile, Icon, FormInput} from 'react-native-elements';
 import CustomBackBtn from './../components/CustomBackBtn/CustomBackBtn';
 import CustomLogoutBtn from './../components/CustomLogoutBtn/CustomLogoutBtn';
 
@@ -27,11 +27,16 @@ class ImageScreen extends Component{
 		// initialize state
 		this.state = {
 			IMAGE_ROOT_URI: 'https://app-api-testing.herokuapp.com/api/images/',
+			COMMENT_URI: 'https://app-api-testing.herokuapp.com/api/comments/',
 			imageId: props.navigation.state.params.data._id,
 			imageLikesArray: props.navigation.state.params.data.likes,
 			userId: props.navigation.state.params.userId,
 			isImageLiked: isLiked,
-			noOfLikes: props.navigation.state.params.data.likes.length
+			noOfLikes: props.navigation.state.params.data.likes.length,
+			commentId: props.navigation.state.params.data.comments,
+			comment: "",
+			displayingComment: []
+			
 		};
 
 		// logs
@@ -41,6 +46,7 @@ class ImageScreen extends Component{
 		console.log('[images js] constructor - userId: ', this.state.userId);
 		console.log('[images js] constructor - isImageLiked: ', this.state.isImageLiked);
 		console.log('[images js] constructor - noOfLikes: ', this.state.noOfLikes);
+		console.log('[images js] constructor - comment: ', this.state.commentId);
 	}
 	
 	onBackBtnPressed = () => {
@@ -114,10 +120,113 @@ class ImageScreen extends Component{
 		})
 		.catch(error => console.log('[images js] onLikePressHandler - Error:', error));    
 	}
+	//enter comment
+	createComment = (comment) => {
+		if(comment){
+			this.setState({
+				comment:comment
+			});
+			console.log('Comment being entered:', comment);
+		}
+	}
+	//save comment to api
+	postComment = () => {
+		fetch(this.state.IMAGE_ROOT_URI + this.state.imageId + '/comments', {
+			method: 'POST',
+			headers:{
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				comment: this.state.comment
+			}),
+		})
+		.then((response) => response.json())
+		.then((responseJson) => {
+			console.log("Comment saved")
+		})
+		.catch((error) => {
+			console.error(error)
+		});
+	}
+	
+	//display comments from api
+	displayComment = () => {
+		// if one comment
+		if (this.state.commentId.length == 1){
+			fetch(this.state.COMMENT_URI + this.state.commentId, {
+				method: 'GET',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
+				},
+			})
+			.then((response) => response.json())
+			.then((responseJson) => {
+				console.log("Comment to display:", responseJson.comment)
+			
+				this.setState({
+					displayingComment: <Text>{responseJson.comment}</Text>
+				})
+			})
+			.catch((error) => {
+				console.error(error)
+			});
+		// if more than one comment 
+		}else if(this.state.commentId.length > 1){
+			let tempDisplay = []
+			this.state.commentId.forEach((comments, index) => {
+				fetch(this.state.COMMENT_URI + comments, {
+					method: 'GET',
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json'
+					},
+				})
+				.then((response) => response.json())
+				.then((responseJson) => {
+					console.log('[images js] Response from server', responseJson)
+					console.log("Comment to display:", responseJson.comment)
+					
+					tempDisplay.push(<Text key={index}>{responseJson.comment}</Text>)
+					this.setState({
+						displayingComment: [...tempDisplay]
+					})
+			})
+			.catch((error) => {
+				console.error(error)
+			});
+		})
+		
+			// fetch(this.state.COMMENT_URI + comments, {
+			// 	method:'GET',
+			// 	headers:{
+			// 		Accept: 'application/json',
+			// 		'Content-Type': 'application/json'
+			// 	},
+			// })
+			// .then((response) => response.json())
+			// .then((responseJson) => {
+			// 	let displayComments = responseJson.comment
+			// 	console.log('Comment') 
+			// })
+
+			
+		// if no comments
+		}else if(this.state.commentId.length == 0){
+			this.setState({
+				displayingComment: <Text>No comments</Text>
+			})
+		}
+		
+	}
+	componentDidMount(){
+		this.displayComment();
+	}
 
     render(){
-        console.log("[images js] render - Image path: ", this.state.IMAGE_ROOT_URI);
-        console.log("[images js] render - CURRENT IMAGE ID: ",this.state.imageId);
+        // console.log("[images js] render - Image path: ", this.state.IMAGE_ROOT_URI);
+        // console.log("[images js] render - CURRENT IMAGE ID: ",this.state.imageId);
 		
         return (
             <View>
@@ -145,6 +254,20 @@ class ImageScreen extends Component{
 							/>
 						</TouchableOpacity>
 					</View>
+					<View style ={styles.commentEntry} >
+						<FormInput placeholder="Comment here" onChangeText={(text) => this.createComment(text)}/>
+					</View>
+					<View style = {styles.commentButton}>
+						<Button
+							raised
+							title="Enter comment"
+							onPress={this.postComment}
+						/>
+					</View>
+					<View style = {styles.commentDisplay}>
+						{this.state.displayingComment}
+					</View>
+
 				</View>	
             </View>
         );
@@ -169,6 +292,16 @@ const styles = StyleSheet.create({
 		height: 59
 	},
 	likesCount: {
+	},
+	commentEntry:{
+		marginTop:70
+	},
+	commentButton:{
+		marginTop:40
+	},
+	commentDisplay:{
+		marginTop: 30
 	}
+
 })
 module.exports = ImageScreen;
