@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import {  TextInput, StyleSheet, View,  Image, Alert, FlatList } from 'react-native';
 import { StackNavigator, } from 'react-navigation';
 import validator from 'validator';
-import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Form, Item, Input, Label } from 'native-base';
+import { 
+	Container, Header, Left, Body, Right, Icon, 
+	Title, Content, Text, Button, Form, Item, 
+	Input, Label, Footer, FooterTab
+} from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 // import CustomBackBtn from './../components/CustomBackBtn/CustomBackBtn';
 
@@ -213,11 +217,15 @@ class RegisterScreen extends Component {
 						</Item>
 
 					</Form>
-					<Button block onPress={this.onRegisterFinishedHandler}>
-						<Text>Register</Text>
-					</Button>
 					{this.state.log.length > 0 ? (<Text>{this.state.log}</Text>) : null}
 				</Content>
+				<Footer>
+					<FooterTab>
+						<Button onPress={this.onRegisterFinishedHandler}>
+							<Text>Register</Text>
+						</Button>
+					</FooterTab>
+				</Footer>
 			</Container>
         );
     }
