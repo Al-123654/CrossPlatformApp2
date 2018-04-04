@@ -3,7 +3,11 @@ import { Platform, StyleSheet,  View, Image } from 'react-native';
 import { StackNavigator, navigationOptions} from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
-import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input, Form, Label} from 'native-base';
+import { 
+	Container, Header, Left, Body, Right, Icon, 
+	Title, Content, Text, Button, Item, Input, 
+	Form, Label, Footer, FooterTab
+} from 'native-base';
 import{Col, Row, Grid} from 'react-native-easy-grid';
 
 var RegisterScreen = require('./screens/register.js');
@@ -132,35 +136,21 @@ class HomeScreen extends Component {
 									<Input secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
 								</Item>
 							</Form>
-							<Button full onPress={this.onLoginPressHandler}>
-								<Text>Login</Text>
+							<Button transparent onPress={this.onRegisterPressHandler}>
+								<Text>Register</Text>
 							</Button>
-							<Text onPress={this.onRegisterPressHandler} >Register</Text>
 							<Text style={{fontSize:12, color:'red'}}>{this.state.log}</Text>
 							<Text style={{ fontSize: 12, color: 'red' }}>{this.state.logDetails}</Text>
 						</Row>
-						{/* <Row style={styles.formContainer}>
-							<Form style={{width:'100%'}}>
-								<Item stackedLabel>
-									<Label>Username</Label>
-									<Input onChangeText={(text) => this.onChangedUsernameHandler(text)} />
-								</Item>
-								<Item stackedLabel last>
-									<Label>Password</Label>
-									<Input secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
-								</Item>
-							</Form>
-							<Button full>
-								<Text>Login</Text>
-							</Button>
-							<Text onPress={this.onRegisterPressHandler} >Register</Text>
-						</Row> */}
-						{/* <Row>
-							<Text style={{fontSize:12, color:'red'}}>{this.state.log}</Text>
-							<Text style={{ fontSize: 12, color: 'red' }}>{this.state.logDetails}</Text>
-						</Row> */}
 					</Grid>
 				</Content>
+				<Footer>
+					<FooterTab>
+						<Button onPress={this.onLoginPressHandler}>
+							<Text>Login</Text>
+						</Button>
+					</FooterTab>
+				</Footer>
 			</Container>
 		);
 	}
@@ -219,7 +209,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: '#635DB7',
+		backgroundColor: '#D3D3D3',
 		height: 175
 	},
 	formContainer: {
