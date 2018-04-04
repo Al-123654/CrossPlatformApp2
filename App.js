@@ -3,7 +3,8 @@ import { Platform, StyleSheet,  View, Image } from 'react-native';
 import { StackNavigator, navigationOptions} from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
-import { Button, FormInput, FormLabel, Text,FormValidationMessage, Header, Icon } from 'react-native-elements';
+
+import { Container, Header, Content, Text, Button} from 'native-base';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 
 var RegisterScreen = require('./screens/register.js');
@@ -86,25 +87,41 @@ class HomeScreen extends Component {
 		
 		return (
 
-			<View style={styles.outerContainer}>
+			// <View style={styles.outerContainer}>
 
-				<Header centerComponent={{ text: "TEST APP", style: { color: "#fff" } }} />
+			// 	<Header centerComponent={{ text: "TEST APP", style: { color: "#fff" } }} />
 
-				<View style={styles.formContainer}>
-					<FormLabel>Login</FormLabel>
-					<FormInput style={styles.input} placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
-					<FormInput style={styles.input} placeholder="Password" secureTextEntry ={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
-					<Button	title="Login" onPress={this.onLoginPressHandler} /> 
-				</View>
+			// 	<View style={styles.formContainer}>
+			// 		<FormLabel>Login</FormLabel>
+			// 		<FormInput style={styles.input} placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
+			// 		<FormInput style={styles.input} placeholder="Password" secureTextEntry ={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
+			// 		<Button dark onPress={this.onLoginPressHandler}>
+			// 			<Text>Login</Text> 
+			// 		</Button> 
+			// 	</View>
 
-				<Text style={styles.registerLink} onPress={this.onRegisterPressHandler}>Register</Text>
+			// 	<Text style={styles.registerLink} onPress={this.onRegisterPressHandler}>Register</Text>
 					
-				<View style={styles.logContainer}>
-					<FormLabel>{this.state.log}</FormLabel>
-					<FormLabel>{this.state.logDetails}</FormLabel>
-				</View>
+			// 	<View style={styles.logContainer}>
+			// 		<FormLabel>{this.state.log}</FormLabel>
+			// 		<FormLabel>{this.state.logDetails}</FormLabel>
+			// 	</View>
 					
-			</View>
+			// </View>
+
+			<Container>
+				<Header />
+				<Content>
+					{/* NativeBase default style */}
+					<Button light onPress={() => console.log("BUTTON PRESSED")}><Text> Light </Text></Button>
+					<Button primary><Text> Primary </Text></Button>
+					<Button success><Text> Success </Text></Button>
+					<Button info><Text> Info </Text></Button>
+					<Button warning><Text> Warning </Text></Button>
+					<Button danger><Text> Danger </Text></Button>
+					<Button dark><Text> Dark </Text></Button>
+				</Content>
+			</Container>
 		);
 	}
 }
@@ -118,34 +135,34 @@ const RootStack = StackNavigator(
 				gesturesEnabled:false
 			}
 		},
-		Register: {
-			screen: RegisterScreen,
-			navigationOptions:{
-				header: null,
-				gesturesEnabled: false
-			}
-		},
-		User: {
-			screen: UserScreen,
-			navigationOptions: {
-				header: null,
-				gesturesEnabled:false
-			}
-		},
-		Image:{
-			screen:ImageScreen,
-			navigationOptions:{
-				header: null,
-				gesturesEnabled: false
-			} 
-		},
-		Explore:{
-			screen:ExploreScreen,
-			navigationOptions:{
-				header: null,
-				gesturesEnabled: false
-			}
-		}
+		// Register: {
+		// 	screen: RegisterScreen,
+		// 	navigationOptions:{
+		// 		header: null,
+		// 		gesturesEnabled: false
+		// 	}
+		// },
+		// User: {
+		// 	screen: UserScreen,
+		// 	navigationOptions: {
+		// 		header: null,
+		// 		gesturesEnabled:false
+		// 	}
+		// },
+		// Image:{
+		// 	screen:ImageScreen,
+		// 	navigationOptions:{
+		// 		header: null,
+		// 		gesturesEnabled: false
+		// 	} 
+		// },
+		// Explore:{
+		// 	screen:ExploreScreen,
+		// 	navigationOptions:{
+		// 		header: null,
+		// 		gesturesEnabled: false
+		// 	}
+		// }
 	},
 	{initialRouteName: 'Home'}
 );
