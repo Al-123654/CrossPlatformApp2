@@ -3,10 +3,8 @@ import { Platform, StyleSheet,  View, Image } from 'react-native';
 import { StackNavigator, navigationOptions} from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
-
 import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input, Form, Label} from 'native-base';
 import{Col, Row, Grid} from 'react-native-easy-grid';
-// import Icon from 'react-native-vector-icons/FontAwesome';
 
 var RegisterScreen = require('./screens/register.js');
 var UserScreen = require('./screens/user.js');
@@ -115,16 +113,15 @@ class HomeScreen extends Component {
 			<Container>
 				<Header>
 					<Body>
-						<Title>TEST APP</Title>
+						<Title>Test App</Title>
 					</Body>
 				</Header>
 				<Content>
 					<Grid>
-						<Row>
-							<Icon name = 'home' style={{fontSize:50}}/>
-
+						<Row style={styles.iconContainer}>
+							<Text>Image Goes Here</Text>
 						</Row>
-						<Row>
+						<Row style={styles.formContainer}>
 							<Form style={{width:'100%'}}>
 								<Item stackedLabel>
 									<Label>Username</Label>
@@ -135,20 +132,33 @@ class HomeScreen extends Component {
 									<Input secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
 								</Item>
 							</Form>
-						</Row>
-						
-						<Button full onPress={this.onLoginPressHandler} >
-							<Text>Login</Text>
-						</Button>
-						<Row>
+							<Button full onPress={this.onLoginPressHandler}>
+								<Text>Login</Text>
+							</Button>
 							<Text onPress={this.onRegisterPressHandler} >Register</Text>
-						</Row>
-						<Row>
 							<Text style={{fontSize:12, color:'red'}}>{this.state.log}</Text>
-						</Row>
-						<Row>
 							<Text style={{ fontSize: 12, color: 'red' }}>{this.state.logDetails}</Text>
 						</Row>
+						{/* <Row style={styles.formContainer}>
+							<Form style={{width:'100%'}}>
+								<Item stackedLabel>
+									<Label>Username</Label>
+									<Input onChangeText={(text) => this.onChangedUsernameHandler(text)} />
+								</Item>
+								<Item stackedLabel last>
+									<Label>Password</Label>
+									<Input secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
+								</Item>
+							</Form>
+							<Button full>
+								<Text>Login</Text>
+							</Button>
+							<Text onPress={this.onRegisterPressHandler} >Register</Text>
+						</Row> */}
+						{/* <Row>
+							<Text style={{fontSize:12, color:'red'}}>{this.state.log}</Text>
+							<Text style={{ fontSize: 12, color: 'red' }}>{this.state.logDetails}</Text>
+						</Row> */}
 					</Grid>
 				</Content>
 			</Container>
@@ -179,13 +189,13 @@ const RootStack = StackNavigator(
 				// gesturesEnabled:false
 			}
 		},
-		// Image:{
-		// 	screen:ImageScreen,
-		// 	navigationOptions:{
-		// 		header: null,
-		// 		gesturesEnabled: false
-		// 	} 
-		// },
+		Image:{
+			screen:ImageScreen,
+			navigationOptions:{
+				header: null,
+				// gesturesEnabled: false
+			} 
+		},
 		// Explore:{
 		// 	screen:ExploreScreen,
 		// 	navigationOptions:{
@@ -204,66 +214,16 @@ export default class App extends Component {
 }
 
 const styles = StyleSheet.create({
-	outerContainer: {
-		flex:1,
-		flexDirection: 'column',
-		justifyContent: 'space-between'
+	iconContainer: {
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: '#635DB7',
+		height: 175
 	},
 	formContainer: {
-		width:'95%',
-		alignSelf: 'center',
-		...Platform.select({
-			ios: {
-				marginBottom: 10
-			}
-		})
-	},
-	logContainer: {
-		width:'95%',
-		alignSelf: 'center'
-	},
-	container: {
 		flex: 1,
-		backgroundColor: '#fff',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		flexDirection: 'column',
-		height: '10%'
+		flexDirection: 'column'
 	},
-	input:{
-		...Platform.select({
-			ios:{
-				width: '50%',
-				height: '13%',
-				borderColor: 'grey',
-				justifyContent: 'space-around',	
-			},
-			android:{}
-		})
-	},
-	entryFields: {
-		width: '50%',
-		height: '13%',
-		borderColor: 'grey',
-		justifyContent: 'space-around',
-	},
-	registerLink: {
-		color: 'blue',
-		marginTop: 10,
-		textAlign:'center'
-	},
-	imageDimensions: {
-		width: 100,
-		height: 100
-	},
-	headerContainer: {
-		width: '100%',
-		height:'100%'
-	},
-	loginButton:{
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		width: '50%',
-		height: '50%'
-	}
 });
