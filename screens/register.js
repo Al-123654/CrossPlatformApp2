@@ -156,8 +156,13 @@ class RegisterScreen extends Component {
         return (
 			<Container>
 				<Header>
+					<Left>
+						<Button transparent onPress={this.onBackBtnPressed}>
+							<Icon name='arrow-back' />
+						</Button>
+					</Left>
 					<Body>
-						<Title>REGISTER</Title>
+						<Title>Register</Title>
 					</Body>
 				</Header>
 				<Content>
