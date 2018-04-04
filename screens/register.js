@@ -208,7 +208,7 @@ class RegisterScreen extends Component {
 				<Footer>
 					<FooterTab>
 						<Button onPress={this.onRegisterFinishedHandler}>
-							<Text>Register</Text>
+							<Text style={{fontSize:15}}>Register</Text>
 						</Button>
 					</FooterTab>
 				</Footer>

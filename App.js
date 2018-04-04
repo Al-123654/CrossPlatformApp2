@@ -9,6 +9,7 @@ import {
 	Form, Label, Footer, FooterTab
 } from 'native-base';
 import{Col, Row, Grid} from 'react-native-easy-grid';
+import validator from 'validator';
 
 var RegisterScreen = require('./screens/register.js');
 var UserScreen = require('./screens/user.js');
@@ -18,69 +19,64 @@ var ExploreScreen = require('./screens/explore.js');
 class HomeScreen extends Component {
 	state = {
 		username: "",
+		logUsername: "",
 		password: "",
+		logPassword: "",
 		log: "",
 		logDetails: "",
 		id: "",
 		imageSource: "",
 	};
 
-	onChangedUsernameHandler = (username) => {
-		if(username){
-			this.setState({
-				username: username
-			});
-		}
-	}
-
-	onChangedPasswordHandler = (password) => {
-		if(password){
-			this.setState({
-				password: password
-			});
-		}
-	}
+	onChangedUsernameHandler = (username) => { if(username) this.setState({ username: username }); }
+	onChangedPasswordHandler = (password) => { if(password) this.setState({ password: password }); }
 
 	onLoginPressHandler = () => {
-		if(this.state.username.length > 1 && this.state.password.length > 1){
-			return fetch('https://app-api-testing.herokuapp.com/login', {
-			// return fetch('http:localhost:5000/login', {
-				method: 'POST',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					username: this.state.username,
-					password: this.state.password
-				}),
-			})
-				.then((response) => {
-					console.log('[app.js] responseOnLogin: ', response);
-					if (response.status !== 200){
-						console.log('[explore js] responseOnLogin bad response: ', response);
-						this.setState({log:"Cannot log in"})
-						return;
-					}
-					response.json().then(data => {
+		console.log('[app js] Login btn pressed.');
+		
+		this.setState({
+			logUsername: "",
+			logPassword: "",
+		});
 
-						console.log('[explore js] componentDidMount json response: ', data);					
-						console.log("[app js] LOGGED IN!");
-						// go to user page
-						console.log('[app js] Response', data);
-						this.props.navigation.navigate('User', data);
-					});
-				})
-				.catch((error) => {
-					console.error(error);
-				});
-		}else {
-			this.setState({
-				log: "Username and Password not provided.",
-				logDetails: ""
-			});
+		if (!validator.isLength(this.state.username, { min: 5 })){
+            this.setState({ logUsername: "Min: 5" });
+            return;
 		}
-		console.log('LOGIN PRESSED');
+		
+		if(!validator.isLength(this.state.password,{min:5})){
+            this.setState({logPassword: "Min: 5"});
+            return;
+		}
+		
+		return fetch('https://app-api-testing.herokuapp.com/login', {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				username: this.state.username,
+				password: this.state.password
+			}),
+		}).then((response) => {
+			console.log('[app js] responseOnLogin: ', response);
+			if (response.status !== 200){
+				console.log('[app js] responseOnLogin bad response: ', response);
+				this.setState({log:"Cannot log in"})
+				return;
+			}
+			response.json().then(data => {
+
+				console.log('[app js] componentDidMount json response: ', data);					
+				console.log("[app js] LOGGED IN!");
+				// go to user page
+				console.log('[app js] Response', data);
+				this.props.navigation.navigate('User', data);
+			});
+		}).catch((error) => {
+			console.log(error);
+		});
 	}
 	
 	onRegisterPressHandler = () => {
@@ -127,17 +123,21 @@ class HomeScreen extends Component {
 						</Row>
 						<Row style={styles.formContainer}>
 							<Form style={{width:'100%'}}>
-								<Item stackedLabel>
+								<Item floatingLabel error={this.state.logUsername.length > 0}>
 									<Label>Username</Label>
 									<Input onChangeText={(text) => this.onChangedUsernameHandler(text)} />
 								</Item>
-								<Item stackedLabel last>
+								{this.state.logUsername.length > 0 ? (<Text style={styles.formLogText}>{this.state.logUsername}</Text>) : null}
+
+								<Item floatingLabel error={this.state.logPassword.length > 0}>
 									<Label>Password</Label>
 									<Input secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
 								</Item>
+								{this.state.logPassword.length > 0 ? (<Text style={styles.formLogText}>{this.state.logPassword}</Text>) : null}
+
 							</Form>
-							<Button transparent onPress={this.onRegisterPressHandler}>
-								<Text>Register</Text>
+							<Button style={{alignSelf:'flex-end'}} transparent onPress={this.onRegisterPressHandler}>
+								<Text style={{fontSize:12}}>Register</Text>
 							</Button>
 							<Text style={{fontSize:12, color:'red'}}>{this.state.log}</Text>
 							<Text style={{ fontSize: 12, color: 'red' }}>{this.state.logDetails}</Text>
@@ -147,7 +147,7 @@ class HomeScreen extends Component {
 				<Footer>
 					<FooterTab>
 						<Button onPress={this.onLoginPressHandler}>
-							<Text>Login</Text>
+							<Text style={{fontSize:15}}>Login</Text>
 						</Button>
 					</FooterTab>
 				</Footer>
@@ -216,4 +216,10 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: 'column'
 	},
+	formLogText: {
+		fontSize: 12,
+		color: 'red',
+		marginTop: 5,
+		marginLeft: 18
+	}
 });
