@@ -7,8 +7,6 @@ import {
 	Title, Content, Text, Button, Form, Item, 
 	Input, Label, Footer, FooterTab
 } from 'native-base';
-import { Col, Row, Grid } from 'react-native-easy-grid';
-// import CustomBackBtn from './../components/CustomBackBtn/CustomBackBtn';
 
 class RegisterScreen extends Component {
     constructor(props) {
@@ -171,53 +169,41 @@ class RegisterScreen extends Component {
 				</Header>
 				<Content>
 					<Form>
-						<Item fixedLabel error={this.state.logUsername.length > 0}>
+						<Item floatingLabel error={this.state.logUsername.length > 0}>
 							<Label>Username</Label>
-							<Input 
-								onChangeText={(text) => this.onChangedUsernameHandler(text)} 
-								placeholder={this.state.logUsername.length > 0 ? this.state.logUsername : null}
-								/>
-							{this.state.logUsername.length > 0 ? (<Icon name='close-circle' />) : null}
+							<Input onChangeText={(text) => this.onChangedUsernameHandler(text)} />
 						</Item>
+						{this.state.logUsername.length > 0 ? (<Text style={styles.formLogText}>{this.state.logUsername}</Text>) : null}
 
-						<Item fixedLabel error={this.state.logPassword.length > 0}>
+						<Item floatingLabel error={this.state.logPassword.length > 0}>
 							<Label>Password</Label>
-							<Input 
-								onChangeText={(text) => this.onChangedPasswordHandler(text)}
-								placeholder={this.state.logPassword.length > 0 ? this.state.logPassword : null}
-								/>
-							{this.state.logPassword.length > 0 ? (<Icon name='close-circle' />) : null}
+							<Input onChangeText={(text) => this.onChangedPasswordHandler(text)} />
 						</Item>
+						{this.state.logPassword.length > 0 ? (<Text style={styles.formLogText}>{this.state.logPassword}</Text>) : null}
 
-						<Item fixedLabel error={this.state.logFname.length > 0}>
+						<Item floatingLabel error={this.state.logFname.length > 0}>
 							<Label>First name</Label>
-							<Input 
-								onChangeText={(text) => this.onChangedFnameHandler(text)}
-								placeholder={this.state.logFname.length > 0 ? this.state.logFname : null}
-								/>
-							{this.state.logFname.length > 0 ? (<Icon name='close-circle' />) : null}
+							<Input onChangeText={(text) => this.onChangedFnameHandler(text)} />
 						</Item>
+						{this.state.logFname.length > 0 ? (<Text style={styles.formLogText}>{this.state.logFname}</Text>) : null}
 
-						<Item fixedLabel error={this.state.logLname.length > 0}>
+						<Item floatingLabel error={this.state.logLname.length > 0}>
 							<Label>Last name</Label>
-							<Input 
-								onChangeText={(text) => this.onChangedLnameHandler(text)}
-								placeholder={this.state.logLname.length > 0 ? this.state.logLname : null}
-								/>
-							{this.state.logLname.length > 0 ? (<Icon name='close-circle' />) : null}
+							<Input onChangeText={(text) => this.onChangedLnameHandler(text)} />
 						</Item>
+						{this.state.logLname.length > 0 ? (<Text style={styles.formLogText}>{this.state.logLname}</Text>) : null}
 
-						<Item fixedLabel last error={this.state.logEmail.length > 0}>
+						<Item floatingLabel last error={this.state.logEmail.length > 0}>
 							<Label>Email</Label>
-							<Input 
-								onChangeText={(text) => this.onChangedEmailHandler(text)}
-								placeholder={this.state.logEmail.length > 0 ? this.state.logEmail : null}
-								/>
-							{this.state.logEmail.length > 0 ? (<Icon name='close-circle' />) : null}
+							<Input onChangeText={(text) => this.onChangedEmailHandler(text)} />
 						</Item>
+						{this.state.logEmail.length > 0 ? (<Text style={styles.formLogText}>{this.state.logEmail}</Text>) : null}
 
 					</Form>
-					{this.state.log.length > 0 ? (<Text>{this.state.log}</Text>) : null}
+					<View style={styles.formMessages}>
+						{this.state.log.length > 0 ? (<Text style={styles.formLogText}>{this.state.log}</Text>) : null}
+					</View>
+						
 				</Content>
 				<Footer>
 					<FooterTab>
@@ -232,10 +218,17 @@ class RegisterScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-    outerContainer: {
-		flex:1,
-		flexDirection: 'column',
-		justifyContent: 'space-between'
+    formMessages: {
+		marginTop: 10,
+		marginLeft: 10,
+		flex: 1,
+		flexDirection: 'column'
+	},
+	formLogText: {
+		fontSize: 12,
+		color: 'red',
+		marginTop: 5,
+		marginLeft: 18
 	}
 });
 module.exports = RegisterScreen;
