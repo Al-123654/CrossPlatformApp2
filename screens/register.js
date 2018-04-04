@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import {  TextInput, StyleSheet, View,  Image, Alert, FlatList } from 'react-native';
 import { StackNavigator, } from 'react-navigation';
 import validator from 'validator';
-import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button } from 'native-base';
+import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Form, Item, Input, Label } from 'native-base';
+import { Col, Row, Grid } from 'react-native-easy-grid';
 // import CustomBackBtn from './../components/CustomBackBtn/CustomBackBtn';
-// import {Icon} from 'react-native-vector-icons;
 
 class RegisterScreen extends Component {
     constructor(props) {
@@ -23,10 +23,9 @@ class RegisterScreen extends Component {
         logLname: "",
         logPassword: "",
         logEmail: "",
-        logDetails: "",
+        logDetails: ""
     };
 
-    
     onChangedUsernameHandler = (username) => {
         if (username) {
             this.setState({
@@ -76,6 +75,7 @@ class RegisterScreen extends Component {
     onRegisterFinishedHandler = () => {
         
         this.setState({
+			logUsername: "",
             logFname: "",
             logLname: "",
             logPassword: "",
@@ -83,31 +83,31 @@ class RegisterScreen extends Component {
         });
         
         if (!validator.isAlphanumeric(this.state.username) ) {
-            this.setState({ logUsername: "Username only allows numbers and letters" });
+            this.setState({ logUsername: "Numbers and letters only" });
             return;
         }
         if (!validator.isLength(this.state.username, { min: 5, max: 10 })){
-            this.setState({ logUsername: "Username too short/too long" });
+            this.setState({ logUsername: "Min: 5, max: 10" });
             return;
         }
         if(!validator.isLength(this.state.password,{min:8})){
-            this.setState({logPassword: "Password to short"});
+            this.setState({logPassword: "Min: 8"});
             return;
         }
         if(!validator.isAlpha(this.state.fname)){
-            this.setState({logFname: "Firstname letters only"});
+            this.setState({logFname: "Letters only"});
             return;
         }
         if (!validator.isLength(this.state.fname, { min: 2 })){
-            this.setState({ logFname: "Firstname too short" });
+            this.setState({ logFname: "Too short" });
             return;
         }        
         if (!validator.isAlpha(this.state.lname)){
-            this.setState({logLname: "Lastname letters only"});
+            this.setState({logLname: "Letters only"});
             return;
         } 
         if (!validator.isLength(this.state.lname, { min: 2 })){
-            this.setState({ logLname: "Lastname too short" });
+            this.setState({ logLname: "Too short" });
             return;
         }       
         if(!validator.isEmail(this.state.email)){
@@ -133,15 +133,16 @@ class RegisterScreen extends Component {
                 console.log('[register.js] responseOnRegister: ', response);
                 if (response.status !== 200) {
                     console.log('[register js] responseOnLogin bad response: ', response);
-                    this.setState({ log: "Cannot register" })
+                    this.setState({ log: "Cannot register" });
                     return;
                 }
                 response.json().then(data => {
                     console.log('[register js] componentDidMount json response: ', data);
-                    console.log("[register js] REGISTERED");
+					console.log("[register js] REGISTERED");
+					this.setState({ log: "Registered!" });
                     // go to user page
                     console.log('[register js] Response', data);
-                    this.props.navigation.navigate('User', data);
+                    // this.props.navigation.navigate('User', data);
                 });
 
             })
@@ -153,44 +154,66 @@ class RegisterScreen extends Component {
 
     render() {
         return (
-        //    <View style={styles.outerContainer}> 
-		// 		<Header 
-		// 			leftComponent={<CustomBackBtn clicked={this.onBackBtnPressed} />}
-		// 			centerComponent={{ text: "REGISTER", style: { color: "#fff" } }} 
-		// 		/>
+			<Container>
+				<Header>
+					<Body>
+						<Title>REGISTER</Title>
+					</Body>
+				</Header>
+				<Content>
+					<Form>
+						<Item fixedLabel error={this.state.logUsername.length > 0}>
+							<Label>Username</Label>
+							<Input 
+								onChangeText={(text) => this.onChangedUsernameHandler(text)} 
+								placeholder={this.state.logUsername.length > 0 ? this.state.logUsername : null}
+								/>
+							{this.state.logUsername.length > 0 ? (<Icon name='close-circle' />) : null}
+						</Item>
 
-		// 		<View style={styles.formContainer}>
-		// 			<FormInput placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
-		// 			<FormValidationMessage >{this.state.logUsername}</FormValidationMessage> 
-		// 			<FormInput placeholder="Password" secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
-		// 			<FormValidationMessage >{this.state.logPassword}</FormValidationMessage> 
-		// 			<FormInput placeholder="First Name" onChangeText={(text) => this.onChangedFnameHandler(text)} />
-		// 			<FormValidationMessage >{this.state.logFname}</FormValidationMessage> 
-		// 			<FormInput placeholder="Last Name" onChangeText={(text) => this.onChangedLnameHandler(text)} />
-		// 			<FormValidationMessage >{this.state.logLname}</FormValidationMessage> 
-		// 			<FormInput placeholder="Email" onChangeText={(text) => this.onChangedEmailHandler(text)} />
-		// 			<FormValidationMessage >{this.state.logEmail}</FormValidationMessage>
-		// 		</View>
-		// 		<View style={styles.btnContainer}>
-		// 			<Button
-		// 				raised
-		// 				title="Register"
-		// 				onPress={this.onRegisterFinishedHandler}
-		// 			/>
-		// 		</View>	
-        //     </View>
-            <Container>
-                <Header>
-                    <Body>
-                        <Title>REGISTER</Title>
-                    </Body>
-                </Header>
-                <Content>
-                  
+						<Item fixedLabel error={this.state.logPassword.length > 0}>
+							<Label>Password</Label>
+							<Input 
+								onChangeText={(text) => this.onChangedPasswordHandler(text)}
+								placeholder={this.state.logPassword.length > 0 ? this.state.logPassword : null}
+								/>
+							{this.state.logPassword.length > 0 ? (<Icon name='close-circle' />) : null}
+						</Item>
 
-                </Content>
-            </Container>
-                
+						<Item fixedLabel error={this.state.logFname.length > 0}>
+							<Label>First name</Label>
+							<Input 
+								onChangeText={(text) => this.onChangedFnameHandler(text)}
+								placeholder={this.state.logFname.length > 0 ? this.state.logFname : null}
+								/>
+							{this.state.logFname.length > 0 ? (<Icon name='close-circle' />) : null}
+						</Item>
+
+						<Item fixedLabel error={this.state.logLname.length > 0}>
+							<Label>Last name</Label>
+							<Input 
+								onChangeText={(text) => this.onChangedLnameHandler(text)}
+								placeholder={this.state.logLname.length > 0 ? this.state.logLname : null}
+								/>
+							{this.state.logLname.length > 0 ? (<Icon name='close-circle' />) : null}
+						</Item>
+
+						<Item fixedLabel last error={this.state.logEmail.length > 0}>
+							<Label>Email</Label>
+							<Input 
+								onChangeText={(text) => this.onChangedEmailHandler(text)}
+								placeholder={this.state.logEmail.length > 0 ? this.state.logEmail : null}
+								/>
+							{this.state.logEmail.length > 0 ? (<Icon name='close-circle' />) : null}
+						</Item>
+
+					</Form>
+					<Button block onPress={this.onRegisterFinishedHandler}>
+						<Text>Register</Text>
+					</Button>
+					{this.state.log.length > 0 ? (<Text>{this.state.log}</Text>) : null}
+				</Content>
+			</Container>
         );
     }
 }
@@ -200,13 +223,6 @@ const styles = StyleSheet.create({
 		flex:1,
 		flexDirection: 'column',
 		justifyContent: 'space-between'
-	},
-	formContainer: {
-		width:'95%',
-		alignSelf: 'center'
-	},
-	btnContainer: {
-		marginBottom: 20
 	}
 });
 module.exports = RegisterScreen;
