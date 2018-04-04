@@ -4,7 +4,8 @@ import { StackNavigator, navigationOptions} from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
 
-import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button} from 'native-base';
+import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input, Form, Label} from 'native-base';
+import{Col, Row, Grid} from 'react-native-easy-grid';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 
 var RegisterScreen = require('./screens/register.js');
@@ -77,10 +78,12 @@ class HomeScreen extends Component {
 				logDetails: ""
 			});
 		}
+		console.log('LOGIN PRESSED');
 	}
 	
 	onRegisterPressHandler = () => {
-		this.props.navigation.navigate('Register');
+		// this.props.navigation.navigate('Register');
+		console.log('REGISTER PRESSED');
 	}
 
 	render() {
@@ -116,8 +119,37 @@ class HomeScreen extends Component {
 					</Body>
 				</Header>
 				<Content>
-					<Text onPress={this.onRegisterPressHandler}>Register</Text>
-				
+					<Grid>
+						<Row>
+							<Icon name = 'home' style={{fontSize:50}}/>
+
+						</Row>
+						<Row>
+							<Form style={{width:'100%'}}>
+								<Item stackedLabel>
+									<Label>Username</Label>
+									<Input onChangeText={(text) => this.onChangedUsernameHandler(text)} />
+								</Item>
+								<Item stackedLabel last>
+									<Label>Password</Label>
+									<Input secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
+								</Item>
+							</Form>
+						</Row>
+						
+						<Button full onPress={this.onLoginPressHandler} >
+							<Text>Login</Text>
+						</Button>
+						<Row>
+							<Text onPress={this.onRegisterPressHandler} >Register</Text>
+						</Row>
+						<Row>
+							<Text style={{fontSize:12, color:'red'}}>{this.state.log}</Text>
+						</Row>
+						<Row>
+							<Text style={{ fontSize: 12, color: 'red' }}>{this.state.logDetails}</Text>
+						</Row>
+					</Grid>
 				</Content>
 			</Container>
 		);
@@ -144,7 +176,7 @@ const RootStack = StackNavigator(
 		// 	screen: UserScreen,
 		// 	navigationOptions: {
 		// 		header: null,
-		// 		gesturesEnabled:false
+		// 		// gesturesEnabled:false
 		// 	}
 		// },
 		// Image:{
