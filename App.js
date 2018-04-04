@@ -172,13 +172,13 @@ const RootStack = StackNavigator(
 				gesturesEnabled: false
 			}
 		},
-		// User: {
-		// 	screen: UserScreen,
-		// 	navigationOptions: {
-		// 		header: null,
-		// 		// gesturesEnabled:false
-		// 	}
-		// },
+		User: {
+			screen: UserScreen,
+			navigationOptions: {
+				header: null,
+				// gesturesEnabled:false
+			}
+		},
 		// Image:{
 		// 	screen:ImageScreen,
 		// 	navigationOptions:{
