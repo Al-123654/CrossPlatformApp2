@@ -186,13 +186,13 @@ const RootStack = StackNavigator(
 				// gesturesEnabled: false
 			} 
 		},
-		// Explore:{
-		// 	screen:ExploreScreen,
-		// 	navigationOptions:{
-		// 		header: null,
-		// 		gesturesEnabled: false
-		// 	}
-		// }
+		Explore:{
+			screen:ExploreScreen,
+			navigationOptions:{
+				header: null,
+				gesturesEnabled: false
+			}
+		}
 	},
 	{initialRouteName: 'Home'}
 );
