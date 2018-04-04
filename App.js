@@ -82,7 +82,7 @@ class HomeScreen extends Component {
 	}
 	
 	onRegisterPressHandler = () => {
-		// this.props.navigation.navigate('Register');
+		this.props.navigation.navigate('Register');
 		console.log('REGISTER PRESSED');
 	}
 
