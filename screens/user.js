@@ -67,17 +67,23 @@ class UserScreen extends Component {
 						const tempImageUri = GET_IMAGES_URI + response.images[0] + '/display';
 						let tempImageHeading = [( <Text key={response.username}>{response.username}</Text> )];
 						let tempImageElement = [( 
-							<TouchableOpacity
-								key={response.images[0]}
-								style={styles.thumbnail}
-								onPress={() => this.onImageClicked2(response.images[0], this.state.passedId)}
-							>
-								<Image
+							// <TouchableOpacity
+							// 	key={response.images[0]}
+							// 	style={styles.thumbnail}
+							// 	onPress={() => this.onImageClicked2(response.images[0], this.state.passedId)}
+							// >
+							// 	<Image
+							// 		key={response.images[0]}
+							// 		source={{uri:tempImageUri}}
+							// 		style={styles.thumbnail}
+							// 	/>
+							// </TouchableOpacity>
+							<Button onPress={() => this.onImageClicked(response.images[0], this.state.passedId)} key={response.images[0]} >
+								<Thumbnail
 									key={response.images[0]}
-									source={{uri:tempImageUri}}
-									style={styles.thumbnail}
+									small square source={{ uri: tempImageUri}}
 								/>
-							</TouchableOpacity>
+							</Button>
 						)];
 						this.setState({ 
 							followImageHeading: [...tempImageHeading],
@@ -90,17 +96,23 @@ class UserScreen extends Component {
 						let tempImageElement = response.images.map((imageId, index) => {
 							let tempImageUri = GET_IMAGES_URI + imageId + '/display';
 							return (
-								<TouchableOpacity
-									key={imageId + index}
-									style={styles.thumbnail}
-									onPress={() => this.onImageClicked2(imageId, this.state.passedId)}
-								>
-									<Image
-										key={imageId}
-										source={{uri:tempImageUri}}
-										style={styles.thumbnail}
+								// <TouchableOpacity
+								// 	key={imageId + index}
+								// 	style={styles.thumbnail}
+								// 	onPress={() => this.onImageClicked2(imageId, this.state.passedId)}
+								// >
+								// 	<Image
+								// 		key={imageId}
+								// 		source={{uri:tempImageUri}}
+								// 		style={styles.thumbnail}
+								// 	/>
+								// </TouchableOpacity>
+								<Button onPress={() => this.onImageClicked(imageId, this.state.passedId)} key={imageId} >
+									<Thumbnail
+										
+										 square source={{ uri: tempImageUri }}
 									/>
-								</TouchableOpacity>
+								</Button>
 							);
 						});
 						this.setState({
@@ -134,17 +146,23 @@ class UserScreen extends Component {
 							let tempImageElements = item.images.map((item,index) => {
 								let tempImageUri =GET_IMAGES_URI + item + '/display';
 								return (
-									<TouchableOpacity
-										key={item + index}
-										style={styles.thumbnail}
-										onPress={() => this.onImageClicked2(item, this.state.passedId)}
-									>
-										<Image
-											key={item}
-											source={{ uri: tempImageUri }}
-											style={styles.thumbnail}
+									// <TouchableOpacity
+									// 	key={item + index}
+									// 	style={styles.thumbnail}
+									// 	onPress={() => this.onImageClicked2(item, this.state.passedId)}
+									// >
+									// 	<Image
+									// 		key={item}
+									// 		source={{ uri: tempImageUri }}
+									// 		style={styles.thumbnail}
+									// 	/>
+									// </TouchableOpacity>
+									<Button onPress={() => this.onImageClicked(imageId, this.state.passedId)} >
+										<Thumbnail
+											key={imageId}
+											 square source={{ uri: tempImageUri }}
 										/>
-									</TouchableOpacity>
+									</Button>
 								);
 							});
 
@@ -349,8 +367,7 @@ class UserScreen extends Component {
                 // </TouchableOpacity>
 					<Button onPress={() => this.onImageClicked(this.state.images[0], this.state.passedId)} >
 						<Thumbnail
-
-							square source={{ uri: GET_IMAGES_URI + this.state.images[0] + '/display' }}
+							 square source={{ uri: GET_IMAGES_URI + this.state.images[0] + '/display' }}
 						/> 
 					</Button>
 					
@@ -373,10 +390,10 @@ class UserScreen extends Component {
                         //         style={styles.thumbnail} 
                         //     />
 						// </TouchableOpacity>
-						<Button onPress={() => this.onImageClicked(this.state.images[0], this.state.passedId)} >
+						<Button onPress={() => this.onImageClicked(this.state.images[0], this.state.passedId)} key={imageId} >
 						<Thumbnail 
 							
-							square source={{ uri: GET_IMAGES_URI + imageId + '/display' }} 
+							 square source={{ uri: GET_IMAGES_URI + imageId + '/display' }} 
 						/> 
 						</Button>
                     );
@@ -432,11 +449,12 @@ class UserScreen extends Component {
             <Content>
                 <View>{imageElement}</View>
                 {/* <Thumbnail square source={this.imageThumbnail}/> */}
-                {/* <Thumbnail square source={this.state.followedImagesContainer}/> */}
+				{/* <Thumbnail square source={this.state.followedImagesContainer}/> */}
+				<View>{this.state.followedImagesContainer}</View>
                 <Button onPress={this.onImagePickerHandler}>
                     <Text>Image Picker</Text>
                 </Button>
-                <Button onPress={this.onExplorePressedHandler}>
+                <Button onPress={() => {this.onExplorePressedHandler(this.state.passedId)}}>
                     <Text>Explore</Text>
                 </Button>
                 <Text>{this.state.log}</Text>

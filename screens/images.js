@@ -279,14 +279,6 @@ class ImageScreen extends Component{
                             <Image source={{ uri: this.state.IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{height: 200, width: null, flex: 1}}/>
                         </CardItem>
                     </Card>
-                    {/* <View>{imageElement}</View> */}
-                    {/* <Button onPress={this.onImagePickerHandler}>
-                        <Text>Image Picker</Text>
-                    </Button>
-                    <Button onPress={this.onExplorePressedHandler}>
-                        <Text>Explore</Text>
-                    </Button>
-                    <Text>{this.state.log}</Text> */}
                 </Content>
             </Container>
         );
