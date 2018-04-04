@@ -4,7 +4,7 @@ import { StackNavigator, navigationOptions} from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
 
-import { Container, Header, Content, Text, Button} from 'native-base';
+import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button} from 'native-base';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 
 var RegisterScreen = require('./screens/register.js');
@@ -110,16 +110,14 @@ class HomeScreen extends Component {
 			// </View>
 
 			<Container>
-				<Header />
+				<Header>
+					<Body>
+						<Title>TEST APP</Title>
+					</Body>
+				</Header>
 				<Content>
-					{/* NativeBase default style */}
-					<Button light onPress={() => console.log("BUTTON PRESSED")}><Text> Light </Text></Button>
-					<Button primary><Text> Primary </Text></Button>
-					<Button success><Text> Success </Text></Button>
-					<Button info><Text> Info </Text></Button>
-					<Button warning><Text> Warning </Text></Button>
-					<Button danger><Text> Danger </Text></Button>
-					<Button dark><Text> Dark </Text></Button>
+					<Text onPress={this.onRegisterPressHandler}>Register</Text>
+				
 				</Content>
 			</Container>
 		);
@@ -135,13 +133,13 @@ const RootStack = StackNavigator(
 				gesturesEnabled:false
 			}
 		},
-		// Register: {
-		// 	screen: RegisterScreen,
-		// 	navigationOptions:{
-		// 		header: null,
-		// 		gesturesEnabled: false
-		// 	}
-		// },
+		Register: {
+			screen: RegisterScreen,
+			navigationOptions:{
+				header: null,
+				gesturesEnabled: false
+			}
+		},
 		// User: {
 		// 	screen: UserScreen,
 		// 	navigationOptions: {
