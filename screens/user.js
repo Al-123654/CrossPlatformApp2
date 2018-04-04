@@ -347,7 +347,13 @@ class UserScreen extends Component {
                 //         style={styles.thumbnail} 
                 //     />
                 // </TouchableOpacity>
-					<Thumbnail square source={{ uri: GET_IMAGES_URI + this.state.images[0] + '/display'}} /> 
+					<Button onPress={() => this.onImageClicked(this.state.images[0], this.state.passedId)} >
+						<Thumbnail
+
+							square source={{ uri: GET_IMAGES_URI + this.state.images[0] + '/display' }}
+						/> 
+					</Button>
+					
                 
                 );
                 
@@ -367,7 +373,12 @@ class UserScreen extends Component {
                         //         style={styles.thumbnail} 
                         //     />
 						// </TouchableOpacity>
-						<Thumbnail square source={{ uri: GET_IMAGES_URI + imageId + '/display' }} /> 
+						<Button onPress={() => this.onImageClicked(this.state.images[0], this.state.passedId)} >
+						<Thumbnail 
+							
+							square source={{ uri: GET_IMAGES_URI + imageId + '/display' }} 
+						/> 
+						</Button>
                     );
                     
 			    });
