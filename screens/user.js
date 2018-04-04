@@ -338,16 +338,16 @@ class UserScreen extends Component {
                 console.log("[user.js] render IMAGE ID", this.state.images);
                 console.log("[user js] render IMAGE URI", GET_IMAGES_URI + this.state.images[0])
 			    imageElement = (
-                <TouchableOpacity
-                    onPress={() => this.onImageClicked(this.state.images[0], this.state.passedId )}
-                    style={styles.thumbnail}    
-                >
-                    <Image 
-					    source={{uri: GET_IMAGES_URI + this.state.images[0] + '/display'}}
-                        style={styles.thumbnail} 
-                    />
-                </TouchableOpacity>
-                // <Thumbnail/>
+                // <TouchableOpacity
+                //     onPress={() => this.onImageClicked(this.state.images[0], this.state.passedId )}
+                //     style={styles.thumbnail}    
+                // >
+                //     <Image 
+				// 	    source={{uri: GET_IMAGES_URI + this.state.images[0] + '/display'}}
+                //         style={styles.thumbnail} 
+                //     />
+                // </TouchableOpacity>
+					<Thumbnail square source={{ uri: GET_IMAGES_URI + this.state.images[0] + '/display'}} /> 
                 
                 );
                 
@@ -356,17 +356,18 @@ class UserScreen extends Component {
 			    imageElement = [];
 			    imageElement = this.state.images.map((imageId, index) => {
 				    return (
-					    <TouchableOpacity
-                            onPress={() => this.onImageClicked(imageId, this.state.passedId)}
-                            key={imageId} 
-                            style={styles.thumbnail}
-                        >
+					    // <TouchableOpacity
+                        //     onPress={() => this.onImageClicked(imageId, this.state.passedId)}
+                        //     key={imageId} 
+                        //     style={styles.thumbnail}
+                        // >
 
-                            <Image  
-                                source={{ uri: GET_IMAGES_URI + imageId + '/display'}}
-                                style={styles.thumbnail} 
-                            />
-					    </TouchableOpacity>
+                        //     <Image  
+                        //         source={{ uri: GET_IMAGES_URI + imageId + '/display'}}
+                        //         style={styles.thumbnail} 
+                        //     />
+						// </TouchableOpacity>
+						<Thumbnail square source={{ uri: GET_IMAGES_URI + imageId + '/display' }} /> 
                     );
                     
 			    });
