@@ -350,6 +350,12 @@ class FeedsScreen extends Component {
 		this.props.navigation.goBack();
 	}
 
+	onProfilePressedHandler = () => {
+		console.log('[feeds js] onProfilePressedHandler clicked!');
+		
+		this.props.navigation.navigate('Profile');
+	}
+
 	render() {
         // console.log('[user js] render PICTURES: ', this.state.images);
         console.log('[feeds js] followedImagesContainer:', this.state.followedImagesContainer);
@@ -502,6 +508,9 @@ class FeedsScreen extends Component {
 					</Button>
 					<Button full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
 						<Text>Explore</Text>
+					</Button>
+					<Button full onPress={() => { this.onProfilePressedHandler() }}>
+						<Text>Profile</Text>
 					</Button>
 				</FooterTab>
 			</Footer>
