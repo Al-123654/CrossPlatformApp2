@@ -10,7 +10,7 @@ const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
 const GET_USERS_FOLLOWED_URI = 'https://app-api-testing.herokuapp.com/api/users?followed=followed';
 const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
 
-class UserScreen extends Component {
+class FeedsScreen extends Component {
 	constructor(props) {
 		super(props);
 		
@@ -33,28 +33,28 @@ class UserScreen extends Component {
         }
         
         //check for number of follows and who
-        console.log('[user js] Constructor - Number of followed users: ', this.state.followed.length);
-        console.log('[user js] Constructor - Followed users list: ', this.state.followed);
+        console.log('[feeds js] Constructor - Number of followed users: ', this.state.followed.length);
+        console.log('[feeds js] Constructor - Followed users list: ', this.state.followed);
 	}
 
 	componentDidMount(){
-		console.log('[user js] componentDidMount - Number of following: ', this.state.followed.length);
+		console.log('[feeds js] componentDidMount - Number of following: ', this.state.followed.length);
 		if(this.state.followed.length == 1){
 			// ONE followed
-			console.log('[user js] componentDidMount - One followed: ', this.state.followed);
-			console.log('[user js] componentDidMount - One followed Contents: ', this.state.followed[0]);
+			console.log('[feeds js] componentDidMount - One followed: ', this.state.followed);
+			console.log('[feeds js] componentDidMount - One followed Contents: ', this.state.followed[0]);
 			const followedId = this.state.followed[0];
 
 			return fetch(GET_USERS_URI+followedId)
 				.then(response => response.json())
 				.then(response => {
-					console.log('[user js] componentDidMount - fetch response: ', response);
-					console.log('[user js] componentDidMount - fetch response images: ', response.images);
-					console.log('[user js] componentDidMount - fetch response images length: ', response.images.length);
+					console.log('[feeds js] componentDidMount - fetch response: ', response);
+					console.log('[feeds js] componentDidMount - fetch response images: ', response.images);
+					console.log('[feeds js] componentDidMount - fetch response images length: ', response.images.length);
 
 					if(response.images.length == 0){
 						// zero images
-						console.log('[user js] componentDidMount - fetch response images length: ZERO');
+						console.log('[feeds js] componentDidMount - fetch response images length: ZERO');
 						let tempImageHeading = [( <Text key={response.username}>{response.username}</Text> )];
 						let tempImageElement = [( <Text key={followingId}>No images available.</Text> )];
 						this.setState({ 
@@ -63,7 +63,7 @@ class UserScreen extends Component {
 						});
 					}else if(response.images.length == 1){
 						// one image
-						console.log('[user js] componentDidMount - fetch response images length: ONE');
+						console.log('[feeds js] componentDidMount - fetch response images length: ONE');
 						const tempImageUri = GET_IMAGES_URI + response.images[0] + '/display';
 						let tempImageHeading = [( <Text key={response.username}>{response.username}</Text> )];
 						let tempImageElement = [( 
@@ -94,7 +94,7 @@ class UserScreen extends Component {
 						});
 					}else if(response.images.length > 1){
 						// multiple images
-						console.log('[user js] componentDidMount - fetch response images length: MORE THAN ONE');
+						console.log('[feeds js] componentDidMount - fetch response images length: MORE THAN ONE');
 						// map
 						let tempImageElement = response.images.map((imageId, index) => {
 							let tempImageUri = GET_IMAGES_URI + imageId + '/display';
@@ -127,22 +127,22 @@ class UserScreen extends Component {
 						});
 					}
 				})
-				.catch(error => console.log('[user js] componentDidMount - ONE followed fetch error: ', error));
+				.catch(error => console.log('[feeds js] componentDidMount - ONE followed fetch error: ', error));
 
 		}else if(this.state.followed.length > 1){
 			// MULTIPLE followed
-			console.log('[user js] componentDidMount - Multiple followed: ', this.state.followed);
+			console.log('[feeds js] componentDidMount - Multiple followed: ', this.state.followed);
 			return fetch(GET_USERS_FOLLOWED_URI)
 				.then(response => response.json())
 				.then(response => {
-					console.log('[user js] componentDidMount - Multiple followed fetch response: ', response);
+					console.log('[feeds js] componentDidMount - Multiple followed fetch response: ', response);
 
 					let tempImageElements = [];
 					// modify and then save response data to tempImagesArray
 					let tempImagesArray = response.data.map((item, index) => {
-						console.log('[user js] componentDidMount - MULTIPLE fetch map: ', item);
-						console.log('[user js] componentDidMount - MULTIPLE fetch image arrays: ', item.images);
-						console.log('[user js] componentDidMount - MULTIPLE fetch image arrays length: ', item.images.length);
+						console.log('[feeds js] componentDidMount - MULTIPLE fetch map: ', item);
+						console.log('[feeds js] componentDidMount - MULTIPLE fetch image arrays: ', item.images);
+						console.log('[feeds js] componentDidMount - MULTIPLE fetch image arrays length: ', item.images.length);
 	
 						if(item.images.length <= 0){
 							// TODO: logic for when followed user does not have images
@@ -177,13 +177,13 @@ class UserScreen extends Component {
 								);
 							});
 
-							console.log('[user js] componentDidMount - MULTIPLE fetch tempImageElements: ', tempImageElements);
+							console.log('[feeds js] componentDidMount - MULTIPLE fetch tempImageElements: ', tempImageElements);
 							// return View element containing tempImageElements 
 							return (
 								<View style={styles.followedImagesOuter}
 									key = {item._id + index}
 								>
-									<Text>{item._id}</Text>
+									<Text>{item.username}</Text>
 									<View style={styles.followedImagesInner}>
 										{[...tempImageElements]}
 									</View>
@@ -196,7 +196,7 @@ class UserScreen extends Component {
 						followedImagesContainer: [...tempImagesArray]
 					});
 				})
-				.catch(error => console.log('[user js] componentDidMount - Multiple followed fetch error: ', error));
+				.catch(error => console.log('[feeds js] componentDidMount - Multiple followed fetch error: ', error));
 		}
 	}
 	
@@ -219,7 +219,7 @@ class UserScreen extends Component {
                         {
                             text: 'OK', onPress: () => {
                                 this.props.navigation.navigate('Home');
-                                console.log("[user js] LOGGED OUT!");
+                                console.log("[feeds js] LOGGED OUT!");
 
                             }
                         }
@@ -227,15 +227,15 @@ class UserScreen extends Component {
                 ) 
             })
             .catch ((error) => {
-                console.log("[user js] onLogoutPressHandler: ", error);
+                console.log("[feeds js] onLogoutPressHandler: ", error);
             });
 	}
 
 	// when Explore btn is clicked
 	onExplorePressedHandler = (currentUserId) => {
-		console.log('[user js] onExplorePressedHandler clicked!');
+		console.log('[feeds js] onExplorePressedHandler clicked!');
 		// this.props.navigation.navigate('User', data);
-		console.log('[user js] ID passed by app js: ', currentUserId);
+		console.log('[feeds js] ID passed by app js: ', currentUserId);
 		this.props.navigation.navigate('Explore', {currentUserId:currentUserId});
 	}
 
@@ -249,14 +249,14 @@ class UserScreen extends Component {
 
         ImagePicker.showImagePicker(imagePickerOptions, (response) => {
 
-			console.log('[user js] Image Picker Response: ', response.fileSize);
+			console.log('[feeds js] Image Picker Response: ', response.fileSize);
 			this.setState({log:''});
             if (response.didCancel) {
-                console.log('[user js] User cancelled the picker.');
+                console.log('[feeds js] User cancelled the picker.');
             } else if (response.error) {
-                console.log('[user js] ImagePicker Error:', response.error);
+                console.log('[feeds js] ImagePicker Error:', response.error);
             } else if (response.customButton) {
-                console.log('[user js] User tapped custom button: ', response.customButton);
+                console.log('[feeds js] User tapped custom button: ', response.customButton);
             } else {
                 let source = { uri: response.uri };
                 this.setState({
@@ -264,15 +264,15 @@ class UserScreen extends Component {
                     log: "Image chosen"
                 });
 
-                console.log('[user js] IMAGE CHOSEN: ', source);
+                console.log('[feeds js] IMAGE CHOSEN: ', source);
 
                 let platformPath = '';
                 if (Platform.OS == 'ios') {
-                    console.log("[user js] PATH OF IMAGE SELECTED IOS: ", response.uri);
+                    console.log("[feeds js] PATH OF IMAGE SELECTED IOS: ", response.uri);
                     platformPath = response.uri.replace(/^file?\:\/\//i, "");
-                    console.log('[user js] SPECIAL CHARACTERS REMOVED: ', platformPath);
+                    console.log('[feeds js] SPECIAL CHARACTERS REMOVED: ', platformPath);
                 } else if (Platform.OS == 'android') {
-                    console.log("[user js] PATH OF IMAGE SELECTED ANDROID: ", response.path);
+                    console.log("[feeds js] PATH OF IMAGE SELECTED ANDROID: ", response.path);
                     platformPath = response.path;
                 }
 
@@ -281,8 +281,8 @@ class UserScreen extends Component {
                         log: "Platform path empty"
                     });
                 }
-                console.log('[user js] TEST:',response.uri);
-                console.log("[user js] PLATFORM PATH ",platformPath);
+                console.log('[feeds js] TEST:',response.uri);
+                console.log("[feeds js] PLATFORM PATH ",platformPath);
                 
 				RNFetchBlob.fetch('POST', 
 					'https://app-api-testing.herokuapp.com/upload',
@@ -293,17 +293,17 @@ class UserScreen extends Component {
 					])
 				.then((res) => {
 					// console.log('[user js] Response from server - ', res);
-					console.log('[user js] Status code - ', res.respInfo.status);
+					console.log('[feeds js] Status code - ', res.respInfo.status);
 					if(res.respInfo.status == 200){
-						console.log('[user js] UPLOAD OK');
+						console.log('[feeds js] UPLOAD OK');
 						this.setState({log: 'Upload ok!'});
 					}else{
-						console.log('[user js] UPLOAD FAILED - ', res);
+						console.log('[feeds js] UPLOAD FAILED - ', res);
 						this.setState({log: 'Upload failed!'});
 					}
 				})
 				.catch((err) => {
-					console.log('[user js] showImagePicker: ', res);
+					console.log('[feeds js] showImagePicker: ', res);
 				});
             }
         });
@@ -320,7 +320,7 @@ class UserScreen extends Component {
         }).then (response => response.json())
         .catch(error => console.error('Error: ', error))
         .then(response => {
-            console.log('[user js] IMAGE DETAILS TRANSFER ', response)
+            console.log('[feeds js] IMAGE DETAILS TRANSFER ', response)
             this.props.navigation.navigate('Image', {
                 data: response,
                 userId: passedId
@@ -346,30 +346,30 @@ class UserScreen extends Component {
         });
 	}
 	onBackBtnPressed = () => {
-		console.log('[user js] onBackBtnPressed');
+		console.log('[feeds js] onBackBtnPressed');
 		this.props.navigation.goBack();
 	}
 
 	render() {
         // console.log('[user js] render PICTURES: ', this.state.images);
-        console.log('[user js] followedImagesContainer:', this.state.followedImagesContainer);
+        console.log('[feeds js] followedImagesContainer:', this.state.followedImagesContainer);
        
         let imageElement;
         let imageThumbnail;
         //check if user have images and display them
         if(typeof this.state.images != undefined && this.state.images != null && this.state.images.length != null && this.state.images.length > 0){
-           console.log('[user js] render IN THE IF STATEMENT');
-           console.log('[user js] render IF STATEMENT',(this.state.images != undefined || this.state.images.length == 0)); 
+           console.log('[feeds js] render IN THE IF STATEMENT');
+           console.log('[feeds js] render IF STATEMENT',(this.state.images != undefined || this.state.images.length == 0)); 
            // find out length of image array
             let imageCount = this.state.images.length;
-		    console.log("[user js] render Image Count: ", imageCount);
+		    console.log("[feeds js] render Image Count: ", imageCount);
 		    // setup variable to contain Image element
             // let imageUri = 'https://app-api-testing.herokuapp.com/api/images/';
             // let imageUri = 'http://localhost:5000/api/images/';
             //if user has only one image
 		    if(imageCount == 1){
-                console.log("[user.js] render IMAGE ID", this.state.images);
-                console.log("[user js] render IMAGE URI", GET_IMAGES_URI + this.state.images[0])
+                console.log("[feeds js] render IMAGE ID", this.state.images);
+                console.log("[feeds js] render IMAGE URI", GET_IMAGES_URI + this.state.images[0])
 			    imageElement = (
                 // <TouchableOpacity
                 //     onPress={() => this.onImageClicked(this.state.images[0], this.state.passedId )}
@@ -466,9 +466,7 @@ class UserScreen extends Component {
         <Container>
             <Header>
 				<Left>
-					{/* <Button transparent onPress={this.onBackBtnPressed}>
-						<Icon name='arrow-back' />
-					</Button> */}
+					
 				</Left>
                 <Body><Title>{this.state.passedUsername}</Title></Body>
 				<Right>
@@ -591,4 +589,4 @@ const styles = StyleSheet.create({
     }
 });
 
-module.exports = UserScreen;
+module.exports = FeedsScreen;

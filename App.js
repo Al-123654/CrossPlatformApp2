@@ -12,7 +12,7 @@ import{ Row, Grid} from 'react-native-easy-grid';
 import validator from 'validator';
 
 var RegisterScreen = require('./screens/register.js');
-var UserScreen = require('./screens/user.js');
+var FeedsScreen = require('./screens/feeds.js');
 var ImageScreen = require('./screens/images.js');
 var ExploreScreen = require('./screens/explore.js');
 
@@ -70,9 +70,9 @@ class HomeScreen extends Component {
 
 				console.log('[app js] componentDidMount json response: ', data);					
 				console.log("[app js] LOGGED IN!");
-				// go to user page
+				// go to feeds page
 				console.log('[app js] Response', data);
-				this.props.navigation.navigate('User', data);
+				this.props.navigation.navigate('Feeds', data);
 			});
 		}).catch((error) => {
 			console.log(error);
@@ -148,8 +148,8 @@ const RootStack = StackNavigator(
 				gesturesEnabled: false
 			}
 		},
-		User: {
-			screen: UserScreen,
+		Feeds: {
+			screen: FeedsScreen,
 			navigationOptions: {
 				header: null,
 				// gesturesEnabled:false
