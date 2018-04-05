@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Platform, StyleSheet, View, Image, Alert, TouchableOpacity } from 'react-native';
 import { StackNavigator, } from 'react-navigation';
-import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input, Form, Label, Thumbnail, Card, CardItem, Badge } from 'native-base';
+import { Container, Header, Left, Body, Right, Icon, Title, 
+	Content, Text, Button, Item, Input, Form, Label, Thumbnail, 
+	Card, CardItem, Badge, ListItem, List, Footer, FooterTab } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
 class ImageScreen extends Component{
@@ -34,7 +36,8 @@ class ImageScreen extends Component{
 			noOfLikes: props.navigation.state.params.data.likes.length,
 			commentId: props.navigation.state.params.data.comments,
 			comment: "",
-			displayingComment: []
+			displayingComment: [],
+			log: ""
 			
 		};
 
@@ -143,10 +146,12 @@ class ImageScreen extends Component{
 		.then((response) => response.json())
 		.then((responseJson) => {
 			console.log("Comment saved")
+			this.setState({log: "Comment saved"})
 		})
 		.catch((error) => {
 			console.error(error)
 		});
+
 	}
 	
 	//display comments from api
@@ -171,6 +176,7 @@ class ImageScreen extends Component{
 			.catch((error) => {
 				console.error(error)
 			});
+		
 		// if more than one comment 
 		}else if(this.state.commentId.length > 1){
 			let tempDisplay = []
@@ -187,7 +193,12 @@ class ImageScreen extends Component{
 					console.log('[images js] Response from server', responseJson)
 					console.log("Comment to display:", responseJson.comment)
 					
-					tempDisplay.push(<Text key={index}>{responseJson.comment}</Text>)
+					tempDisplay.push(
+						
+					<ListItem key={index}>
+						<Text  >{responseJson.comment}</Text>
+					</ListItem>
+					)
 					this.setState({
 						displayingComment: [...tempDisplay]
 					})
@@ -294,17 +305,36 @@ class ImageScreen extends Component{
                         </CardItem>
 							{/* <Text>{this.state.noOfLikes}likes</Text> */}
 							<Button
-								style={{alignSelf:'flex-end'}}onPress={() =>{this.onLikePressHandler(this.state.imageId)}}
+								transparent style={{alignSelf:'flex-end', position: "relative"}}onPress={() =>{this.onLikePressHandler(this.state.imageId)}}
 							>
+								<Badge style={{position: "absolute", bottom: 0, right:1}}>
+									<Text style={{fontSize:12}}>{this.state.noOfLikes}</Text>
+								</Badge>
 								<Icon
+								style={{fontSize:35}}
 								name={this.state.isImageLiked ? "ios-heart" : "ios-heart-outline"} 
-						/>
+								/>
 							</Button>
-						<CardItem>
-
-						</CardItem>
                     </Card>
+					<Item rounded>
+						<Label>Comment here</Label>
+						<Input onChangeText={(text) => this.createComment(text)} />
+					</Item>
+					<List>
+						
+						{this.state.displayingComment}
+					</List>
+					
                 </Content>
+				<Text>{this.state.log}</Text>
+				<Footer>
+					
+					<FooterTab >
+						<Button full onPress={this.postComment}>
+							<Text>Post Comment</Text>
+						</Button>
+					</FooterTab>
+				</Footer>
             </Container>
         );
     }
@@ -336,7 +366,10 @@ const styles = StyleSheet.create({
 		marginTop:40
 	},
 	commentDisplay:{
-		marginTop: 30
+		// marginTop: 30
+		flex: 1,
+		flexDirection: 'column',
+		// justifyContent:'space-between'
 	}
 
 })

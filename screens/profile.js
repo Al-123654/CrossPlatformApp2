@@ -50,6 +50,12 @@ class ProfileScreen extends Component{
                 console.error(error);
             });
     }
+
+    onFeedsPressedHandler = () => {
+        
+    }
+
+    
     render(){
        return(
            <Container>
@@ -76,7 +82,15 @@ class ProfileScreen extends Component{
                </Tabs>
                <Footer>
                    <FooterTab >
-                       
+                       <Button full onPress={this.onFeedsPressedHandler()}>
+                           <Text>Feeds</Text>
+                       </Button>
+                       <Button full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
+                           <Text>Explore</Text>
+                       </Button>
+                       <Button full onPress={() => { this.onProfilePressedHandler() }}>
+                           <Text>Profile</Text>
+                       </Button>
                    </FooterTab>
                </Footer>
            </Container>
