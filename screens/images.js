@@ -222,6 +222,10 @@ class ImageScreen extends Component{
 	componentDidMount(){
 		this.displayComment();
 	}
+	onBackBtnPressed = () => {
+		console.log('[image js] onBackBtnPressed');
+		this.props.navigation.goBack();
+	}
 
     render(){
         // console.log("[images js] render - Image path: ", this.state.IMAGE_ROOT_URI);
@@ -271,7 +275,17 @@ class ImageScreen extends Component{
             // </View>
             <Container>
                 <Header>
+					<Left>
+						<Button transparent onPress={this.onBackBtnPressed}>
+							<Icon name='arrow-back' />
+						</Button>
+					</Left>
                     <Body><Title>IMAGES</Title></Body>
+					<Right>
+						<Button transparent onPress={this.onLogoutHandler}>
+							<Icon name='home' />
+						</Button>
+					</Right>
                 </Header>
                 <Content>
                     <Card>

@@ -3,7 +3,7 @@ import { Platform, StyleSheet, View, Image, Alert , TouchableOpacity, TouchableH
 import { StackNavigator,  } from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
-import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input, Form, Label, Thumbnail } from 'native-base';
+import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input, Form, Label, Thumbnail, Footer, FooterTab } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
@@ -334,6 +334,10 @@ class UserScreen extends Component {
             });
         });
 	}
+	onBackBtnPressed = () => {
+		console.log('[user js] onBackBtnPressed');
+		this.props.navigation.goBack();
+	}
 
 	render() {
         // console.log('[user js] render PICTURES: ', this.state.images);
@@ -365,9 +369,9 @@ class UserScreen extends Component {
                 //         style={styles.thumbnail} 
                 //     />
                 // </TouchableOpacity>
-					<Button onPress={() => this.onImageClicked(this.state.images[0], this.state.passedId)} >
+					<Button style={styles.thumbnail} onPress={() => this.onImageClicked(this.state.images[0], this.state.passedId)} >
 						<Thumbnail
-							 square source={{ uri: GET_IMAGES_URI + this.state.images[0] + '/display' }}
+							  large square  source={{ uri: GET_IMAGES_URI + this.state.images[0] + '/display' }}
 						/> 
 					</Button>
 					
@@ -390,10 +394,9 @@ class UserScreen extends Component {
                         //         style={styles.thumbnail} 
                         //     />
 						// </TouchableOpacity>
-						<Button onPress={() => this.onImageClicked(this.state.images[0], this.state.passedId)} key={imageId} >
+						<Button style={styles.thumbnail} onPress={() => this.onImageClicked(this.state.images[0], this.state.passedId)} key={imageId} >
 						<Thumbnail 
-							
-							 square source={{ uri: GET_IMAGES_URI + imageId + '/display' }} 
+								 large square  source={{ uri: GET_IMAGES_URI + imageId + '/display' }} 
 						/> 
 						</Button>
                     );
@@ -444,21 +447,50 @@ class UserScreen extends Component {
         
         <Container>
             <Header>
+				<Left>
+					{/* <Button transparent onPress={this.onBackBtnPressed}>
+						<Icon name='arrow-back' />
+					</Button> */}
+				</Left>
                 <Body><Title>{this.state.passedUsername}</Title></Body>
+				<Right>
+					<Button transparent onPress={this.onLogoutHandler}>
+						<Icon name='home' />
+					</Button>
+				</Right>
             </Header>
             <Content>
-                <View>{imageElement}</View>
-                {/* <Thumbnail square source={this.imageThumbnail}/> */}
-				{/* <Thumbnail square source={this.state.followedImagesContainer}/> */}
-				<View>{this.state.followedImagesContainer}</View>
-                <Button onPress={this.onImagePickerHandler}>
-                    <Text>Image Picker</Text>
-                </Button>
-                <Button onPress={() => {this.onExplorePressedHandler(this.state.passedId)}}>
-                    <Text>Explore</Text>
-                </Button>
-                <Text>{this.state.log}</Text>
+				<Grid>
+					<Row>
+						<View>{imageElement}</View>
+					</Row>
+					<Row>
+						<View>{this.state.followedImagesContainer}</View>
+					</Row>
+					{/* <Row style={styles.buttonsContainer}>
+						<Button full onPress={this.onImagePickerHandler}>
+							<Text>Image Picker</Text>
+						</Button>
+						<Button full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
+							<Text>Explore</Text>
+						</Button>
+					</Row> */}
+					<Row>
+						<Text>{this.state.log}</Text>
+					</Row>
+				</Grid>
+                
             </Content>
+			<Footer>
+				<FooterTab>
+						<Button full onPress={this.onImagePickerHandler}>
+							<Text>Image Picker</Text>
+						</Button>
+						<Button full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
+							<Text>Explore</Text>
+						</Button>
+				</FooterTab>
+			</Footer>
         </Container>
         );
     }
@@ -482,7 +514,7 @@ const styles = StyleSheet.create({
 	},
 	imagesContainer: {
 		flex: 1,
-		flexDirection: 'column',
+		flexDirection: 'row',
 		width: '100%',
 		height: '100%'
 	},
@@ -499,7 +531,8 @@ const styles = StyleSheet.create({
 	buttonsContainer: {
 		width: '100%',
 		height: '100%',
-		flex: 1
+		flex: 1,
+		flexDirection:'column'
 	},
 	followedImagesOuter: {
 		flex:1,
