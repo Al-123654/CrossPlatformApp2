@@ -3,7 +3,11 @@ import { Platform, StyleSheet, View, Image, Alert , TouchableOpacity, TouchableH
 import { StackNavigator,  } from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
-import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input, Form, Label, Thumbnail, Footer, FooterTab } from 'native-base';
+import { 
+	Container, Header, Left, Body, Right, Icon, 
+	Title, Content, Text, Button, Item, Input, 
+	Form, Label, Thumbnail, Footer, FooterTab 
+} from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
@@ -29,7 +33,8 @@ class FeedsScreen extends Component {
              followImageHeading: [],
              followedImagesContainer: [],
 			 followIDArray: [],
-			 oneFollowMultiImageFlag: false
+			 oneFollowMultiImageFlag: false,
+			 feedImagesArray: []
         }
         
         //check for number of follows and who
@@ -39,79 +44,99 @@ class FeedsScreen extends Component {
 
 	componentDidMount(){
 		console.log('[feeds js] componentDidMount - Number of following: ', this.state.followed.length);
-		if(this.state.followed.length == 1){
-			// ONE followed
+		let tempFeedImagesArray = [];
+		if(this.state.followed.length === 1){
+			// ONE FOLLOWED
 			console.log('[feeds js] componentDidMount - One followed: ', this.state.followed);
 			console.log('[feeds js] componentDidMount - One followed Contents: ', this.state.followed[0]);
 			const followedId = this.state.followed[0];
 
 			return fetch(GET_USERS_URI+followedId)
-				.then(response => response.json())
-				.then(response => {
-					console.log('[feeds js] componentDidMount - fetch response: ', response);
-					console.log('[feeds js] componentDidMount - fetch response images: ', response.images);
-					console.log('[feeds js] componentDidMount - fetch response images length: ', response.images.length);
+			.then(response => response.json())
+			.then(response => {
+				console.log('[feeds js] componentDidMount - fetch response: ', response);
+				console.log('[feeds js] componentDidMount - fetch response images: ', response.images);
+				console.log('[feeds js] componentDidMount - fetch response images length: ', response.images.length);
 
-					if(response.images.length == 0){
-						// zero images
-						console.log('[feeds js] componentDidMount - fetch response images length: ZERO');
-						let tempImageHeading = [( <Text key={response.username}>{response.username}</Text> )];
-						let tempImageElement = [( <Text key={followingId}>No images available.</Text> )];
-						this.setState({ 
-							followImageHeading: [...tempImageHeading],
-							followedImagesContainer: [...tempImageElement] 
-						});
-					}else if(response.images.length == 1){
-						// one image
-						console.log('[feeds js] componentDidMount - fetch response images length: ONE');
-						const tempImageUri = GET_IMAGES_URI + response.images[0] + '/display';
-						let tempImageHeading = [( <Text key={response.username}>{response.username}</Text> )];
-						let tempImageElement = [( 
-							// <TouchableOpacity
-							// 	key={response.images[0]}
-							// 	style={styles.thumbnail}
-							// 	onPress={() => this.onImageClicked2(response.images[0], this.state.passedId)}
-							// >
-							// 	<Image
-							// 		key={response.images[0]}
-							// 		source={{uri:tempImageUri}}
-							// 		style={styles.thumbnail}
-							// 	/>
-							// </TouchableOpacity>
-							<Button
+				if(response.images.length >= 1){
+					// save images
+					tempFeedImagesArray = response.images.map((imageId, index) => {
+						let tempImageUri = GET_IMAGES_URI + imageId + '/display';
+						return (
+							<Button 
 								transparent style={styles.thumbnail} 
-								onPress={() => this.onImageClicked(response.images[0], this.state.passedId)} 
-								key={response.images[0]} >
+								onPress={() => this.onImageClicked(imageId, this.state.passedId)} 
+								key={imageId} 
+							>
 								<Thumbnail
-									key={response.images[0]}
-									large square source={{ uri: tempImageUri}}
+									large square source={{ uri: tempImageUri }}
 								/>
 							</Button>
-						)];
-						this.setState({ 
-							followImageHeading: [...tempImageHeading],
-							followedImagesContainer: [...tempImageElement] 
-						});
-					}else if(response.images.length > 1){
-						// multiple images
-						console.log('[feeds js] componentDidMount - fetch response images length: MORE THAN ONE');
-						// map
-						let tempImageElement = response.images.map((imageId, index) => {
+						);
+					});
+
+					this.setState({
+						feedImagesArray: [...tempFeedImagesArray]
+					});
+				}
+			})
+			.catch(error => console.log('[feeds js] componentDidMount - ONE followed fetch error: ', error));
+		}else if(this.state.followed.length > 1){
+			// MULTIPLE FOLLOWED
+			console.log('[feeds js] componentDidMount - Multiple followed: ', this.state.followed);
+			return fetch(GET_USERS_FOLLOWED_URI)
+			.then(response => response.json())
+			.then(response => {
+				// save images
+				// data: [ 
+				// 	{ 
+				// 		_id: '5ac5c7d8c86aad0004a44de6',
+				// 		username: 'user_c',
+				// 		images: [ 
+				// 			'5ac5c7d8c86aad0004a44dec', 
+				// 			'5ac5c7d8c86aad0004a44ded' 
+				// 		] 
+				// 	},
+				// 	{ 
+				// 		_id: '5ac5c7d8c86aad0004a44de7',
+				// 		username: 'user_d',
+				// 		images: [ 
+				// 			'5ac5c7d8c86aad0004a44de9',
+				// 			'5ac5c7d8c86aad0004a44dea',
+				// 			'5ac5c7d8c86aad0004a44deb' 
+				// 		] 
+				// 	} 
+				// ]
+				console.log('[feeds js] componentDidMount - Multiple followed response: ', response);
+				
+				// let tempFeedImagesArray = response.data.map((item, index) => {
+				// 	if(item.images.length >= 1){
+				// 		item.images.forEach((imageId,index) => {
+				// 			let tempImageUri = GET_IMAGES_URI + imageId + '/display';
+				// 			return (
+				// 				<Button 
+				// 					transparent style={styles.thumbnail} 
+				// 					onPress={() => this.onImageClicked(imageId, this.state.passedId)} 
+				// 					key={imageId} 
+				// 				>
+				// 					<Thumbnail
+				// 						large square source={{ uri: tempImageUri }}
+				// 					/>
+				// 				</Button>
+				// 			);
+				// 		});	
+				// 	}		
+				// });
+				// loop through followed users
+				let tempArray1 = [];
+				response.data.forEach((followedUser,index) => {
+					// check image array length
+					if(followedUser.images.length >= 1){
+						let tempArray2 = followedUser.images.map((imageId,index) => {
 							let tempImageUri = GET_IMAGES_URI + imageId + '/display';
-							return (
-								// <TouchableOpacity
-								// 	key={imageId + index}
-								// 	style={styles.thumbnail}
-								// 	onPress={() => this.onImageClicked2(imageId, this.state.passedId)}
-								// >
-								// 	<Image
-								// 		key={imageId}
-								// 		source={{uri:tempImageUri}}
-								// 		style={styles.thumbnail}
-								// 	/>
-								// </TouchableOpacity>
+							return(
 								<Button 
-									transparent style={styles.thumbnail} 
+									transparent style={styles.thumbnail}
 									onPress={() => this.onImageClicked(imageId, this.state.passedId)} 
 									key={imageId} 
 								>
@@ -121,83 +146,175 @@ class FeedsScreen extends Component {
 								</Button>
 							);
 						});
-						this.setState({
-							oneFollowMultiImageFlag: true, 
-							followedImagesContainer: [...tempImageElement] 
-						});
+						tempArray1 = [...tempArray1, ...tempArray2];
 					}
-				})
-				.catch(error => console.log('[feeds js] componentDidMount - ONE followed fetch error: ', error));
-
-		}else if(this.state.followed.length > 1){
-			// MULTIPLE followed
-			console.log('[feeds js] componentDidMount - Multiple followed: ', this.state.followed);
-			return fetch(GET_USERS_FOLLOWED_URI)
-				.then(response => response.json())
-				.then(response => {
-					console.log('[feeds js] componentDidMount - Multiple followed fetch response: ', response);
-
-					let tempImageElements = [];
-					// modify and then save response data to tempImagesArray
-					let tempImagesArray = response.data.map((item, index) => {
-						console.log('[feeds js] componentDidMount - MULTIPLE fetch map: ', item);
-						console.log('[feeds js] componentDidMount - MULTIPLE fetch image arrays: ', item.images);
-						console.log('[feeds js] componentDidMount - MULTIPLE fetch image arrays length: ', item.images.length);
-	
-						if(item.images.length <= 0){
-							// TODO: logic for when followed user does not have images
-						}else if(item.images.length >= 1){
-							// followed user has multiple images
-							// modify and then save each image to tempImageElements
-							let tempImageElements = item.images.map((item,index) => {
-								let tempImageUri =GET_IMAGES_URI + item + '/display';
-								return (
-									// <TouchableOpacity
-									// 	key={item + index}
-									// 	style={styles.thumbnail}
-									// 	onPress={() => this.onImageClicked2(item, this.state.passedId)}
-									// >
-									// 	<Image
-									// 		key={item}
-									// 		source={{ uri: tempImageUri }}
-									// 		style={styles.thumbnail}
-									// 	/>
-									// </TouchableOpacity>
-									<Button 
-										transparent style={styles.thumbnail}
-										key={item} 
-										onPress={() => this.onImageClicked(item, this.state.passedId)} 
-									>
-										<Thumbnail
-											key={item}
-											large square source={{ uri: tempImageUri }}
-										/>
-										
-									</Button>
-								);
-							});
-
-							console.log('[feeds js] componentDidMount - MULTIPLE fetch tempImageElements: ', tempImageElements);
-							// return View element containing tempImageElements 
-							return (
-								<View style={styles.followedImagesOuter}
-									key = {item._id + index}
-								>
-									<Text>{item.username}</Text>
-									<View style={styles.followedImagesInner}>
-										{[...tempImageElements]}
-									</View>
-									
-								</View>
-							);
-						}
-					});
-					this.setState({
-						followedImagesContainer: [...tempImagesArray]
-					});
-				})
-				.catch(error => console.log('[feeds js] componentDidMount - Multiple followed fetch error: ', error));
+				});
+				this.setState({
+					feedImagesArray: [...tempArray1]
+				});
+				console.log('[feeds js] componentDidMount - Multiple feedImagesArray: ', this.state.feedImagesArray);
+			})
+			.catch(error => console.log('[feeds js] componentDidMount - MULTIPLE followed fetch error: ', error));
 		}
+		// if(this.state.followed.length == 1){
+		// 	// ONE followed
+		// 	console.log('[feeds js] componentDidMount - One followed: ', this.state.followed);
+		// 	console.log('[feeds js] componentDidMount - One followed Contents: ', this.state.followed[0]);
+		// 	const followedId = this.state.followed[0];
+
+		// 	return fetch(GET_USERS_URI+followedId)
+		// 		.then(response => response.json())
+		// 		.then(response => {
+		// 			console.log('[feeds js] componentDidMount - fetch response: ', response);
+		// 			console.log('[feeds js] componentDidMount - fetch response images: ', response.images);
+		// 			console.log('[feeds js] componentDidMount - fetch response images length: ', response.images.length);
+
+		// 			if(response.images.length == 0){
+		// 				// zero images
+		// 				console.log('[feeds js] componentDidMount - fetch response images length: ZERO');
+		// 				let tempImageHeading = [( <Text key={response.username}>{response.username}</Text> )];
+		// 				let tempImageElement = [( <Text key={followingId}>No images available.</Text> )];
+		// 				this.setState({ 
+		// 					followImageHeading: [...tempImageHeading],
+		// 					followedImagesContainer: [...tempImageElement] 
+		// 				});
+		// 			}else if(response.images.length == 1){
+		// 				// one image
+		// 				console.log('[feeds js] componentDidMount - fetch response images length: ONE');
+		// 				const tempImageUri = GET_IMAGES_URI + response.images[0] + '/display';
+		// 				let tempImageHeading = [( <Text key={response.username}>{response.username}</Text> )];
+		// 				let tempImageElement = [( 
+		// 					// <TouchableOpacity
+		// 					// 	key={response.images[0]}
+		// 					// 	style={styles.thumbnail}
+		// 					// 	onPress={() => this.onImageClicked2(response.images[0], this.state.passedId)}
+		// 					// >
+		// 					// 	<Image
+		// 					// 		key={response.images[0]}
+		// 					// 		source={{uri:tempImageUri}}
+		// 					// 		style={styles.thumbnail}
+		// 					// 	/>
+		// 					// </TouchableOpacity>
+		// 					<Button
+		// 						transparent style={styles.thumbnail} 
+		// 						onPress={() => this.onImageClicked(response.images[0], this.state.passedId)} 
+		// 						key={response.images[0]} >
+		// 						<Thumbnail
+		// 							key={response.images[0]}
+		// 							large square source={{ uri: tempImageUri}}
+		// 						/>
+		// 					</Button>
+		// 				)];
+		// 				this.setState({ 
+		// 					followImageHeading: [...tempImageHeading],
+		// 					followedImagesContainer: [...tempImageElement] 
+		// 				});
+		// 			}else if(response.images.length > 1){
+		// 				// multiple images
+		// 				console.log('[feeds js] componentDidMount - fetch response images length: MORE THAN ONE');
+		// 				// map
+		// 				let tempImageElement = response.images.map((imageId, index) => {
+		// 					let tempImageUri = GET_IMAGES_URI + imageId + '/display';
+		// 					return (
+		// 						// <TouchableOpacity
+		// 						// 	key={imageId + index}
+		// 						// 	style={styles.thumbnail}
+		// 						// 	onPress={() => this.onImageClicked2(imageId, this.state.passedId)}
+		// 						// >
+		// 						// 	<Image
+		// 						// 		key={imageId}
+		// 						// 		source={{uri:tempImageUri}}
+		// 						// 		style={styles.thumbnail}
+		// 						// 	/>
+		// 						// </TouchableOpacity>
+		// 						<Button 
+		// 							transparent style={styles.thumbnail} 
+		// 							onPress={() => this.onImageClicked(imageId, this.state.passedId)} 
+		// 							key={imageId} 
+		// 						>
+		// 							<Thumbnail
+		// 								large square source={{ uri: tempImageUri }}
+		// 							/>
+		// 						</Button>
+		// 					);
+		// 				});
+		// 				this.setState({
+		// 					oneFollowMultiImageFlag: true, 
+		// 					followedImagesContainer: [...tempImageElement] 
+		// 				});
+		// 			}
+		// 		})
+		// 		.catch(error => console.log('[feeds js] componentDidMount - ONE followed fetch error: ', error));
+
+		// }else if(this.state.followed.length > 1){
+		// 	// MULTIPLE followed
+		// 	console.log('[feeds js] componentDidMount - Multiple followed: ', this.state.followed);
+		// 	return fetch(GET_USERS_FOLLOWED_URI)
+		// 		.then(response => response.json())
+		// 		.then(response => {
+		// 			console.log('[feeds js] componentDidMount - Multiple followed fetch response: ', response);
+
+		// 			let tempImageElements = [];
+		// 			// modify and then save response data to tempImagesArray
+		// 			let tempImagesArray = response.data.map((item, index) => {
+		// 				console.log('[feeds js] componentDidMount - MULTIPLE fetch map: ', item);
+		// 				console.log('[feeds js] componentDidMount - MULTIPLE fetch image arrays: ', item.images);
+		// 				console.log('[feeds js] componentDidMount - MULTIPLE fetch image arrays length: ', item.images.length);
+	
+		// 				if(item.images.length <= 0){
+		// 					// TODO: logic for when followed user does not have images
+		// 				}else if(item.images.length >= 1){
+		// 					// followed user has multiple images
+		// 					// modify and then save each image to tempImageElements
+		// 					let tempImageElements = item.images.map((item,index) => {
+		// 						let tempImageUri =GET_IMAGES_URI + item + '/display';
+		// 						return (
+		// 							// <TouchableOpacity
+		// 							// 	key={item + index}
+		// 							// 	style={styles.thumbnail}
+		// 							// 	onPress={() => this.onImageClicked2(item, this.state.passedId)}
+		// 							// >
+		// 							// 	<Image
+		// 							// 		key={item}
+		// 							// 		source={{ uri: tempImageUri }}
+		// 							// 		style={styles.thumbnail}
+		// 							// 	/>
+		// 							// </TouchableOpacity>
+		// 							<Button 
+		// 								transparent style={styles.thumbnail}
+		// 								key={item} 
+		// 								onPress={() => this.onImageClicked(item, this.state.passedId)} 
+		// 							>
+		// 								<Thumbnail
+		// 									key={item}
+		// 									large square source={{ uri: tempImageUri }}
+		// 								/>
+										
+		// 							</Button>
+		// 						);
+		// 					});
+
+		// 					console.log('[feeds js] componentDidMount - MULTIPLE fetch tempImageElements: ', tempImageElements);
+		// 					// return View element containing tempImageElements 
+		// 					return (
+		// 						<View style={styles.followedImagesOuter}
+		// 							key = {item._id + index}
+		// 						>
+		// 							<Text>{item.username}</Text>
+		// 							<View style={styles.followedImagesInner}>
+		// 								{[...tempImageElements]}
+		// 							</View>
+									
+		// 						</View>
+		// 					);
+		// 				}
+		// 			});
+		// 			this.setState({
+		// 				followedImagesContainer: [...tempImagesArray]
+		// 			});
+		// 		})
+		// 		.catch(error => console.log('[feeds js] componentDidMount - Multiple followed fetch error: ', error));
+		// }
 	}
 	
 	onLogoutHandler = () => {
@@ -491,8 +608,8 @@ class FeedsScreen extends Component {
 					</Row>
 					<Text>FOLLOWED IMAGES</Text>
 					<Row>
-						<View style={this.state.followed.length > 1 ? styles.imagesContainer2 : styles.imagesContainer}>
-							{this.state.followedImagesContainer}
+						<View style={styles.imagesContainer}>
+							{this.state.feedImagesArray}
 						</View>
 					</Row>
 					<Row>
@@ -539,13 +656,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		width: '100%',
 		height: '100%',
-		flexDirection:'row'
-	},
-	imagesContainer2:{
-		flex: 1,
-		width: '100%',
-		height: '100%',
-		flexDirection: 'column'
+		flexDirection:'row',
+		flexWrap:'wrap'
 	},
 	currentUserOuter: {
 		flex: 1,
