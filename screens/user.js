@@ -369,7 +369,7 @@ class UserScreen extends Component {
                 //         style={styles.thumbnail} 
                 //     />
                 // </TouchableOpacity>
-					<Button style={styles.thumbnail} onPress={() => this.onImageClicked(this.state.images[0], this.state.passedId)} >
+					<Button transparent style={styles.thumbnail} onPress={() => this.onImageClicked(this.state.images[0], this.state.passedId)} >
 						<Thumbnail
 							  large square  source={{ uri: GET_IMAGES_URI + this.state.images[0] + '/display' }}
 						/> 
@@ -394,7 +394,11 @@ class UserScreen extends Component {
                         //         style={styles.thumbnail} 
                         //     />
 						// </TouchableOpacity>
-						<Button style={styles.thumbnail} onPress={() => this.onImageClicked(this.state.images[0], this.state.passedId)} key={imageId} >
+						<Button 
+							transparent style={styles.thumbnail} 
+							onPress={() => this.onImageClicked(imageId, this.state.passedId)} 
+							key={imageId} 
+						>
 						<Thumbnail 
 								 large square  source={{ uri: GET_IMAGES_URI + imageId + '/display' }} 
 						/> 
@@ -462,7 +466,9 @@ class UserScreen extends Component {
             <Content>
 				<Grid>
 					<Row>
-						<View>{imageElement}</View>
+						<View style={styles.imagesContainer}>
+							{imageElement}
+						</View>
 					</Row>
 					<Row>
 						<View>{this.state.followedImagesContainer}</View>
@@ -482,13 +488,13 @@ class UserScreen extends Component {
                 
             </Content>
 			<Footer>
-				<FooterTab>
-						<Button full onPress={this.onImagePickerHandler}>
-							<Text>Image Picker</Text>
-						</Button>
-						<Button full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
-							<Text>Explore</Text>
-						</Button>
+				<FooterTab >
+					<Button full onPress={this.onImagePickerHandler}>
+						<Text>Image Picker</Text>
+					</Button>
+					<Button full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
+						<Text>Explore</Text>
+					</Button>
 				</FooterTab>
 			</Footer>
         </Container>
@@ -529,8 +535,8 @@ const styles = StyleSheet.create({
 		flexWrap:'wrap'
 	},
 	buttonsContainer: {
-		width: '100%',
-		height: '100%',
+		width: 60,
+		height: 60,
 		flex: 1,
 		flexDirection:'column'
 	},

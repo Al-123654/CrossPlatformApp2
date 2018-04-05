@@ -167,9 +167,7 @@ class RegisterScreen extends Component {
 						<Title>Register</Title>
 					</Body>
                     <Right>
-                        {/* <Button transparent onPress={this.onLogoutHandler}>
-                            <Icon name='home'/>
-                        </Button> */}
+                        
                     </Right>
 				</Header>
 				<Content>
