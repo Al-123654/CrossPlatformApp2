@@ -78,10 +78,13 @@ class UserScreen extends Component {
 							// 		style={styles.thumbnail}
 							// 	/>
 							// </TouchableOpacity>
-							<Button onPress={() => this.onImageClicked(response.images[0], this.state.passedId)} key={response.images[0]} >
+							<Button
+								transparent style={styles.thumbnail} 
+								onPress={() => this.onImageClicked(response.images[0], this.state.passedId)} 
+								key={response.images[0]} >
 								<Thumbnail
 									key={response.images[0]}
-									small square source={{ uri: tempImageUri}}
+									large square source={{ uri: tempImageUri}}
 								/>
 							</Button>
 						)];
@@ -107,10 +110,13 @@ class UserScreen extends Component {
 								// 		style={styles.thumbnail}
 								// 	/>
 								// </TouchableOpacity>
-								<Button onPress={() => this.onImageClicked(imageId, this.state.passedId)} key={imageId} >
+								<Button 
+									transparent style={styles.thumbnail} 
+									onPress={() => this.onImageClicked(imageId, this.state.passedId)} 
+									key={imageId} 
+								>
 									<Thumbnail
-										
-										 square source={{ uri: tempImageUri }}
+										large square source={{ uri: tempImageUri }}
 									/>
 								</Button>
 							);
@@ -157,11 +163,16 @@ class UserScreen extends Component {
 									// 		style={styles.thumbnail}
 									// 	/>
 									// </TouchableOpacity>
-									<Button onPress={() => this.onImageClicked(imageId, this.state.passedId)} >
+									<Button 
+										transparent style={styles.thumbnail}
+										key={item} 
+										onPress={() => this.onImageClicked(item, this.state.passedId)} 
+									>
 										<Thumbnail
-											key={imageId}
-											 square source={{ uri: tempImageUri }}
+											key={item}
+											large square source={{ uri: tempImageUri }}
 										/>
+										
 									</Button>
 								);
 							});
@@ -170,7 +181,7 @@ class UserScreen extends Component {
 							// return View element containing tempImageElements 
 							return (
 								<View style={styles.followedImagesOuter}
-									key = {item._id}
+									key = {item._id + index}
 								>
 									<Text>{item._id}</Text>
 									<View style={styles.followedImagesInner}>
@@ -369,9 +380,12 @@ class UserScreen extends Component {
                 //         style={styles.thumbnail} 
                 //     />
                 // </TouchableOpacity>
-					<Button transparent style={styles.thumbnail} onPress={() => this.onImageClicked(this.state.images[0], this.state.passedId)} >
+					<Button 
+						transparent style={styles.thumbnail} 
+						onPress={() => this.onImageClicked(this.state.images[0], this.state.passedId)} 
+					>
 						<Thumbnail
-							  large square  source={{ uri: GET_IMAGES_URI + this.state.images[0] + '/display' }}
+								large square  source={{ uri: GET_IMAGES_URI + this.state.images[0] + '/display' }}
 						/> 
 					</Button>
 					
@@ -399,9 +413,9 @@ class UserScreen extends Component {
 							onPress={() => this.onImageClicked(imageId, this.state.passedId)} 
 							key={imageId} 
 						>
-						<Thumbnail 
-								 large square  source={{ uri: GET_IMAGES_URI + imageId + '/display' }} 
-						/> 
+							<Thumbnail 
+									large square  source={{ uri: GET_IMAGES_URI + imageId + '/display' }} 
+							/> 
 						</Button>
                     );
                     
@@ -465,22 +479,18 @@ class UserScreen extends Component {
             </Header>
             <Content>
 				<Grid>
+					<Text>USER IMAGES</Text>
 					<Row>
 						<View style={styles.imagesContainer}>
 							{imageElement}
 						</View>
 					</Row>
+					<Text>FOLLOWED IMAGES</Text>
 					<Row>
-						<View>{this.state.followedImagesContainer}</View>
+						<View style={this.state.followed.length > 1 ? styles.imagesContainer2 : styles.imagesContainer}>
+							{this.state.followedImagesContainer}
+						</View>
 					</Row>
-					{/* <Row style={styles.buttonsContainer}>
-						<Button full onPress={this.onImagePickerHandler}>
-							<Text>Image Picker</Text>
-						</Button>
-						<Button full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
-							<Text>Explore</Text>
-						</Button>
-					</Row> */}
 					<Row>
 						<Text>{this.state.log}</Text>
 					</Row>
@@ -520,9 +530,15 @@ const styles = StyleSheet.create({
 	},
 	imagesContainer: {
 		flex: 1,
-		flexDirection: 'row',
 		width: '100%',
-		height: '100%'
+		height: '100%',
+		flexDirection:'row'
+	},
+	imagesContainer2:{
+		flex: 1,
+		width: '100%',
+		height: '100%',
+		flexDirection: 'column'
 	},
 	currentUserOuter: {
 		flex: 1,
