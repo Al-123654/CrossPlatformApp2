@@ -6,8 +6,8 @@ import RNFetchBlob from 'react-native-fetch-blob';
 import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input, Form, Label, Thumbnail, Footer, FooterTab, Tab, Tabs } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
-// import Tab1 from './tabOne';
-// import Tab2 from './tabTwo';
+import TabOne from './../components/Tabs/TabOne';
+import TabTwo from './../components/Tabs/TabTwo';
 // import Tab3 from './tabThree';
 // import Tab4 from './tabFour';
 // import Tab5 from './tabOne';
@@ -53,7 +53,7 @@ class ProfileScreen extends Component{
     render(){
        return(
            <Container>
-               <Header>
+               <Header hasTabs>
                    <Left>
                     <Button transparent onPress={this.onBackBtnPressed}>
                         <Icon name='arrow-back' />
@@ -66,10 +66,14 @@ class ProfileScreen extends Component{
                        </Button>
                    </Right>
                </Header>
-               <Content>
-                   <Text>Hello</Text>
-
-               </Content>
+               <Tabs initialPage={1}>
+                   <Tab heading="Tab1">
+                       <TabOne />
+                   </Tab>
+                   <Tab heading="Tab2">
+                       <TabTwo />
+                   </Tab>
+               </Tabs>
                <Footer>
                    <FooterTab >
                        

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Platform, StyleSheet, View, Image, Alert, TouchableOpacity } from 'react-native';
 import { StackNavigator, } from 'react-navigation';
-import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input, Form, Label, Thumbnail, Card, CardItem } from 'native-base';
+import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input, Form, Label, Thumbnail, Card, CardItem, Badge } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
 class ImageScreen extends Component{
@@ -70,7 +70,7 @@ class ImageScreen extends Component{
 					{
 						text: 'OK', onPress: () => {
 							this.props.navigation.navigate('Home');
-							console.log("[explore js] onLogoutPressHandler - LOGGED OUT")
+							console.log("[images js] onLogoutPressHandler - LOGGED OUT")
 						}
 					}
 				]
@@ -292,6 +292,17 @@ class ImageScreen extends Component{
                         <CardItem cardBody>
                             <Image source={{ uri: this.state.IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{height: 200, width: null, flex: 1}}/>
                         </CardItem>
+							{/* <Text>{this.state.noOfLikes}likes</Text> */}
+							<Button
+								style={{alignSelf:'flex-end'}}onPress={() =>{this.onLikePressHandler(this.state.imageId)}}
+							>
+								<Icon
+								name={this.state.isImageLiked ? "ios-heart" : "ios-heart-outline"} 
+						/>
+							</Button>
+						<CardItem>
+
+						</CardItem>
                     </Card>
                 </Content>
             </Container>
