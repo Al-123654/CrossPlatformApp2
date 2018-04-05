@@ -8,7 +8,7 @@ import {
 	Title, Content, Text, Button, Item, Input, 
 	Form, Label, Footer, FooterTab
 } from 'native-base';
-import{Col, Row, Grid} from 'react-native-easy-grid';
+import{ Row, Grid} from 'react-native-easy-grid';
 import validator from 'validator';
 
 var RegisterScreen = require('./screens/register.js');
@@ -80,36 +80,13 @@ class HomeScreen extends Component {
 	}
 	
 	onRegisterPressHandler = () => {
+		console.log('[app js] Register btn pressed.');
 		this.props.navigation.navigate('Register');
-		console.log('REGISTER PRESSED');
 	}
 
 	render() {
 		
 		return (
-
-			// <View style={styles.outerContainer}>
-
-			// 	<Header centerComponent={{ text: "TEST APP", style: { color: "#fff" } }} />
-
-			// 	<View style={styles.formContainer}>
-			// 		<FormLabel>Login</FormLabel>
-			// 		<FormInput style={styles.input} placeholder="Username" onChangeText={(text) => this.onChangedUsernameHandler(text)} />
-			// 		<FormInput style={styles.input} placeholder="Password" secureTextEntry ={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
-			// 		<Button dark onPress={this.onLoginPressHandler}>
-			// 			<Text>Login</Text> 
-			// 		</Button> 
-			// 	</View>
-
-			// 	<Text style={styles.registerLink} onPress={this.onRegisterPressHandler}>Register</Text>
-					
-			// 	<View style={styles.logContainer}>
-			// 		<FormLabel>{this.state.log}</FormLabel>
-			// 		<FormLabel>{this.state.logDetails}</FormLabel>
-			// 	</View>
-					
-			// </View>
-
 			<Container>
 				<Header>
 					<Body>
@@ -134,7 +111,6 @@ class HomeScreen extends Component {
 									<Input secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
 								</Item>
 								{this.state.logPassword.length > 0 ? (<Text style={styles.formLogText}>{this.state.logPassword}</Text>) : null}
-
 							</Form>
 							<Button style={{alignSelf:'flex-end'}} transparent onPress={this.onRegisterPressHandler}>
 								<Text style={{fontSize:12}}>Register</Text>

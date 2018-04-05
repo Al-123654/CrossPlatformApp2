@@ -5,15 +5,18 @@ import {
 	TouchableOpacity, TouchableHighlight
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input, Form, Label, Thumbnail, Card, CardItem, ListItem, List } from 'native-base';
+import { 
+	Container, Header, Left, Body, Right, Icon, 
+	Title, Content, Text, Button, Item, Input, 
+	Form, Label, Thumbnail, Card, CardItem, ListItem, 
+	List 
+} from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
-class ExploreScreen extends Component {
+const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users';
+const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
 
-	// state = { 
-	// 	log: "",
-	// 	listOfUsers: ""
-	// };
+class ExploreScreen extends Component {
 
 	constructor(props) {
 		super(props);
@@ -39,7 +42,7 @@ class ExploreScreen extends Component {
 	}
 
 	fetchListofUsers = () => {
-		fetch('https://app-api-testing.herokuapp.com/api/users')
+		fetch(GET_USERS_URI)
 		.then(response=>{
 			console.log('[explore js] fetchListofUsers - response: ', response);
 			if(response.status !== 200){
@@ -61,8 +64,7 @@ class ExploreScreen extends Component {
 	}
 
     onLogoutHandler = () => {
-        return fetch('https://app-api-testing.herokuapp.com/logout', {
-        // return fetch('http://localhost:5000/logout', {
+        return fetch(LOGOUT_URI, {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
@@ -93,7 +95,7 @@ class ExploreScreen extends Component {
 		console.log('[explore js] onListItemPressed itemID type: ', typeof itemId);
 		console.log('[explore js] onListItemPressed userID: ', userId);
 
-		return fetch('https://app-api-testing.herokuapp.com/api/users/',
+		return fetch(GET_USERS_URI,
 		{
 			method: 'PUT',
 			headers: {
@@ -185,21 +187,29 @@ class ExploreScreen extends Component {
             
             <Container>
                 <Header>
-                    <Body><Title>EXPLORE</Title></Body>
+					<Left>
+						<Button transparent onPress={this.onBackBtnPressed}>
+							<Icon name='arrow-back' />
+						</Button>
+					</Left>
+                    <Body><Title>Explore</Title></Body>
+					<Right>
+						<Button transparent onPress={this.onLogoutHandler}>
+							<Icon name='home' />
+						</Button>
+					</Right>
                 </Header>
                 <Content>
                     <List dataArray = {listOfUsersCopy}
-					renderRow={(item) =>
-						<ListItem>
-							
-							<Text>{item.username}</Text>
-							<Text>{item.email}</Text>
-							<Button onPress={() => this.onListItemPressed(item.id, this.state.passedUserId)} ></Button>
-							{/* <Icon name= 'ion-plus-round' */}
-						</ListItem>
-					}>
-					{/* keyExtractor={item => item._id}
-					) */}
+						renderRow={(item) =>
+							<ListItem 
+								style={styles.listItem}
+								button 
+								onPress={() => this.onListItemPressed(item._id, this.state.passedUserId)}>
+								<Text style={{color:'#007594'}}>{item.username}</Text>
+								<Text style={{color:'#000000',fontSize:12}}>{item.isFollowed ? 'Unfollow' : 'Follow'}</Text>
+							</ListItem>
+						}>
                     </List>
                 </Content>
             </Container>
@@ -209,6 +219,11 @@ class ExploreScreen extends Component {
 }
 
 const styles = StyleSheet.create({
+	listItem: {
+		flex:1,
+		flexDirection:'row',
+		justifyContent:'space-between'
+	},
 	outerList : {
 		marginTop: 0
 	},
@@ -223,9 +238,7 @@ const styles = StyleSheet.create({
         width: '80%',
         flexWrap:'wrap',
         justifyContent: 'center',
-        
     },
-
     thumbnail: {
         width: 75,
         height: 75,
