@@ -6,7 +6,7 @@ import RNFetchBlob from 'react-native-fetch-blob';
 import { 
 	Container, Header, Left, Body, Right, Icon, 
 	Title, Content, Text, Button, Item, Input, 
-	Form, Label, Footer, FooterTab
+	Form, Label, Footer, FooterTab,Root
 } from 'native-base';
 import{ Row, Grid} from 'react-native-easy-grid';
 import validator from 'validator';
@@ -181,11 +181,16 @@ const RootStack = StackNavigator(
 	{initialRouteName: 'Home'}
 );
 
-export default class App extends Component {
-	render() {
-		return <RootStack />;
-	}
-}
+// export default class App extends Component {
+// 	render() {
+// 		return <RootStack />;
+// 	}
+// }
+
+export default () =>
+	<Root>
+		<RootStack/>
+	</Root>;
 
 const styles = StyleSheet.create({
 	iconContainer: {

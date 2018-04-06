@@ -3,9 +3,11 @@ import { Platform, StyleSheet, View, Image, Alert, TouchableOpacity } from 'reac
 import { StackNavigator, } from 'react-navigation';
 import { Container, Header, Left, Body, Right, Icon, Title, 
 	Content, Text, Button, Item, Input, Form, Label, Thumbnail, 
-	Card, CardItem, Badge, ListItem, List, Footer, FooterTab } from 'native-base';
+	Card, CardItem, Badge, ListItem, List, Footer, FooterTab,
+	Toast, Root} from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import moment from 'moment';
+import validator from 'validator';
 
 class ImageScreen extends Component{
     constructor(props) {
@@ -39,7 +41,8 @@ class ImageScreen extends Component{
 			comment: "",
 			displayingComment: [],
 			log: "",
-			dateCommented: []
+			dateCommented: [],
+			showToast:false
 			
 		};
 
@@ -135,24 +138,38 @@ class ImageScreen extends Component{
 	}
 	//save comment to api
 	postComment = () => {
-		fetch(this.state.IMAGE_ROOT_URI + this.state.imageId + '/comments', {
-			method: 'POST',
-			headers:{
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				comment: this.state.comment
-			}),
-		})
-		.then((response) => response.json())
-		.then((responseJson) => {
-			console.log("Comment saved")
-			this.setState({log: "Comment saved"})
-		})
-		.catch((error) => {
-			console.error(error)
-		});
+		if (validator.isLength(this.state.comment,{min:1, max: 200})){
+			fetch(this.state.IMAGE_ROOT_URI + this.state.imageId + '/comments', {
+				method: 'POST',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					comment: this.state.comment
+				}),
+			})
+				.then((response) => response.json())
+				.then((responseJson) => {
+					console.log("Comment saved")
+					this.setState({ log: "Comment saved" })
+				})
+				.catch((error) => {
+					console.error(error)
+				});
+		}else{
+			Toast.show({
+				text: 'Comment too long/short',
+				position: 'bottom',
+				buttonText: 'Ok'
+			})
+		}
+		// else{
+		// 	this.setState({
+		// 		log: <Text>Comment too long/short</Text>
+		// 	})
+		// }
+		
 
 	}
 	
@@ -353,7 +370,6 @@ class ImageScreen extends Component{
                 </Content>
 				<Text>{this.state.log}</Text>
 				<Footer>
-					
 					<FooterTab >
 						<Button full onPress={this.postComment}>
 							<Text>Post Comment</Text>
@@ -398,4 +414,4 @@ const styles = StyleSheet.create({
 	}
 
 })
-module.exports = ImageScreen;
+module.exports=ImageScreen;
