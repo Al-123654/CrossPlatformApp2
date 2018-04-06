@@ -48,12 +48,6 @@ class FeedsScreen extends Component {
 		let userImagesArray = this.getUserImages();
 		console.log('[feeds js] componentDidMount - userImagesArray: ', userImagesArray);
 
-		// let followedImagesArray = this.getFollowedUsersImages();
-		// console.log('[feeds js] componentDidMount - followedImagesArray: ', followedImagesArray);
-
-		// if(!this.state.areFollowedUsersImagesLoading)
-		// 	this.setState({ feedImagesArray: [...userImagesArray, ...followedImagesArray] });
-
 		console.log('[feeds js] componentDidMount - Number of following: ', this.state.followed.length);
 		let tempFeedImagesArray = [];
 		if(this.state.followed.length === 0){
@@ -104,25 +98,6 @@ class FeedsScreen extends Component {
 			.then(response => response.json())
 			.then(response => {
 				// save images
-				// data: [ 
-				// 	{ 
-				// 		_id: '5ac5c7d8c86aad0004a44de6',
-				// 		username: 'user_c',
-				// 		images: [ 
-				// 			'5ac5c7d8c86aad0004a44dec', 
-				// 			'5ac5c7d8c86aad0004a44ded' 
-				// 		] 
-				// 	},
-				// 	{ 
-				// 		_id: '5ac5c7d8c86aad0004a44de7',
-				// 		username: 'user_d',
-				// 		images: [ 
-				// 			'5ac5c7d8c86aad0004a44de9',
-				// 			'5ac5c7d8c86aad0004a44dea',
-				// 			'5ac5c7d8c86aad0004a44deb' 
-				// 		] 
-				// 	} 
-				// ]
 				console.log('[feeds js] componentDidMount - Multiple followed response: ', response);
 				
 				// loop through followed users
