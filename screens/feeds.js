@@ -146,9 +146,9 @@ class FeedsScreen extends Component {
 							transparent style={styles.thumbnail} 
 							onPress={() => this.onImageClicked(imageId, this.state.passedId)} 
 							key={imageId} >
-							<Thumbnail 
-							large square  source={{ uri: GET_IMAGES_URI + imageId + '/display' }} 
-							/> 
+								<Thumbnail 
+									large square source={{ uri: GET_IMAGES_URI + imageId + '/display' }} 
+								/>
 						</Button>
 					); 
 				});
@@ -431,8 +431,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     thumbnail: {
-        width: 75,
-        height: 75,
+        width: 80,
+        height: 80,
     }
 });
 
