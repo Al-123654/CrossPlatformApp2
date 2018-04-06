@@ -5,6 +5,7 @@ import { Container, Header, Left, Body, Right, Icon, Title,
 	Content, Text, Button, Item, Input, Form, Label, Thumbnail, 
 	Card, CardItem, Badge, ListItem, List, Footer, FooterTab } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
+import moment from 'moment';
 
 class ImageScreen extends Component{
     constructor(props) {
@@ -37,7 +38,8 @@ class ImageScreen extends Component{
 			commentId: props.navigation.state.params.data.comments,
 			comment: "",
 			displayingComment: [],
-			log: ""
+			log: "",
+			dateCommented: []
 			
 		};
 
@@ -157,6 +159,7 @@ class ImageScreen extends Component{
 	//display comments from api
 	displayComment = () => {
 		// if one comment
+		let tempDisplay 
 		if (this.state.commentId.length == 1){
 			fetch(this.state.COMMENT_URI + this.state.commentId, {
 				method: 'GET',
@@ -167,10 +170,27 @@ class ImageScreen extends Component{
 			})
 			.then((response) => response.json())
 			.then((responseJson) => {
+				console.log("Response from server:", responseJson)
 				console.log("Comment to display:", responseJson.comment)
-			
+				console.log("ID to display:", responseJson.owner)
+				console.log("Date created:", responseJson.date_created)
+				console.log("Owner:", responseJson.owner_username)
 				this.setState({
-					displayingComment: <Text>{responseJson.comment}</Text>
+					dateCommented: moment(responseJson.date_created).startOf().fromNow()
+				})
+				
+				
+				this.setState({
+					// commentedBy: <Text>{responseJson.owner} </Text>,
+					displayingComment: 
+						<ListItem>
+							<Body>
+								<Text> {responseJson.owner_username}</Text>
+								<Text> {responseJson.comment}</Text>
+								<Text style={{alignSelf:'flex-end', fontSize: 12}}>{this.state.dateCommented}</Text>
+							</Body>
+						{/* <Text> {responseJson.owner} {responseJson.comment}</Text>  */}
+					</ListItem>
 				})
 			})
 			.catch((error) => {
@@ -179,6 +199,7 @@ class ImageScreen extends Component{
 		
 		// if more than one comment 
 		}else if(this.state.commentId.length > 1){
+			// let tempCommentBy = []
 			let tempDisplay = []
 			this.state.commentId.forEach((comments, index) => {
 				fetch(this.state.COMMENT_URI + comments, {
@@ -192,36 +213,41 @@ class ImageScreen extends Component{
 				.then((responseJson) => {
 					console.log('[images js] Response from server', responseJson)
 					console.log("Comment to display:", responseJson.comment)
-					
-					tempDisplay.push(
-						
-					<ListItem key={index}>
-						<Text  >{responseJson.comment}</Text>
-					</ListItem>
-					)
+					console.log("ID to display:", responseJson.owner)
+					console.log("Date created:", responseJson.date_created)
+					console.log("Owner:", responseJson.owner_username)
 					this.setState({
+						dateCommented: moment(responseJson.date_created).startOf().fromNow()
+					})
+					
+					// tempCommentBy.push(
+					// 	<ListItem key={index}>
+					// 		<Text>{responseJson.owner}</Text>
+							
+					// 	</ListItem>,
+						
+					// )
+					tempDisplay.push(
+						<ListItem key={index}>
+							<Body>
+								<Text style={{fontWeight: 'bold', fontSize: 13}}> {responseJson.owner_username}</Text>
+								<Text style={{fontSize:15}}> {responseJson.comment}</Text>
+								<Text style={{ alignSelf: 'flex-end', fontSize: 10 }}>{this.state.dateCommented}</Text> 
+							</Body>
+							{/* <Text> {responseJson.owner} {responseJson.comment}</Text>  */}
+						</ListItem>
+					)
+					
+					this.setState({
+						// commentedBy: [...tempCommentBy],
 						displayingComment: [...tempDisplay]
 					})
-			})
+				})
 			.catch((error) => {
 				console.error(error)
 			});
-		})
-		
-			// fetch(this.state.COMMENT_URI + comments, {
-			// 	method:'GET',
-			// 	headers:{
-			// 		Accept: 'application/json',
-			// 		'Content-Type': 'application/json'
-			// 	},
-			// })
-			// .then((response) => response.json())
-			// .then((responseJson) => {
-			// 	let displayComments = responseJson.comment
-			// 	console.log('Comment') 
-			// })
+			})
 
-			
 		// if no comments
 		}else if(this.state.commentId.length == 0){
 			this.setState({
@@ -299,29 +325,28 @@ class ImageScreen extends Component{
 					</Right>
                 </Header>
                 <Content>
-                    <Card>
-                        <CardItem cardBody>
-                            <Image source={{ uri: this.state.IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{height: 200, width: null, flex: 1}}/>
-                        </CardItem>
-							{/* <Text>{this.state.noOfLikes}likes</Text> */}
-							<Button
-								transparent style={{alignSelf:'flex-end', position: "relative"}}onPress={() =>{this.onLikePressHandler(this.state.imageId)}}
-							>
-								<Badge style={{position: "absolute", bottom: 0, right:1}}>
-									<Text style={{fontSize:12}}>{this.state.noOfLikes}</Text>
-								</Badge>
-								<Icon
-								style={{fontSize:35}}
-								name={this.state.isImageLiked ? "ios-heart" : "ios-heart-outline"} 
-								/>
-							</Button>
-                    </Card>
-					<Item rounded>
+					<Image source={{ uri: this.state.IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{height: 200, width: null, flex: 1}}/>
+				
+					{/* <Text>{this.state.noOfLikes}likes</Text> */}
+					<Button
+						transparent style={{alignSelf:'flex-end', position: "relative"}}onPress={() =>{this.onLikePressHandler(this.state.imageId)}}
+					>
+						<Badge style={{position: "absolute", bottom: 0, right:1, zIndex:100}}>
+							<Text style={{fontSize:12}}>{this.state.noOfLikes}</Text>
+						</Badge>
+						<Icon
+						style={{fontSize:35}}
+						name={this.state.isImageLiked ? "ios-heart" : "ios-heart-outline"} 
+						/>
+					</Button>
+					<Item floatingLabel>
 						<Label>Comment here</Label>
 						<Input onChangeText={(text) => this.createComment(text)} />
 					</Item>
-					<List>
-						
+					<List style={{marginTop:40}} >
+						<ListItem itemHeader first>
+							<Text style={{fontSize:12}}>COMMENTS</Text>
+						</ListItem>
 						{this.state.displayingComment}
 					</List>
 					
