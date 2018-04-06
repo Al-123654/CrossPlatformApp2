@@ -118,11 +118,11 @@ class FeedsScreen extends Component {
 								</Button>
 							);
 						});
-						tempFeedImagesArray = [...userImagesArray, ...tempFeedImagesArray, ...tempFeedImagesArray2];
+						tempFeedImagesArray = [...tempFeedImagesArray, ...tempFeedImagesArray2];
 					}
 				});
 				this.setState({
-					feedImagesArray: [...tempFeedImagesArray]
+					feedImagesArray: [...userImagesArray, ...tempFeedImagesArray]
 				});
 				console.log('[feeds js] componentDidMount - Multiple feedImagesArray: ', this.state.feedImagesArray);
 			})
