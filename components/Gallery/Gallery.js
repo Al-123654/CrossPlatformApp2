@@ -33,7 +33,7 @@ export default class Gallery extends Component {
 	};
 
 	render() {
-		const { images } = this.props;
+		const { images, clicked, passedUserId } = this.props;
 		const { index, shown } = this.state;
 
 		return (
@@ -47,7 +47,13 @@ export default class Gallery extends Component {
 			{
 				(
 					() => images.map((image,idx) => 
-						<GalleryImage index={idx} key={idx} uri={GET_IMAGES_URI + image + '/display'} />)
+						<GalleryImage 
+							index={idx} 
+							key={idx} 
+							uri={GET_IMAGES_URI + image + '/display'} 
+							onPress={clicked} 
+							imageId={image}
+							passedUserId={passedUserId} />)
 				)()
 				// (() =>
 				// images.map((image, idx) =>

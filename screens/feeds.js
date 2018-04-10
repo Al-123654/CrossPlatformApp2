@@ -272,7 +272,7 @@ class FeedsScreen extends Component {
 	}
 	
 	onImageClicked = (imageId,passedId) => {
-        console.log("[user.js] onImageClicked: ", imageId );
+        console.log("[feeds js] onImageClicked: ", imageId );
         return fetch('https://app-api-testing.herokuapp.com/api/images/' + imageId, {
             method: 'GET',
             headers:{
@@ -348,7 +348,11 @@ class FeedsScreen extends Component {
 							{this.state.feedImagesArray}
 						</View>
 					</View> */}
-					<Gallery images={this.state.feedImagesArray}/>
+					<Gallery 
+						images={this.state.feedImagesArray} 
+						clicked={this.onImageClicked} 
+						passedUserId={this.state.passedId}
+					/>
 					{/* <Gallery images={this.state.images}/> */}
 				</Content>
 				<Footer>
