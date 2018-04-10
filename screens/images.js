@@ -15,15 +15,15 @@ class ImageScreen extends Component{
 		//TODO: check if props.navigation.state.params exists
 		console.log('[images js] constructor - passedParams: ', props.navigation.state.params);
 
-		// check if image liked
-		let isLiked = false;
-		if (typeof props.navigation.state.params.data.likes !== 'undefined' && 
-		props.navigation.state.params.data.likes.length > 0){
-			props.navigation.state.params.data.likes.forEach(function(likeId){
-				console.log('[images js] constructor - likeId: ', likeId);
-				if(likeId == props.navigation.state.params.userId){
-					console.log('[images js] constructor - User already liked this image.');
-					isLiked = true;
+		// check if image favorited
+		let isFavorite= false;
+		if (typeof props.navigation.state.params.data.favorite !== 'undefined' && 
+		props.navigation.state.params.data.favorite.length > 0){
+			props.navigation.state.params.data.favorite.forEach(function(favoriteId){
+				console.log('[images js] constructor - favoriteId: ', favoriteId);
+				if(favoriteId == props.navigation.state.params.userId){
+					console.log('[images js] constructor - User already Favorited this image.');
+					isFavorite = true;
 				}
 			});
 		}
@@ -33,10 +33,10 @@ class ImageScreen extends Component{
 			IMAGE_ROOT_URI: 'https://app-api-testing.herokuapp.com/api/images/',
 			COMMENT_URI: 'https://app-api-testing.herokuapp.com/api/comments/',
 			imageId: props.navigation.state.params.data._id,
-			imageLikesArray: props.navigation.state.params.data.likes,
+			// imageLikesArray: props.navigation.state.params.data.favorite,
 			userId: props.navigation.state.params.userId,
-			isImageLiked: isLiked,
-			noOfLikes: props.navigation.state.params.data.likes.length,
+			isImageFavorite: isFavorite,
+			noOfFavorite: props.navigation.state.params.data.favorite.length,
 			commentId: props.navigation.state.params.data.comments,
 			comment: "",
 			displayingComment: [],
@@ -49,10 +49,10 @@ class ImageScreen extends Component{
 		// logs
 		console.log('[images js] constructor - After init.');
 		console.log('[images js] constructor - imageId: ', this.state.imageId);
-		console.log('[images js] constructor - imageLikesArray: ', this.state.imageLikesArray);
+		// console.log('[images js] constructor - imageLikesArray: ', this.state.imageLikesArray);
 		console.log('[images js] constructor - userId: ', this.state.userId);
-		console.log('[images js] constructor - isImageLiked: ', this.state.isImageLiked);
-		console.log('[images js] constructor - noOfLikes: ', this.state.noOfLikes);
+		console.log('[images js] constructor - isImageFavorite: ', this.state.isImageFavorite);
+		console.log('[images js] constructor - noOfFavorite: ', this.state.noOfFavorite);
 		console.log('[images js] constructor - comment: ', this.state.commentId);
 	}
 	
@@ -89,10 +89,12 @@ class ImageScreen extends Component{
 		});
 	}
     
-    onLikePressHandler = (imageId) => {
-		console.log('[images js] onLikePressHandler - Like btn Pressed!');
-		console.log('[images js] onLikePressHandler - imageUri: ', this.state.IMAGE_ROOT_URI);
-		console.log('[images js] onLikePressHandler - imageId: ', imageId);
+    onFavoritePressHandler = (imageId) => {
+		console.log('[images js] onFavoritePressHandler - Favorite btn Pressed!');
+		console.log('[images js] onFavoritePressHandler - imageUri: ', this.state.IMAGE_ROOT_URI);
+		console.log('[images js] onFavoritePressHandler - imageId: ', imageId);
+		console.log('[images js] onFavoritePressHandler - URI + imageId: ', this.state.IMAGE_ROOT_URI + imageId);
+
 		
 		// send request to API
         return fetch(this.state.IMAGE_ROOT_URI + imageId, {
@@ -104,28 +106,27 @@ class ImageScreen extends Component{
 		})
 		.then((response) => response.json())
 		.then((responseJson) => {
-			console.log("[images js] onLikePressHandler - responseJson: ", responseJson);
+			console.log("[images js] onFavoritePressHandler - responseJson: ", responseJson);
 
-			// check if image liked
-			let isLiked = false;
+			// check if image favorited
+			let isFavorite= false;
 			const userId = this.state.userId;
-			console.log("[images js] onLikePressHandler - responseJson Likes: ", responseJson.likes);
-			if (typeof responseJson.likes !== 'undefined' && responseJson.likes.length > 0) {
-				responseJson.likes.forEach(function(likeId){
-					console.log('[images js] onLikePressHandler - likeId: ', likeId);
-					if(likeId == userId){
-						console.log('[images js] onLikePressHandler - User already liked this image.');
-						isLiked = true;
+			console.log("[images js] onFavoritePressHandler - responseJson Favorites: ", responseJson.favorite);
+			if (typeof responseJson.favorite !== 'undefined' && responseJson.favorite.length > 0) {
+				responseJson.favorite.forEach(function(favoriteId){
+					console.log('[images js] onFavoritePressHandler - favoriteId: ', favoriteId);
+					if(favoriteId == userId){
+						console.log('[images js] onFavoritePressHandler - User already Favouritethis image.');
+						isFavorite= true;
 					}
 				});
 			}
-
 			this.setState({
-				noOfLikes: responseJson.likes.length,
-				isImageLiked: isLiked
+				noOfFavorite: responseJson.favorite.length,
+				isImageFavorite: isFavorite
 			});
 		})
-		.catch(error => console.log('[images js] onLikePressHandler - Error:', error));    
+		.catch(error => console.log('[images js] onFavoritePressHandler - Error:', error));    
 	}
 	//enter comment
 	createComment = (comment) => {
@@ -346,14 +347,14 @@ class ImageScreen extends Component{
 				
 					{/* <Text>{this.state.noOfLikes}likes</Text> */}
 					<Button
-						transparent style={{alignSelf:'flex-end', position: "relative"}}onPress={() =>{this.onLikePressHandler(this.state.imageId)}}
+						transparent style={{alignSelf:'flex-end', position: "relative"}}onPress={() =>{this.onFavoritePressHandler(this.state.imageId)}}
 					>
 						<Badge style={{position: "absolute", bottom: 0, right:1, zIndex:100}}>
-							<Text style={{fontSize:12}}>{this.state.noOfLikes}</Text>
+							<Text style={{fontSize:12}}>{this.state.noOfFavorite}</Text>
 						</Badge>
 						<Icon
 						style={{fontSize:35}}
-						name={this.state.isImageLiked ? "ios-heart" : "ios-heart-outline"} 
+						name={this.state.isImageFavorite ? "ios-heart" : "ios-heart-outline"} 
 						/>
 					</Button>
 					<Item floatingLabel>
@@ -398,7 +399,7 @@ const styles = StyleSheet.create({
 		width: 59,
 		height: 59
 	},
-	likesCount: {
+	favoritesCount: {
 	},
 	commentEntry:{
 		marginTop:70
