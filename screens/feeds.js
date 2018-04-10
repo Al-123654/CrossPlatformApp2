@@ -9,6 +9,7 @@ import {
 	Form, Label, Thumbnail, Footer, FooterTab 
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
+import Gallery from '../components/Gallery/Gallery';
 
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
 const GET_USERS_FOLLOWED_URI = 'https://app-api-testing.herokuapp.com/api/users?followed=followed';
@@ -70,20 +71,21 @@ class FeedsScreen extends Component {
 
 				if(response.images.length >= 1){
 					// save images
-					tempFeedImagesArray = response.images.map((imageId, index) => {
-						let tempImageUri = GET_IMAGES_URI + imageId + '/display';
-						return (
-							<Button 
-								transparent style={styles.thumbnail} 
-								onPress={() => this.onImageClicked(imageId, this.state.passedId)} 
-								key={imageId} 
-							>
-								<Thumbnail
-									large square source={{ uri: tempImageUri }}
-								/>
-							</Button>
-						);
-					});
+					// tempFeedImagesArray = response.images.map((imageId, index) => {
+					// 	let tempImageUri = GET_IMAGES_URI + imageId + '/display';
+					// 	return (
+					// 		<Button 
+					// 			transparent style={styles.thumbnail} 
+					// 			onPress={() => this.onImageClicked(imageId, this.state.passedId)} 
+					// 			key={imageId} 
+					// 		>
+					// 			<Thumbnail
+					// 				large square source={{ uri: tempImageUri }}
+					// 			/>
+					// 		</Button>
+					// 	);
+					// });
+					tempFeedImagesArray = [...response.images];
 
 					this.setState({
 						feedImagesArray: [...userImagesArray , ...tempFeedImagesArray]
@@ -118,7 +120,8 @@ class FeedsScreen extends Component {
 								</Button>
 							);
 						});
-						tempFeedImagesArray = [...tempFeedImagesArray, ...tempFeedImagesArray2];
+						// tempFeedImagesArray = [...tempFeedImagesArray, ...tempFeedImagesArray2];
+						tempFeedImagesArray = [...tempFeedImagesArray, ...followedUser.images];
 					}
 				});
 				this.setState({
@@ -140,22 +143,24 @@ class FeedsScreen extends Component {
 			console.log("[feeds js] getUserImages Image Count: ", this.state.images.length);
 
 			if(this.state.images.length >= 1 ){
-				userImagesArray = this.state.images.map((imageId, index) => {
-					return (
-						<Button 
-							transparent style={styles.thumbnail} 
-							onPress={() => this.onImageClicked(imageId, this.state.passedId)} 
-							key={imageId} >
-								<Thumbnail 
-									large square source={{ uri: GET_IMAGES_URI + imageId + '/display' }} 
-								/>
-						</Button>
-					); 
-				});
+				// userImagesArray = this.state.images.map((imageId, index) => {
+				// 	return (
+				// 		<Button 
+				// 			transparent style={styles.thumbnail} 
+				// 			onPress={() => this.onImageClicked(imageId, this.state.passedId)} 
+				// 			key={imageId} >
+				// 				<Thumbnail 
+				// 					large square source={{ uri: GET_IMAGES_URI + imageId + '/display' }} 
+				// 				/>
+				// 		</Button>
+				// 	); 
+				// });
+				userImagesArray = [...this.state.images];
 			}
 		}
 		console.log("[feeds js] getUserImages userImagesArray: ", userImagesArray);
-		return userImagesArray;
+		// return userImagesArray;
+		return [...userImagesArray];
 	}
 	
 	onLogoutHandler = () => {
@@ -338,11 +343,13 @@ class FeedsScreen extends Component {
 							<Text>{this.state.log}</Text>
 						</Row>
 					</Grid> */}
-					<View>
+					{/* <View>
 						<View style={styles.imagesContainer}>
 							{this.state.feedImagesArray}
 						</View>
-					</View>
+					</View> */}
+					<Gallery images={this.state.feedImagesArray}/>
+					{/* <Gallery images={this.state.images}/> */}
 				</Content>
 				<Footer>
 					<FooterTab >
