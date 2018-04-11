@@ -290,33 +290,34 @@ class FeedsScreen extends Component {
                 'Content-Type': 'application/json'
             }
         }).then (response => response.json())
-        .catch(error => console.error('Error: ', error))
+        
         .then(response => {
             console.log('[feeds js] IMAGE DETAILS TRANSFER ', response)
             this.props.navigation.navigate('Image', {
                 data: response,
                 userId: passedId
             });
-        });
+		})
+			.catch(error => console.error('Error: ', error));
 	}
 
-	onImageClicked2 = (imageId,passedId) => {
+	// onImageClicked2 = (imageId,passedId) => {
         
-        return fetch('https://app-api-testing.herokuapp.com/api/images/' + imageId, {
-            method: 'GET',
-            headers:{
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            }
-        }).then (response => response.json())
-        .catch(error => console.error('Error: ', error))
-        .then(response => {
-            this.props.navigation.navigate('Image', {
-                data: response,
-                following: passedId
-            });
-        });
-	}
+    //     return fetch('https://app-api-testing.herokuapp.com/api/images/' + imageId, {
+    //         method: 'GET',
+    //         headers:{
+    //             Accept: 'application/json',
+    //             'Content-Type': 'application/json'
+    //         }
+    //     }).then (response => response.json())
+    //     .catch(error => console.error('Error: ', error))
+    //     .then(response => {
+    //         this.props.navigation.navigate('Image', {
+    //             data: response,
+    //             following: passedId
+    //         });
+    //     });
+	// }
 	onBackBtnPressed = () => {
 		console.log('[feeds js] onBackBtnPressed');
 		this.props.navigation.goBack();
