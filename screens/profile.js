@@ -3,7 +3,7 @@ import { Platform, StyleSheet, View, Image, Alert, TouchableOpacity, TouchableHi
 import { StackNavigator, } from 'react-navigation';
 // import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
-import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input, Form, Label, Thumbnail, Footer, FooterTab, Tab, Tabs } from 'native-base';
+import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input, Form, Label, Thumbnail, Footer, FooterTab, Tab, Tabs, TabHeading } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
 import Favorite from './../components/Tabs/FavoriteTab';
@@ -24,6 +24,11 @@ class ProfileScreen extends Component{
 
         const { params } = this.props.navigation.state;
         console.log('[profile js] constructor - passedParams: ', props.navigation.state.params);
+
+        this.state={
+            passedId: props.navigation.state.params.data.id
+        }
+        console.log('[profile js] passedId:', this.state.passedId);
     }
     
 
@@ -72,10 +77,9 @@ class ProfileScreen extends Component{
     }
 
     onExplorePressedHandler = (currentUserId) => {
-        // console.log('[profile js] onExplorePressedHandler clicked!');
-        // // this.props.navigation.navigate('User', data);
-        // console.log('[profile js] ID passed by app js: ', currentUserId);
-        // this.props.navigation.navigate('Explore', { currentUserId: currentUserId });
+        console.log('[profile js] onExplorePressedHandler clicked!');
+        console.log('[profile js] ID passed by app js: ', currentUserId);
+        this.props.navigation.navigate('Explore', { currentUserId: currentUserId });
     }
 
     onImageClicked = (imageId, passedId) => {
@@ -118,11 +122,18 @@ class ProfileScreen extends Component{
                    </Right>
                </Header>
                <Tabs initialPage={0}>
-                   <Tab heading="Favorite">
-                        <Favorite
-                        clicked = {this.onImageClicked}
-                        />
+                   {/* <Tab heading="Favorite"> */}
 
+                   <Tab heading={
+                       <TabHeading>
+                           <Icon name="heart" />
+                           {/* <Text>Favorite</Text> */}
+                       </TabHeading>
+                   }
+                   >
+                    <Favorite
+                    clicked = {this.onImageClicked}
+                    />
                    </Tab>
                    <Tab heading="Tab2">
                        <TabTwo />
@@ -131,9 +142,11 @@ class ProfileScreen extends Component{
                <Footer>
                    <FooterTab >
                        <Button full onPress={this.onFeedsPressedHandler()}>
+                            <Icon name = "camera"/>
                            <Text>Feeds</Text>
                        </Button>
                        <Button full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
+                           <Icon name ="navigate"/>
                            <Text>Explore</Text>
                        </Button>
                    </FooterTab>
