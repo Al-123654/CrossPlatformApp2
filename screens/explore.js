@@ -64,30 +64,38 @@ class ExploreScreen extends Component {
 	}
 
     onLogoutHandler = () => {
-        return fetch(LOGOUT_URI, {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-        }).then((response) => response.json())
-		.then((responseJson) => {
-			Alert.alert(
-				'Logging out',
-				"",
-				[
-					{
-						text: 'OK', onPress: () => {
-							this.props.navigation.navigate('Home');
-							console.log("[explore js] onLogoutPressHandler - LOGGED OUT")
-						}
+
+		Alert.alert(
+			'Logging out',
+			"",
+			[
+				{
+					text: 'OK', onPress: () => {
+						return fetch(LOGOUT_URI, {
+							method: 'GET',
+							headers: {
+								Accept: 'application/json',
+								'Content-Type': 'application/json'
+							},
+						}).then((response) => response.json())
+							.then((responseJson) => {
+
+							})
+							.catch((error) => {
+								console.error(error);
+							});
+						this.props.navigation.navigate('Home');
+						console.log("[explore js] onLogoutPressHandler - LOGGED OUT")
 					}
-				]
-			) 
-		})
-		.catch ((error) => {
-			console.error(error);
-		});
+				},
+				{
+					text: 'Cancel', onPress: () => {
+						style: 'cancel'
+					}
+				}
+			]
+		) 
+       
 	}
 
 	onListItemPressed = (itemId, userId) => {

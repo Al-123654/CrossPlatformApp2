@@ -167,34 +167,40 @@ class FeedsScreen extends Component {
 		return [...userImagesArray];
 	}
 	
-	onLogoutHandler = () => {
-        return fetch('https://app-api-testing.herokuapp.com/logout', {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            
-        })
-            .then((response) => response.json())
-            .then((responseJson) => {
-                Alert.alert(
-                    'Logging out',
-                    "",
-                    [
-                        {
-                            text: 'OK', onPress: () => {
-                                this.props.navigation.navigate('Home');
-                                console.log("[feeds js] LOGGED OUT!");
 
-                            }
-                        }
-                    ]
-                ) 
-            })
-            .catch ((error) => {
-                console.log("[feeds js] onLogoutPressHandler: ", error);
-            });
+	onLogoutHandler = () => {
+
+		Alert.alert(
+			'Logging out',
+			"",
+			[
+				{
+					text: 'OK', onPress: () => {
+						return fetch(LOGOUT_URI, {
+							method: 'GET',
+							headers: {
+								Accept: 'application/json',
+								'Content-Type': 'application/json'
+							},
+						}).then((response) => response.json())
+							.then((responseJson) => {
+
+							})
+							.catch((error) => {
+								console.error(error);
+							});
+						this.props.navigation.navigate('Home');
+						console.log("[feeds js] onLogoutPressHandler - LOGGED OUT")
+					}
+				},
+				{
+					text: 'Cancel', onPress: () => {
+						style: 'cancel'
+					}
+				}
+			]
+		)
+
 	}
 
 	// when Explore btn is clicked
