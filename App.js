@@ -153,14 +153,14 @@ const RootStack = StackNavigator(
 			screen: FeedsScreen,
 			navigationOptions: {
 				header: null,
-				// gesturesEnabled:false
+				gesturesEnabled:false
 			}
 		},
 		Image:{
 			screen:ImageScreen,
 			navigationOptions:{
 				header: null,
-				// gesturesEnabled: false
+				gesturesEnabled: false
 			} 
 		},
 		Explore:{
