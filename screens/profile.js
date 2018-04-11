@@ -12,6 +12,7 @@ import TabTwo from './../components/Tabs/TabTwo';
 // import Tab4 from './tabFour';
 // import Tab5 from './tabOne';
 // import Tab6 from './tabOne';
+const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
 
 class ProfileScreen extends Component{
     constructor(props) {
@@ -60,13 +61,13 @@ class ProfileScreen extends Component{
                             },
                         }).then((response) => response.json())
                             .then((responseJson) => {
-
+                                this.props.navigation.navigate('Home');
+                                console.log("[profile js] onLogoutPressHandler - LOGGED OUT");
                             })
                             .catch((error) => {
                                 console.error(error);
                             });
-                        this.props.navigation.navigate('Home');
-                        console.log("[profile js] onLogoutPressHandler - LOGGED OUT")
+                      
                     }
                 },
                 {

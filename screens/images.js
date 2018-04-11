@@ -9,6 +9,8 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 import moment from 'moment';
 import validator from 'validator';
 
+const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
+
 class ImageScreen extends Component{
     constructor(props) {
 		super(props);
@@ -78,13 +80,13 @@ class ImageScreen extends Component{
 							},
 						}).then((response) => response.json())
 							.then((responseJson) => {
-
+								this.props.navigation.navigate('Home');
+								console.log("[images js] onLogoutPressHandler - LOGGED OUT");
 							})
 							.catch((error) => {
 								console.error(error);
 							});
-						this.props.navigation.navigate('Home');
-						console.log("[images js] onLogoutPressHandler - LOGGED OUT")
+					
 					}
 				},
 				{

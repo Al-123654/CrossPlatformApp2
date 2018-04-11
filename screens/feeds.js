@@ -14,7 +14,7 @@ import Gallery from '../components/Gallery/Gallery';
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
 const GET_USERS_FOLLOWED_URI = 'https://app-api-testing.herokuapp.com/api/users?followed=followed';
 const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
-
+const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
 class FeedsScreen extends Component {
 	constructor(props) {
 		super(props);
@@ -184,13 +184,13 @@ class FeedsScreen extends Component {
 							},
 						}).then((response) => response.json())
 							.then((responseJson) => {
-
+								this.props.navigation.navigate('Home');
+								console.log("[feeds js] onLogoutPressHandler - LOGGED OUT");
 							})
 							.catch((error) => {
 								console.error(error);
 							});
-						this.props.navigation.navigate('Home');
-						console.log("[feeds js] onLogoutPressHandler - LOGGED OUT")
+						
 					}
 				},
 				{

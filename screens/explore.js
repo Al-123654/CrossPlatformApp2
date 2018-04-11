@@ -79,13 +79,13 @@ class ExploreScreen extends Component {
 							},
 						}).then((response) => response.json())
 							.then((responseJson) => {
-
+								this.props.navigation.navigate('Home');
+								console.log("[explore js] onLogoutPressHandler - LOGGED OUT");
 							})
 							.catch((error) => {
 								console.error(error);
 							});
-						this.props.navigation.navigate('Home');
-						console.log("[explore js] onLogoutPressHandler - LOGGED OUT")
+						
 					}
 				},
 				{
