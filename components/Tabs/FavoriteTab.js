@@ -12,9 +12,9 @@ import moment from 'moment';
 import validator from 'validator';
 import Gallery from '../Gallery/Gallery';
 
+
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
 // const GET_USERS_FOLLOWED_URI = 'https://app-api-testing.herokuapp.com/api/users?followed=followed';
-const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
 
 
 class Favorite extends Component{
@@ -29,7 +29,7 @@ class Favorite extends Component{
        }
 
     }
-    // display images favorited by user only
+    // get images favorited by user only
     componentDidMount(){
         fetch(GET_USERS_URI + global.userId + '?test=test',{
             method:'GET',
@@ -51,34 +51,15 @@ class Favorite extends Component{
         .catch(error => console.error('Error:', error));
     }
 
-    onImageClicked = (imageId, passedId) => {
-
-        // return fetch('https://app-api-testing.herokuapp.com/api/images/' + imageId, {
-        //     method: 'GET',
-        //     headers: {
-        //         Accept: 'application/json',
-        //         'Content-Type': 'application/json'
-        //     }
-        // }).then(response => response.json())
-        //     .catch(error => console.error('Error: ', error))
-        //     .then(response => {
-        //         this.props.navigation.navigate('Image', {
-        //             data: response,
-        //             following: passedId
-        //         });
-        //     });
-    }
-
-
-
     render(){
-        console.log('[FavoriteTab js] favImageArray at render:', this.state.favImageArray)
+        const { clicked  } = this.props;
+        console.log('[FavoriteTab js] clicked:', clicked );
+        console.log('[FavoriteTab js] favImageArray at render:', this.state.favImageArray);
         return (
             <Content>
-                <Text>Favorites</Text>
                 <Gallery
                     images={this.state.favImageArray}
-                    clicked={this.onImageClicked}
+                    clicked={clicked}
                     passedUserId={global.userId}
                 />
             </Content>

@@ -12,7 +12,11 @@ import TabTwo from './../components/Tabs/TabTwo';
 // import Tab4 from './tabFour';
 // import Tab5 from './tabOne';
 // import Tab6 from './tabOne';
+import Gallery from '../components/Gallery/Gallery';
+
 const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
+const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
+
 
 class ProfileScreen extends Component{
     constructor(props) {
@@ -20,23 +24,6 @@ class ProfileScreen extends Component{
 
         const { params } = this.props.navigation.state;
         console.log('[profile js] constructor - passedParams: ', props.navigation.state.params);
-
-        // this.state={
-        //     passedUsername: props.navigation.state.params.data.username,
-        //     fname: props.navigation.state.params.data.fname,
-        //     lname: props.navigation.state.params.data.lname,
-        //     email: props.navigation.state.params.data.email,
-        //     passedId: props.navigation.state.params.data._id,
-        //     images: props.navigation.state.params.data.images,
-        //     followed: props.navigation.state.params.data.following,
-        //     followImageHeading: [],
-        //     followedImagesContainer: [],
-        //     followIDArray: [],
-        //     oneFollowMultiImageFlag: false,
-        //     feedImagesArray: [],
-        //     areUserImagesLoading: true,
-        //     areFollowedUsersImagesLoading: true,
-        // }
     }
     
 
@@ -85,10 +72,32 @@ class ProfileScreen extends Component{
     }
 
     onExplorePressedHandler = (currentUserId) => {
-        console.log('[feeds js] onExplorePressedHandler clicked!');
-        // this.props.navigation.navigate('User', data);
-        console.log('[feeds js] ID passed by app js: ', currentUserId);
-        this.props.navigation.navigate('Explore', { currentUserId: currentUserId });
+        // console.log('[profile js] onExplorePressedHandler clicked!');
+        // // this.props.navigation.navigate('User', data);
+        // console.log('[profile js] ID passed by app js: ', currentUserId);
+        // this.props.navigation.navigate('Explore', { currentUserId: currentUserId });
+    }
+
+    onImageClicked = (imageId, passedId) => {
+        console.log('[FavoriteTab js] imageId:', imageId)
+        return fetch(GET_IMAGES_URI + imageId, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            }
+
+        }).then(response => response.json())
+            .then(response => {
+                console.log('[FavoriteTab js] response from api:', response)
+                this.props.navigation.navigate('Image', {
+                    data: response,
+                    userId: passedId
+                });
+            })
+            .catch(error => console.error('Error: ', error));
+        console.log('[profile js] onImageClicked')
+
     }
 
     
@@ -110,7 +119,10 @@ class ProfileScreen extends Component{
                </Header>
                <Tabs initialPage={0}>
                    <Tab heading="Favorite">
-                       <Favorite data = {this.props.navigation.state} />
+                        <Favorite
+                        clicked = {this.onImageClicked}
+                        />
+
                    </Tab>
                    <Tab heading="Tab2">
                        <TabTwo />
