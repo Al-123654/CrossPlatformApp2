@@ -6,7 +6,7 @@ import RNFetchBlob from 'react-native-fetch-blob';
 import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input, Form, Label, Thumbnail, Footer, FooterTab, Tab, Tabs } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
-import TabOne from './../components/Tabs/TabOne';
+import Favorite from './../components/Tabs/FavoriteTab';
 import TabTwo from './../components/Tabs/TabTwo';
 // import Tab3 from './tabThree';
 // import Tab4 from './tabFour';
@@ -16,7 +16,28 @@ import TabTwo from './../components/Tabs/TabTwo';
 class ProfileScreen extends Component{
     constructor(props) {
         super(props);
+
+        const { params } = this.props.navigation.state;
+        console.log('[profile js] constructor - passedParams: ', props.navigation.state.params);
+
+        // this.state={
+        //     passedUsername: props.navigation.state.params.data.username,
+        //     fname: props.navigation.state.params.data.fname,
+        //     lname: props.navigation.state.params.data.lname,
+        //     email: props.navigation.state.params.data.email,
+        //     passedId: props.navigation.state.params.data._id,
+        //     images: props.navigation.state.params.data.images,
+        //     followed: props.navigation.state.params.data.following,
+        //     followImageHeading: [],
+        //     followedImagesContainer: [],
+        //     followIDArray: [],
+        //     oneFollowMultiImageFlag: false,
+        //     feedImagesArray: [],
+        //     areUserImagesLoading: true,
+        //     areFollowedUsersImagesLoading: true,
+        // }
     }
+    
 
     onBackBtnPressed = () => {
         console.log('[profile js] onBackBtnPressed');
@@ -42,6 +63,11 @@ class ProfileScreen extends Component{
                                 this.props.navigation.navigate('Home');
                                 console.log("[profile js] onLogoutPressHandler - LOGGED OUT")
                             }
+                        },
+                        {
+                            text: 'Cancel', onPress: () => {
+                                style: 'cancel'
+                            }
                         }
                     ]
                 )
@@ -53,6 +79,13 @@ class ProfileScreen extends Component{
 
     onFeedsPressedHandler = () => {
         
+    }
+
+    onExplorePressedHandler = (currentUserId) => {
+        console.log('[feeds js] onExplorePressedHandler clicked!');
+        // this.props.navigation.navigate('User', data);
+        console.log('[feeds js] ID passed by app js: ', currentUserId);
+        this.props.navigation.navigate('Explore', { currentUserId: currentUserId });
     }
 
     
@@ -72,9 +105,9 @@ class ProfileScreen extends Component{
                        </Button>
                    </Right>
                </Header>
-               <Tabs initialPage={1}>
-                   <Tab heading="Tab1">
-                       <TabOne />
+               <Tabs initialPage={0}>
+                   <Tab heading="Favorite">
+                       <Favorite data = {this.props.navigation.state} />
                    </Tab>
                    <Tab heading="Tab2">
                        <TabTwo />
@@ -87,9 +120,6 @@ class ProfileScreen extends Component{
                        </Button>
                        <Button full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
                            <Text>Explore</Text>
-                       </Button>
-                       <Button full onPress={() => { this.onProfilePressedHandler() }}>
-                           <Text>Profile</Text>
                        </Button>
                    </FooterTab>
                </Footer>

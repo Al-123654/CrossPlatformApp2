@@ -38,7 +38,8 @@ class FeedsScreen extends Component {
 			 feedImagesArray: [],
 			 areUserImagesLoading: true,
 			 areFollowedUsersImagesLoading: true,
-        }
+		}
+		global.userId = this.state.passedId;
         
         //check for number of follows and who
         console.log('[feeds js] Constructor - Number of followed users: ', this.state.followed.length);
@@ -53,6 +54,7 @@ class FeedsScreen extends Component {
 		let tempFeedImagesArray = [];
 		if(this.state.followed.length === 0){
 			// 0 FOLLOWED
+			console.log('[feed js] Check No Follow Array:', [...userImagesArray, ...tempFeedImagesArray])
 			this.setState({
 				feedImagesArray: [...userImagesArray, ...tempFeedImagesArray]
 			});
@@ -86,7 +88,8 @@ class FeedsScreen extends Component {
 					// 	);
 					// });
 					tempFeedImagesArray = [...response.images];
-
+					
+					console.log('[feed js] Check Single Follow Array:', [...userImagesArray, ...tempFeedImagesArray])
 					this.setState({
 						feedImagesArray: [...userImagesArray , ...tempFeedImagesArray]
 					});
@@ -124,6 +127,7 @@ class FeedsScreen extends Component {
 						tempFeedImagesArray = [...tempFeedImagesArray, ...followedUser.images];
 					}
 				});
+				console.log('[feed js] Check Multiple Follow Array:', [...userImagesArray, ...tempFeedImagesArray])
 				this.setState({
 					feedImagesArray: [...userImagesArray, ...tempFeedImagesArray]
 				});
@@ -312,10 +316,25 @@ class FeedsScreen extends Component {
 		this.props.navigation.goBack();
 	}
 
-	onProfilePressedHandler = () => {
+	onProfilePressedHandler = (passedId) => {
+		console.log('[feeds js] passedId=', passedId)
 		console.log('[feeds js] onProfilePressedHandler clicked!');
+		return fetch(GET_USERS_URI + passedId + '?test=test', {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			}
+		}).then(response => response.json())
+		.then(response => {
+			console.log('[feeds js] Testing response', response)
+			this.props.navigation.navigate('Profile', {
+				data: response,
+				userId: passedId
+			});
+		})
 		
-		this.props.navigation.navigate('Profile');
+		.catch (error => console.error('Error: ', error));
 	}
 
 	render() {
@@ -363,7 +382,7 @@ class FeedsScreen extends Component {
 						<Button full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
 							<Text>Explore</Text>
 						</Button>
-						<Button full onPress={() => { this.onProfilePressedHandler() }}>
+						<Button full onPress={() => { this.onProfilePressedHandler(this.state.passedId) }}>
 							<Text>Profile</Text>
 						</Button>
 					</FooterTab>
