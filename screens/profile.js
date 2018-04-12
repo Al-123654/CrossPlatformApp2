@@ -3,7 +3,8 @@ import { Platform, StyleSheet, View, Image, Alert, TouchableOpacity, TouchableHi
 import { StackNavigator, } from 'react-navigation';
 // import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
-import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input, Form, Label, Thumbnail, Footer, FooterTab, Tab, Tabs, TabHeading } from 'native-base';
+import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input, 
+    Form, Label, Thumbnail, Footer, FooterTab, Tab, Tabs, TabHeading, Toast } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
 import Favorite from './../components/Tabs/FavoriteTab';
@@ -40,7 +41,7 @@ class ProfileScreen extends Component{
     onLogoutHandler = () => {
 
         Alert.alert(
-            'Logging out',
+            'Log out?',
             "",
             [
                 {
@@ -53,6 +54,12 @@ class ProfileScreen extends Component{
                             },
                         }).then((response) => response.json())
                             .then((responseJson) => {
+                                Toast.show({
+                                    text: 'Logout successful',
+                                    buttonText: 'Ok',
+                                    position: 'top',
+                                    duration: 4000
+                                })
                                 this.props.navigation.navigate('Home');
                                 console.log("[profile js] onLogoutPressHandler - LOGGED OUT");
                             })
