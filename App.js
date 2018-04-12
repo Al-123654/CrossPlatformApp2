@@ -6,7 +6,7 @@ import RNFetchBlob from 'react-native-fetch-blob';
 import { 
 	Container, Header, Left, Body, Right, Icon, 
 	Title, Content, Text, Button, Item, Input, 
-	Form, Label, Footer, FooterTab,Root
+	Form, Label, Footer, FooterTab,Root, Toast
 } from 'native-base';
 import{ Row, Grid} from 'react-native-easy-grid';
 import validator from 'validator';
@@ -64,14 +64,28 @@ class HomeScreen extends Component {
 			console.log('[app js] responseOnLogin: ', response);
 			if (response.status !== 200){
 				console.log('[app js] responseOnLogin bad response: ', response);
-				this.setState({log:"Cannot log in"})
+				// this.setState({log:"Cannot log in"})
+				Toast.show({
+					text:'Cannot log in',
+					buttonText: 'Ok',
+					position: 'top',
+					duration: 4000
+				})
 				return;
+
+
 			}
 			response.json().then(data => {
 
 				console.log('[app js] componentDidMount json response: ', data);					
 				console.log("[app js] LOGGED IN!");
 				// go to feeds page
+				Toast.show({
+					text: 'Login successful',
+					buttonText: 'Ok',
+					position: 'top',
+					duration: 4000
+				})
 				console.log('[app js] Response', data);
 				this.props.navigation.navigate('Feeds', data);
 			});
@@ -124,6 +138,7 @@ class HomeScreen extends Component {
 				<Footer>
 					<FooterTab>
 						<Button onPress={this.onLoginPressHandler}>
+							<Icon name = "log-in"/>
 							<Text style={{fontSize:15}}>Login</Text>
 						</Button>
 					</FooterTab>
