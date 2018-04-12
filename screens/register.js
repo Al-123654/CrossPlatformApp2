@@ -211,6 +211,7 @@ class RegisterScreen extends Component {
 				<Footer>
 					<FooterTab>
 						<Button onPress={this.onRegisterFinishedHandler}>
+                            <Icon name = "person-add"/>
 							<Text style={{fontSize:15}}>Register</Text>
 						</Button>
 					</FooterTab>
