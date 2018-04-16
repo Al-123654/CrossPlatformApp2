@@ -44,7 +44,9 @@ class ImageScreen extends Component{
 			displayingComment: [],
 			log: "",
 			dateCommented: [],
-			showToast:false
+			showToast:false,
+			// timePostedComment:[],
+			// postedComments: []
 			
 		};
 
@@ -80,6 +82,12 @@ class ImageScreen extends Component{
 							},
 						}).then((response) => response.json())
 							.then((responseJson) => {
+								Toast.show({
+                                    text: 'Logout successful',
+                                    buttonText: 'Ok',
+                                    position: 'top',
+                                    duration: 4000
+                                })
 								this.props.navigation.navigate('Home');
 								console.log("[images js] onLogoutPressHandler - LOGGED OUT");
 							})
@@ -137,7 +145,7 @@ class ImageScreen extends Component{
 		})
 		.catch(error => console.log('[images js] onFavoritePressHandler - Error:', error));    
 	}
-	//enter comment
+	//ENTER COMMENT IN COMMENT BOX
 	createComment = (comment) => {
 		if(comment){
 			this.setState({
@@ -146,8 +154,10 @@ class ImageScreen extends Component{
 			console.log('Comment being entered:', comment);
 		}
 	}
-	//save comment to api
+	//SAVE COMMENT TO API
 	postComment = () => {
+		
+		let tempDisplayingComment = []
 		if (validator.isLength(this.state.comment,{min:1, max: 200})){
 			fetch(this.state.IMAGE_ROOT_URI + this.state.imageId + '/comments', {
 				method: 'POST',
@@ -161,32 +171,50 @@ class ImageScreen extends Component{
 			})
 				.then((response) => response.json())
 				.then((responseJson) => {
-					console.log("Comment saved")
-					this.setState({ log: "Comment saved" })
+					console.log('[images js] response from server postComment:', responseJson);
+					// console.log("Comment saved")
+					let tempCommentId = [];
+					responseJson.comments.forEach((comments, index) => {
+						tempCommentId.push(
+							comments
+						)
+					})
+					console.log('[images js] tempCommentId', tempCommentId);
+					
+					this.setState({
+						commentId: tempCommentId
+					})
+					console.log('[images js]postComment this.state.commentId', this.state.commentId)
+					Toast.show({
+                        text: 'Comment posted',
+                        buttonText: 'Ok',
+                        position: 'top',
+                        duration: 4000
+					});
+					this.displayComment();				
 				})
 				.catch((error) => {
 					console.error(error)
 				});
+			
+			console.log('[images js] commentId after comment posted', this.state.commentId)
+			
 		}else{
 			Toast.show({
 				text: 'Comment too long/short',
-				position: 'bottom',
-				buttonText: 'Ok'
+				position: 'top',
+				buttonText: 'Ok',
+			 	duration: 4000
 			})
 		}
-		// else{
-		// 	this.setState({
-		// 		log: <Text>Comment too long/short</Text>
-		// 	})
-		// }
-		
-
 	}
 	
-	//display comments from api
+	//DISPLAY COMMENTS FROM API
 	displayComment = () => {
-		// if one comment
-		let tempDisplay 
+		console.log('[images js] Inside display comment')
+		console.log('[images js] displayComment this.state.commentid', this.state.commentId)
+		// IF ONE COMMENT
+		let tempDisplay;
 		if (this.state.commentId.length == 1){
 			fetch(this.state.COMMENT_URI + this.state.commentId, {
 				method: 'GET',
@@ -197,11 +225,11 @@ class ImageScreen extends Component{
 			})
 			.then((response) => response.json())
 			.then((responseJson) => {
-				console.log("Response from server:", responseJson)
-				console.log("Comment to display:", responseJson.comment)
-				console.log("ID to display:", responseJson.owner)
-				console.log("Date created:", responseJson.date_created)
-				console.log("Owner:", responseJson.owner_username)
+				console.log("Response from server displayComment IF ONE COMMENT:", responseJson)
+				console.log("Comment to display displayComment IF ONE COMMENT:", responseJson.comment)
+				console.log("ID to display displayComment IF ONE COMMENT:", responseJson.owner)
+				console.log("Date created displayComment IF ONE COMMENT:", responseJson.date_created)
+				console.log("Owner displayComment IF ONE COMMENT :", responseJson.owner_username)
 				this.setState({
 					dateCommented: moment(responseJson.date_created).startOf().fromNow()
 				})
@@ -210,11 +238,11 @@ class ImageScreen extends Component{
 				this.setState({
 					// commentedBy: <Text>{responseJson.owner} </Text>,
 					displayingComment: 
-						<ListItem>
+					<ListItem>
 							<Body>
-								<Text> {responseJson.owner_username}</Text>
-								<Text> {responseJson.comment}</Text>
-								<Text style={{alignSelf:'flex-end', fontSize: 12}}>{this.state.dateCommented}</Text>
+								<Text style={{ fontWeight: 'bold', fontSize: 13 }}> {responseJson.owner_username}</Text>
+								<Text style={{ fontSize: 15 }}> {responseJson.comment}</Text>
+								<Text style={{ alignSelf: 'flex-end', fontSize: 10 }}>{this.state.dateCommented}</Text> 
 							</Body>
 						{/* <Text> {responseJson.owner} {responseJson.comment}</Text>  */}
 					</ListItem>
@@ -224,7 +252,7 @@ class ImageScreen extends Component{
 				console.error(error)
 			});
 		
-		// if more than one comment 
+		// IF MORE THAN ONE COMMENT
 		}else if(this.state.commentId.length > 1){
 			// let tempCommentBy = []
 			let tempDisplay = []
@@ -238,11 +266,11 @@ class ImageScreen extends Component{
 				})
 				.then((response) => response.json())
 				.then((responseJson) => {
-					console.log('[images js] Response from server', responseJson)
-					console.log("Comment to display:", responseJson.comment)
-					console.log("ID to display:", responseJson.owner)
-					console.log("Date created:", responseJson.date_created)
-					console.log("Owner:", responseJson.owner_username)
+					console.log('[images js] Response from server displayComment IF MORE THAN ONE COMMENT:', responseJson)
+					console.log("Comment to display displayComment IF MORE THAN ONE COMMENT:", responseJson.comment)
+					console.log("ID to display displayComment IF MORE THAN ONE COMMENT:", responseJson.owner)
+					console.log("Date created displayComment IF MORE THAN ONE COMMENT:", responseJson.date_created)
+					console.log("Owner displayComment IF MORE THAN ONE COMMENT:", responseJson.owner_username)
 					this.setState({
 						dateCommented: moment(responseJson.date_created).startOf().fromNow()
 					})
@@ -275,7 +303,7 @@ class ImageScreen extends Component{
 			});
 			})
 
-		// if no comments
+		// IF NO COMMENTS
 		}else if(this.state.commentId.length == 0){
 			this.setState({
 				displayingComment: <Text>No comments</Text>
@@ -284,6 +312,7 @@ class ImageScreen extends Component{
 		
 	}
 	componentDidMount(){
+		console.log('[images js] inside componentDidMount')
 		this.displayComment();
 	}
 	onBackBtnPressed = () => {
@@ -375,10 +404,10 @@ class ImageScreen extends Component{
 							<Text style={{fontSize:12}}>COMMENTS</Text>
 						</ListItem>
 						{this.state.displayingComment}
+						{/* {this.state.postedComments} */}
 					</List>
 					
                 </Content>
-				<Text>{this.state.log}</Text>
 				<Footer>
 					<FooterTab >
 						<Button full onPress={this.postComment}>
