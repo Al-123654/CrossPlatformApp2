@@ -345,6 +345,34 @@ class FeedsScreen extends Component {
 	}
 
 	render() {
+		let gallery = (<Text>No images available</Text>);
+		        if (this.state.feedImagesArray.length > 0) {
+			            // return (
+			            //  <Container>
+			            //      <Text>No images available</Text>
+			            //      <Footer>
+			            //          <FooterTab >
+			            //              <Button full onPress={this.onImagePickerHandler}>
+			            //                  <Text>Image Picker</Text>
+			            //              </Button>
+			            //              <Button full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
+			            //                  <Text>Explore</Text>
+			            //              </Button>
+			            //              <Button full onPress={() => { this.onProfilePressedHandler(this.state.passedId) }}>
+			            //                  <Icon name="navigate" />
+			            //                  <Text>Profile</Text>
+			            //              </Button>
+			            //          </FooterTab>
+			            //      </Footer>
+			            //  </Container>
+
+			            // )
+			            gallery = (<Gallery
+				                images={this.state.feedImagesArray}
+				                clicked={this.onImageClicked}
+				                passedUserId={this.state.passedId}
+			                />);
+		        }
         return (
 			<Container>
 				<Header>
