@@ -9,7 +9,7 @@ import {
 	Container, Header, Left, Body, Right, Icon, 
 	Title, Content, Text, Button, Item, Input, 
 	Form, Label, Thumbnail, Card, CardItem, ListItem, 
-	List 
+	List, Toast 
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
@@ -79,6 +79,12 @@ class ExploreScreen extends Component {
 							},
 						}).then((response) => response.json())
 							.then((responseJson) => {
+								Toast.show({
+                                    text: 'Logout successful',
+                                    buttonText: 'Ok',
+                                    position: 'top',
+                                    duration: 4000
+                                })
 								this.props.navigation.navigate('Home');
 								console.log("[explore js] onLogoutPressHandler - LOGGED OUT");
 							})
