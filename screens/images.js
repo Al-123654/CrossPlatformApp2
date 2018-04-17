@@ -195,7 +195,7 @@ class ImageScreen extends Component{
                         position: 'top',
                         duration: 4000
 					});
-					// this.displayComment();				
+					this.fetchComments();				
 				})
 				.catch((error) => {
 					console.error(error)
@@ -212,188 +212,12 @@ class ImageScreen extends Component{
 			})
 		}
 	}
-	
-	//DISPLAY COMMENTS FROM API
-	displayComment = () => {
-		console.log('[images js] Inside display comment')
-		console.log('[images js] displayComment this.state.commentid', this.state.commentId)
-		// IF ONE COMMENT
-		let tempDisplay;
-		if (this.state.commentId.length == 1){
-			fetch(this.state.COMMENT_URI + this.state.commentId, {
-				method: 'GET',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json'
-				},
-			})
-			.then((response) => response.json())
-			.then((responseJson) => {
-				console.log("Response from server displayComment IF ONE COMMENT:", responseJson)
-				console.log("Comment to display displayComment IF ONE COMMENT:", responseJson.comment)
-				console.log("ID to display displayComment IF ONE COMMENT:", responseJson.owner)
-				console.log("Date created displayComment IF ONE COMMENT:", responseJson.date_created)
-				console.log("Owner displayComment IF ONE COMMENT :", responseJson.owner_username)
-				this.setState({
-					dateCommented: moment(responseJson.date_created).startOf().fromNow()
-				})
-				
-				
-				this.setState({
-					// commentedBy: <Text>{responseJson.owner} </Text>,
-					displayingComment: 
-					<ListItem>
-							<Body>
-								<Text style={{ fontWeight: 'bold', fontSize: 13 }}> {responseJson.owner_username}</Text>
-								<Text style={{ fontSize: 15 }}> {responseJson.comment}</Text>
-								<Text style={{ alignSelf: 'flex-end', fontSize: 10 }}>{this.state.dateCommented}</Text> 
-							</Body>
-						{/* <Text> {responseJson.owner} {responseJson.comment}</Text>  */}
-					</ListItem>
-				})
-			})
-			.catch((error) => {
-				console.error(error)
-			});
-		
-		// IF MORE THAN ONE COMMENT
-		}else if(this.state.commentId.length > 1){
-			// let tempCommentBy = []
-			let tempDisplay = [];
-			let tempTime = [];
-			let tempResponse = [];
-			function sortFunction(a,b){
-				var dateA = new Date(a.date).getTime();
-				var dateB = new Date(b.date).getTime();
-				return dateA > dateB ? 1 : -1;
-			}
-			this.state.commentId.forEach((comments, index) => {
-				fetch(this.state.COMMENT_URI + comments, {
-					method: 'GET',
-					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/json'
-					},
-				})
-				.then((response) => response.json())
-				.then((responseJson) => {
-					console.log('[images js] Response from server displayComment IF MORE THAN ONE COMMENT:', responseJson)
-					console.log("Comment to display displayComment IF MORE THAN ONE COMMENT:", responseJson.comment)
-					console.log("ID to display displayComment IF MORE THAN ONE COMMENT:", responseJson.owner)
-					console.log("Date created displayComment IF MORE THAN ONE COMMENT:", responseJson.date_created)
-					console.log("Owner displayComment IF MORE THAN ONE COMMENT:", responseJson.owner_username)
-					// this.setState({
-					// 	dateCommented: moment(responseJson.date_created).startOf().fromNow()
-					// })
-					// tempTime.push(
-					// 	moment(responseJson.date_created).startOf().fromNow()
-					// )
 
-					// tempTime = [moment(responseJson.date_created).startOf().fromNow()]
-					// tempTime.sort(sortFunction); 
-
-					// tempResponse.push(
-					// 	responseJson
-					// );
-
-					// this.setState({
-					// 	// commentedBy: [...tempCommentBy],
-					// 	getResponse: [...tempResponse]
-					// })
-					// tempDisplay.push(
-					// 	<ListItem key={index}>
-					// 		<Body>
-					// 			<Text style={{fontWeight: 'bold', fontSize: 13}}> {responseJson.owner_username}</Text>
-					// 			<Text style={{fontSize:15}}> {responseJson.comment}</Text>
-					// 			{/* <Text style={{ alignSelf: 'flex-end', fontSize: 10 }}>{this.state.dateCommented}</Text>  */}
-					// 			<Text style={{ alignSelf: 'flex-end', fontSize: 10 }}>{tempTime}</Text> 
-								
-					// 		</Body>
-					// 	</ListItem>
-					// )
-					// tempDisplay.sort(function(a,b){
-					// 	return new Date(b.date) - new Date(a.date)
-					// });
-					
-					// this.setState({
-					// 	// commentedBy: [...tempCommentBy],
-					// 	displayingComment: [...tempDisplay]
-					// })
-
-					// this.state.dateCommented.sort(function(a,b){
-					// 	var c = new Date(a.date);
-					// 	var d = new Date(b.date);
-					// 	return d-c;
-					// });
-					
-					// this.setState({
-					// 	dateCommented: tempTime
-					// })
-
-					// if (tempResponse.length > 1) {
-					// 	// let now = moment();
-					// 	console.log('[images js] getResponse at displayComment MORE THAN ONE COMMENT:', tempResponse);
-					// 	let sortedArray = tempResponse.sort(function (a, b) {
-					// 		console.log('[images js] render a = ', a.date_created);
-					// 		console.log('[images js] render b = ', b.date_created);
-					// 		// if(now > date_created)
-					// 		// return true;
-					// 		// return moment(a.date_created).isBefore(b.date_created)
-					// 		console.log('[images js] Comparing two times: ', moment(a.date_created).isBefore(b.date_created));
-					// 		// return true;
-					// 		if (moment(a.date_created).isBefore(b.date_created)) {
-					// 			return 1;
-					// 		}
-					// 		return -1;
-					// 	});
-					// 	console.log('[images js] sortedArray at displayComment MORE THAN ONE COMMENT: ', sortedArray);
-					// 	console.log('[images js] tempDisplay BEFORE SORTING', tempDisplay);
-					// 	let tempDisplay2 = [];
-					// 	console.log('[images js] tempDisplay2 BEFORE SORTING', tempDisplay2)
-					// 	tempDisplay2 = sortedArray.map(obj =>{
-					// 		<ListItem key={responseJson.date_created}>
-					// 			<Body>
-					// 				<Text style={{ fontWeight: 'bold', fontSize: 13 }}> {responseJson.owner_username}</Text>
-					// 				<Text style={{ fontSize: 15 }}> {responseJson.comment}</Text>
-					// 				{/* <Text style={{ alignSelf: 'flex-end', fontSize: 10 }}>{this.state.dateCommented}</Text>  */}
-					// 				<Text style={{ alignSelf: 'flex-end', fontSize: 10 }}>{tempTime}</Text>
-
-					// 			</Body>
-					// 		</ListItem>
-					// 	})
-					// 	console.log('[images js] tempDisplay2 AFTER SORTING', tempDisplay2)
-						
-					// 	// console.log('[images js] this.state.getResponse: ', this.state.getResponse)
-					// 	// console.log('[images js] DID tempDisplay SORT?:', tempDisplay)
-
-					// 	// this.setState({
-					// 	// 	displayingComment: [...sortedArray]
-					// 	// })
-					// }
-				})
-			.catch((error) => {
-				console.error(error)
-			});
-			
-				
-			})
-
-		// IF NO COMMENTS
-		}else if(this.state.commentId.length == 0){
-			this.setState({
-				displayingComment: <Text>No comments</Text>
-			})
-		}
-		
-	}
-	componentDidMount(){
-		console.log('[images js] inside componentDidMount');
-		// this.displayComment();
-		//INITIALISING VARIABLES
+	fetchComments(){
 		let commentArray = [];
-		
+
 		//FETCHING COMMENTS
-		if (this.state.commentId.length >= 1){
+		if (this.state.commentId.length >= 1) {
 			console.log('[images js] commentId at componentDidMount:', this.state.commentId)
 			this.state.commentId.forEach((commentID, index) => {
 				return fetch(this.state.COMMENT_URI + commentID, {
@@ -410,16 +234,16 @@ class ImageScreen extends Component{
 						console.log("ID to display componentDidMount:", responseJson.owner);
 						console.log("Date created componentDidMount:", responseJson.date_created);
 						console.log("Owner componentDidMount :", responseJson.owner_username);
-						
+
 						commentArray.push(
 							responseJson
 						);
 						console.log('[images js] commentArray at componentDidMount:', commentArray);
 						console.log('[images js] Length of commentArray at componentDidMount', commentArray.length);
 						console.log('[images js] Length of commentId at componentDidMount', this.state.commentId.length);
-						if(this.state.commentId.length === commentArray.length){
+						if (this.state.commentId.length === commentArray.length) {
 							console.log('[images js] NO MORE IMAGES TO LOOP THROUGH');
-							if(commentArray.length > 1){
+							if (commentArray.length > 1) {
 								let sortedArray = commentArray.sort(function (a, b) {
 									console.log('[images js] render a = ', a.date_created);
 									console.log('[images js] render b = ', b.date_created);
@@ -438,29 +262,33 @@ class ImageScreen extends Component{
 									areCommentsLoaded: true,
 									arrayOfComments: [...sortedArray]
 								});
-							}else if (commentArray.length == 1){
+							} else if (commentArray.length == 1) {
 								this.setState({
-									areCommentsLoaded:true,
+									areCommentsLoaded: true,
 									arrayOfComments: [...commentArray]
 								})
 							}
-							
+
 						}
 
-						
+
 					})
 					.catch((error) => {
 						console.error(error)
 					});
 			})
 		}
-		else if (this.state.commentId.length == 0){
+		else if (this.state.commentId.length == 0) {
 			this.setState({
-				areCommentsLoaded:true
+				areCommentsLoaded: true
 			})
 		}
-		
+	}
 	
+	
+	componentDidMount(){
+		console.log('[images js] inside componentDidMount');
+		this.fetchComments();
 	}
 	onBackBtnPressed = () => {
 		console.log('[image js] onBackBtnPressed');
