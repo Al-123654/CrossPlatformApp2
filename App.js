@@ -6,7 +6,7 @@ import RNFetchBlob from 'react-native-fetch-blob';
 import { 
 	Container, Header, Left, Body, Right, Icon, 
 	Title, Content, Text, Button, Item, Input, 
-	Form, Label, Footer, FooterTab,Root, Toast
+	Form, Label, Footer, FooterTab,Root, Toast, Spinner
 } from 'native-base';
 import{ Row, Grid} from 'react-native-easy-grid';
 import validator from 'validator';
@@ -41,13 +41,15 @@ class HomeScreen extends Component {
 		this.setState({
 			logUsername: "",
 			logPassword: "",
-			disableButton: true
+			disableButton: true,
+			isLoggedIn: true
 		});
 
 		if (!validator.isLength(this.state.username, { min: 5 })) {
 			this.setState({ 
 				logUsername: "Min: 5", 
-				disableButton: false
+				disableButton: false,
+				isLoggedIn: false
 			});
 			return;
 		}
@@ -55,7 +57,8 @@ class HomeScreen extends Component {
 		if (!validator.isLength(this.state.password, { min: 5 })) {
 			this.setState({ 
 				logPassword: "Min: 5",
-				disableButton: false
+				disableButton: false,
+				isLoggedIn: false
 			});
 			return;
 		}
@@ -83,7 +86,8 @@ class HomeScreen extends Component {
 					duration: 4000
 				});
 				this.setState({
-					disableButton:false
+					disableButton: false,
+					isLoggedIn: false
 				});
 				return;
 			}
@@ -109,9 +113,25 @@ class HomeScreen extends Component {
 		console.log('[app js] Register btn pressed.');
 		this.props.navigation.navigate('Register');
 	}
+	onLoginLoader = () => {
+		console.log('[app js] Loading login page')
+		
+	}
 
 	render() {
-		
+		console.log('[app js] Loading login page')
+		console.log('[app js] isLoggedIn:', this.state.isLoggedIn);
+		let loginLoader = (
+			<Button disabled={this.state.disableButton} onPress={this.onLoginPressHandler}>
+				<Icon name="log-in" /> 
+				<Text style={{fontSize:15}}>Login</Text>
+			</Button>);
+		if(this.state.isLoggedIn){
+			loginLoader = (
+			<Button disabled={this.state.disableButton}>
+				<Spinner/>
+			</Button>);
+		}
 		return (
 			<Container>
 				<Header>
@@ -148,10 +168,7 @@ class HomeScreen extends Component {
 				</Content>
 				<Footer>
 					<FooterTab>
-						<Button disabled = {this.state.disableButton} onPress={this.onLoginPressHandler}>
-							<Icon name = "log-in"/>
-							<Text style={{fontSize:15}}>Login</Text>
-						</Button>
+							{loginLoader}
 					</FooterTab>
 				</Footer>
 			</Container>
