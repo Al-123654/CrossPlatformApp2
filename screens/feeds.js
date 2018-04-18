@@ -6,7 +6,7 @@ import RNFetchBlob from 'react-native-fetch-blob';
 import { 
 	Container, Header, Left, Body, Right, Icon, 
 	Title, Content, Text, Button, Item, Input, 
-	Form, Label, Thumbnail, Footer, FooterTab 
+	Form, Label, Thumbnail, Footer, FooterTab, Spinner 
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import Gallery from '../components/Gallery/Gallery';
@@ -36,8 +36,8 @@ class FeedsScreen extends Component {
 			 followIDArray: [],
 			 oneFollowMultiImageFlag: false,
 			 feedImagesArray: [],
-			 areUserImagesLoading: true,
-			 areFollowedUsersImagesLoading: true,
+			 areImagesLoaded: false,
+			 disableButton: false
 		}
 		global.userId = this.state.passedId;
         
@@ -56,7 +56,8 @@ class FeedsScreen extends Component {
 			// 0 FOLLOWED
 			console.log('[feed js] Check No Follow Array:', [...userImagesArray, ...tempFeedImagesArray])
 			this.setState({
-				feedImagesArray: [...userImagesArray, ...tempFeedImagesArray]
+				feedImagesArray: [...userImagesArray, ...tempFeedImagesArray],
+				areImagesLoaded: true
 			});
 		}else if(this.state.followed.length === 1){
 			// ONE FOLLOWED
@@ -91,7 +92,8 @@ class FeedsScreen extends Component {
 					
 					console.log('[feed js] Check Single Follow Array:', [...userImagesArray, ...tempFeedImagesArray])
 					this.setState({
-						feedImagesArray: [...userImagesArray , ...tempFeedImagesArray]
+						feedImagesArray: [...userImagesArray , ...tempFeedImagesArray],
+						areImagesLoaded: true
 					});
 				}
 			})
@@ -129,14 +131,15 @@ class FeedsScreen extends Component {
 				});
 				console.log('[feed js] Check Multiple Follow Array:', [...userImagesArray, ...tempFeedImagesArray])
 				this.setState({
-					feedImagesArray: [...userImagesArray, ...tempFeedImagesArray]
+					feedImagesArray: [...userImagesArray, ...tempFeedImagesArray],
+					areImagesLoaded: true
 				});
 				console.log('[feeds js] componentDidMount - Multiple feedImagesArray: ', this.state.feedImagesArray);
 			})
 			.catch(error => console.log('[feeds js] componentDidMount - MULTIPLE followed fetch error: ', error));
 		}
 	}
-
+	//DISPLAY USER IMAGES
 	getUserImages(){
 		let userImagesArray = [];
 		// let imageThumbnail;
@@ -281,7 +284,10 @@ class FeedsScreen extends Component {
         });
 	}
 	
-	onImageClicked = (imageId,passedId) => {
+	onImageClicked = (imageId,passedId,disabled) => {
+		// this.setState({
+		// 	disableButton: true
+		// });
         console.log("[feeds js] onImageClicked: ", imageId );
         return fetch('https://app-api-testing.herokuapp.com/api/images/' + imageId, {
             method: 'GET',
@@ -295,7 +301,8 @@ class FeedsScreen extends Component {
             console.log('[feeds js] IMAGE DETAILS TRANSFER ', response)
             this.props.navigation.navigate('Image', {
                 data: response,
-                userId: passedId
+				userId: passedId,
+				// disabled:this.state.disableButton
             });
 		})
 			.catch(error => console.error('Error: ', error));
@@ -324,6 +331,9 @@ class FeedsScreen extends Component {
 	}
 
 	onProfilePressedHandler = (passedId) => {
+		// this.setState({
+		// 	disableButton: true
+		// });
 		console.log('[feeds js] passedId=', passedId)
 		console.log('[feeds js] onProfilePressedHandler clicked!');
 		return fetch(GET_USERS_URI + passedId + '?test=test', {
@@ -345,34 +355,22 @@ class FeedsScreen extends Component {
 	}
 
 	render() {
-		let gallery = (<Text>No images available</Text>);
-		        if (this.state.feedImagesArray.length > 0) {
-			            // return (
-			            //  <Container>
-			            //      <Text>No images available</Text>
-			            //      <Footer>
-			            //          <FooterTab >
-			            //              <Button full onPress={this.onImagePickerHandler}>
-			            //                  <Text>Image Picker</Text>
-			            //              </Button>
-			            //              <Button full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
-			            //                  <Text>Explore</Text>
-			            //              </Button>
-			            //              <Button full onPress={() => { this.onProfilePressedHandler(this.state.passedId) }}>
-			            //                  <Icon name="navigate" />
-			            //                  <Text>Profile</Text>
-			            //              </Button>
-			            //          </FooterTab>
-			            //      </Footer>
-			            //  </Container>
-
-			            // )
-			            gallery = (<Gallery
-				                images={this.state.feedImagesArray}
-				                clicked={this.onImageClicked}
-				                passedUserId={this.state.passedId}
-			                />);
-		        }
+		// let gallery = (<Text>No images available</Text>);
+		let gallery = (<Spinner/>);
+		console.log('[feeds js] feedImagesArray length:', this.state.feedImagesArray.length) 
+		if(this.state.areImagesLoaded){
+			if (this.state.feedImagesArray.length > 0) {
+				gallery = (<Gallery
+					images={this.state.feedImagesArray}
+					clicked={this.onImageClicked}
+					passedUserId={this.state.passedId}
+				// disabled = {this.state.disableButton}
+				/>);
+			} else if (this.state.feedImagesArray.length === 0) {
+				gallery = (<Text>No images available</Text>);
+			}
+		}
+       
         return (
 			<Container>
 				<Header>
@@ -387,34 +385,14 @@ class FeedsScreen extends Component {
 					</Right>
 				</Header>
 				<Content>
-					{/* <Grid>
-						<Row style={{justifyContent:'center'}}>
-							<View style={styles.imagesContainer}>
-								{this.state.feedImagesArray}
-							</View>
-						</Row>
-						<Row>
-							<Text>{this.state.log}</Text>
-						</Row>
-					</Grid> */}
-					{/* <View>
-						<View style={styles.imagesContainer}>
-							{this.state.feedImagesArray}
-						</View>
-					</View> */}
-					<Gallery 
-						images={this.state.feedImagesArray} 
-						clicked={this.onImageClicked} 
-						passedUserId={this.state.passedId}
-					/>
-					{/* <Gallery images={this.state.images}/> */}
+					{gallery}
 				</Content>
 				<Footer>
 					<FooterTab >
 						<Button full onPress={this.onImagePickerHandler}>
 							<Text>Image Picker</Text>
 						</Button>
-						<Button full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
+						<Button  full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
 							<Text>Explore</Text>
 						</Button>
 						<Button full onPress={() => { this.onProfilePressedHandler(this.state.passedId) }}>
@@ -438,8 +416,6 @@ const styles = StyleSheet.create({
 	outerHeader:{},
 	body: {
 		flex:1,
-		// width:'100%',
-		// height:'100%',
 		flexDirection:'column',
 		justifyContent: 'space-between'
 	},
