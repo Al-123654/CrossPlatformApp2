@@ -1,20 +1,26 @@
 import React, { Component } from 'react';
 import { Platform, StyleSheet, View, Image, Alert, TouchableOpacity } from 'react-native';
-import { StackNavigator, } from 'react-navigation';
+import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Container, Header, Left, Body, Right, Icon, Title, 
 	Content, Text, Button, Item, Input, Form, Label, Thumbnail, 
 	Card, CardItem, Badge, ListItem, List, Footer, FooterTab,
-	Toast, Root} from 'native-base';
+	Toast, Root, Spinner} from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import moment from 'moment';
 import validator from 'validator';
 
 const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
 
+// const resetAction = NavigationActions.reset({
+// 	index: 0,
+// 	actions: [
+// 		NavigationActions.navigate({ routeName: 'Feeds' })
+// 	]
+// })
+
 class ImageScreen extends Component{
     constructor(props) {
 		super(props);
-		//TODO: check if props.navigation.state.params exists
 		console.log('[images js] constructor - passedParams: ', props.navigation.state.params);
 
 		// check if image favorited
@@ -30,23 +36,18 @@ class ImageScreen extends Component{
 			});
 		}
 
-		// initialize state
+		// INITIALIZE STATES
 		this.state = {
 			IMAGE_ROOT_URI: 'https://app-api-testing.herokuapp.com/api/images/',
 			COMMENT_URI: 'https://app-api-testing.herokuapp.com/api/comments/',
 			imageId: props.navigation.state.params.data._id,
-			// imageLikesArray: props.navigation.state.params.data.favorite,
 			userId: props.navigation.state.params.userId,
 			isImageFavorite: isFavorite,
 			noOfFavorite: props.navigation.state.params.data.favorite.length,
 			commentId: props.navigation.state.params.data.comments,
 			comment: "",
-			displayingComment: [],
-			log: "",
 			dateCommented: [],
 			showToast:false,
-			// timePostedComment:[],
-			// postedComments: []
 			getResponse: null,
 			arrayOfComments: [],
 			areCommentsLoaded: false
@@ -56,7 +57,6 @@ class ImageScreen extends Component{
 		// logs
 		console.log('[images js] constructor - After init.');
 		console.log('[images js] constructor - imageId: ', this.state.imageId);
-		// console.log('[images js] constructor - imageLikesArray: ', this.state.imageLikesArray);
 		console.log('[images js] constructor - userId: ', this.state.userId);
 		console.log('[images js] constructor - isImageFavorite: ', this.state.isImageFavorite);
 		console.log('[images js] constructor - noOfFavorite: ', this.state.noOfFavorite);
@@ -116,7 +116,7 @@ class ImageScreen extends Component{
 		console.log('[images js] onFavoritePressHandler - URI + imageId: ', this.state.IMAGE_ROOT_URI + imageId);
 
 		
-		// send request to API
+		// SEND REQUEST TO API
         return fetch(this.state.IMAGE_ROOT_URI + imageId, {
             method: 'POST',
             headers: {
@@ -128,7 +128,7 @@ class ImageScreen extends Component{
 		.then((responseJson) => {
 			console.log("[images js] onFavoritePressHandler - responseJson: ", responseJson);
 
-			// check if image favorited
+			// CHECK IF IMAGE FAVORITED
 			let isFavorite= false;
 			const userId = this.state.userId;
 			console.log("[images js] onFavoritePressHandler - responseJson Favorites: ", responseJson.favorite);
@@ -159,8 +159,6 @@ class ImageScreen extends Component{
 	}
 	//SAVE COMMENT TO API
 	postComment = () => {
-		
-		// let tempDisplayingComment = []
 		if (validator.isLength(this.state.comment,{min:1, max: 200})){
 			fetch(this.state.IMAGE_ROOT_URI + this.state.imageId + '/comments', {
 				method: 'POST',
@@ -175,7 +173,6 @@ class ImageScreen extends Component{
 				.then((response) => response.json())
 				.then((responseJson) => {
 					console.log('[images js] response from server postComment:', responseJson);
-					// console.log("Comment saved")
 					//DISPLAY THE NEW COMMENT ON SCREEN WITH PREVIOUS COMMENTS
 					let tempCommentId = [];
 					responseJson.comments.forEach((comments, index) => {
@@ -243,15 +240,12 @@ class ImageScreen extends Component{
 						console.log('[images js] Length of commentId at componentDidMount', this.state.commentId.length);
 						if (this.state.commentId.length === commentArray.length) {
 							console.log('[images js] NO MORE IMAGES TO LOOP THROUGH');
+							//SORTING COMMENTS FROM NEWEST TO OLDEST
 							if (commentArray.length > 1) {
 								let sortedArray = commentArray.sort(function (a, b) {
 									console.log('[images js] render a = ', a.date_created);
 									console.log('[images js] render b = ', b.date_created);
-									// if(now > date_created)
-									// return true;
-									// return moment(a.date_created).isBefore(b.date_created)
 									console.log('[images js] Comparing two times: ', moment(a.date_created).isBefore(b.date_created));
-									// return true;
 									if (moment(a.date_created).isBefore(b.date_created)) {
 										return 1;
 									}
@@ -268,10 +262,7 @@ class ImageScreen extends Component{
 									arrayOfComments: [...commentArray]
 								})
 							}
-
 						}
-
-
 					})
 					.catch((error) => {
 						console.error(error)
@@ -290,44 +281,18 @@ class ImageScreen extends Component{
 		console.log('[images js] inside componentDidMount');
 		this.fetchComments();
 	}
-	onBackBtnPressed = () => {
+	onBackBtnPressed = (disabled) => {
 		console.log('[image js] onBackBtnPressed');
 		this.props.navigation.goBack();
+		// this.props.navigation.dispatch(NavigationActions.reset({
+		// 	index: 0,
+		// 	key: null,
+		// 	actions: [NavigationActions.navigate({ routeName: 'Feeds' })]
+		// }));
 	}
 
     render(){
-		// if(this.state.getResponse){
-		// 	// let now = moment();
-		// 	console.log('[images js] getResponse at render:', this.state.getResponse);
-		// 	let sortedArray = this.state.getResponse.sort(function(a,b){
-		// 			console.log('[images js] render a = ', a.date_created);
-		// 			console.log('[images js] render b = ', b.date_created);
-		// 			// if(now > date_created)
-		// 			// return true;
-		// 			// return moment(a.date_created).isBefore(b.date_created)
-		// 			console.log('[images js] Comparing two times: ', moment(a.date_created).isBefore(b.date_created));
-		// 			// return true;
-		// 			if (moment(a.date_created).isBefore(b.date_created)){
-		// 				return 1;
-		// 			}
-		// 			return -1;
-		// 		});
-		// 	// console.log('[images js] this.state.getResponse: ', this.state.getResponse);
-		// 	console.log('[images js] sortedArray: ', sortedArray);
-		// }
-
-		// tempDisplay.push(
-		// 	<ListItem key={index}>
-		// 		<Body>
-		// 			<Text style={{fontWeight: 'bold', fontSize: 13}}> {responseJson.owner_username}</Text>
-		// 			<Text style={{fontSize:15}}> {responseJson.comment}</Text>
-		// 			{/* <Text style={{ alignSelf: 'flex-end', fontSize: 10 }}>{this.state.dateCommented}</Text>  */}
-		// 			<Text style={{ alignSelf: 'flex-end', fontSize: 10 }}>{tempTime}</Text> 
-
-		// 		</Body>
-		// 	</ListItem>
-		// )
-		let listOfComments = (<Text>Loading...</Text>);
+		let listOfComments = (<Spinner />);
 		if(this.state.areCommentsLoaded){
 			console.log('[images js] arrayOfComments.length at render:',  this.state.arrayOfComments.length);
 			if(this.state.arrayOfComments.length >= 1){
@@ -337,7 +302,6 @@ class ImageScreen extends Component{
 						<Body>
 							<Text style={{ fontWeight: 'bold', fontSize: 13 }}> {comment.owner_username}</Text>
 							<Text style={{ fontSize: 15 }}> {comment.comment}</Text>
-							{/* <Text style={{ alignSelf: 'flex-end', fontSize: 10 }}>{this.state.dateCommented}</Text>  */}
 							<Text style={{ alignSelf: 'flex-end', fontSize: 10 }}>{moment(comment.date_created).startOf().fromNow()}</Text>
 
 						</Body>
@@ -391,7 +355,6 @@ class ImageScreen extends Component{
 							<Text style={{fontSize:12}}>COMMENTS</Text>
 						</ListItem>
 						{listOfComments}
-						{/* {this.state.postedComments} */}
 					</List>
 					
                 </Content>
@@ -427,7 +390,6 @@ const styles = StyleSheet.create({
 	favoritesCount: {
 	},
 	commentEntry:{
-		// marginTop:70
 		flex:1,
 		flexDirection: 'column'
 	},
@@ -435,10 +397,10 @@ const styles = StyleSheet.create({
 		marginTop:40
 	},
 	commentDisplay:{
-		// marginTop: 30
+
 		flex: 1,
 		flexDirection: 'column',
-		// justifyContent:'space-between'
+		
 	}
 
 })
