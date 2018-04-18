@@ -50,7 +50,9 @@ class ImageScreen extends Component{
 			showToast:false,
 			getResponse: null,
 			arrayOfComments: [],
-			areCommentsLoaded: false
+			areCommentsLoaded: false,
+			isLoggedOut: false,
+			isImageLoaded: false
 			
 		};
 
@@ -85,6 +87,9 @@ class ImageScreen extends Component{
 							},
 						}).then((response) => response.json())
 							.then((responseJson) => {
+								this.setState({
+									isLoggedOut: true
+								});
 								Toast.show({
                                     text: 'Logout successful',
                                     buttonText: 'Ok',
@@ -108,7 +113,7 @@ class ImageScreen extends Component{
 			]
 		)
 	}
-    
+    //FAVORITE THE IMAGE
     onFavoritePressHandler = (imageId) => {
 		console.log('[images js] onFavoritePressHandler - Favorite btn Pressed!');
 		console.log('[images js] onFavoritePressHandler - imageUri: ', this.state.IMAGE_ROOT_URI);
@@ -293,6 +298,12 @@ class ImageScreen extends Component{
 
     render(){
 		let listOfComments = (<Spinner />);
+		let logoutLoader = (
+			<Button transparent onPress={this.onLogoutHandler}>
+				<Icon name='home' />
+			</Button>);
+		
+
 		if(this.state.areCommentsLoaded){
 			console.log('[images js] arrayOfComments.length at render:',  this.state.arrayOfComments.length);
 			if(this.state.arrayOfComments.length >= 1){
@@ -313,6 +324,13 @@ class ImageScreen extends Component{
 			}
 			
 		}
+		if(this.state.isLoggedOut){
+			logoutLoader = (
+				<Button transparent disabled={this.state.disableButton}>
+					<Spinner />
+				</Button>
+			)
+		}
         return (
        
             <Container>
@@ -324,13 +342,12 @@ class ImageScreen extends Component{
 					</Left>
                     <Body><Title>IMAGES</Title></Body>
 					<Right>
-						<Button transparent onPress={this.onLogoutHandler}>
-							<Icon name='home' />
-						</Button>
+						{logoutLoader}
 					</Right>
                 </Header>
                 <Content>
-					<Image source={{ uri: this.state.IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{height: 200, width: null, flex: 1}}/>
+					<Image source={{ uri: this.state.IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} />
+					 
 					<Button
 						transparent style={{alignSelf:'flex-end', position: "relative"}}onPress={() =>{this.onFavoritePressHandler(this.state.imageId)}}
 					>

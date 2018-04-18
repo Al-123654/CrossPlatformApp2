@@ -6,7 +6,7 @@ import RNFetchBlob from 'react-native-fetch-blob';
 import { 
 	Container, Header, Left, Body, Right, Icon, 
 	Title, Content, Text, Button, Item, Input, 
-	Form, Label, Thumbnail, Footer, FooterTab, Spinner 
+	Form, Label, Thumbnail, Footer, FooterTab, Spinner , Toast
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import Gallery from '../components/Gallery/Gallery';
@@ -37,7 +37,8 @@ class FeedsScreen extends Component {
 			 oneFollowMultiImageFlag: false,
 			 feedImagesArray: [],
 			 areImagesLoaded: false,
-			 disableButton: false
+			 disableButton: false,
+			 isLoggedOut: false
 		}
 		global.userId = this.state.passedId;
         
@@ -187,13 +188,22 @@ class FeedsScreen extends Component {
 							},
 						}).then((response) => response.json())
 							.then((responseJson) => {
+								this.setState({
+									isLoggedOut: true
+								});
+								Toast.show({
+                                    text: 'Logout successful',
+                                    buttonText: 'Ok',
+                                    position: 'top',
+                                    duration: 4000
+                                })
 								this.props.navigation.navigate('Home');
 								console.log("[feeds js] onLogoutPressHandler - LOGGED OUT");
+								
 							})
 							.catch((error) => {
 								console.error(error);
 							});
-						
 					}
 				},
 				{
@@ -357,6 +367,10 @@ class FeedsScreen extends Component {
 	render() {
 		// let gallery = (<Text>No images available</Text>);
 		let gallery = (<Spinner/>);
+		let logoutLoader = (
+			<Button transparent onPress={this.onLogoutHandler}>
+				<Icon name='home' />
+			</Button>);
 		console.log('[feeds js] feedImagesArray length:', this.state.feedImagesArray.length) 
 		if(this.state.areImagesLoaded){
 			if (this.state.feedImagesArray.length > 0) {
@@ -370,6 +384,14 @@ class FeedsScreen extends Component {
 				gallery = (<Text>No images available</Text>);
 			}
 		}
+
+		if(this.state.isLoggedOut){
+			logoutLoader = (
+				<Button transparent disabled ={this.state.disableButton}>
+					<Spinner/>
+				</Button>
+			)
+		}
        
         return (
 			<Container>
@@ -379,9 +401,7 @@ class FeedsScreen extends Component {
 					</Left>
 					<Body><Title>{this.state.passedUsername}</Title></Body>
 					<Right>
-						<Button transparent onPress={this.onLogoutHandler}>
-							<Icon name='home' />
-						</Button>
+						{logoutLoader}
 					</Right>
 				</Header>
 				<Content>
