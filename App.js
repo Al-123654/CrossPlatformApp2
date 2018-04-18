@@ -27,29 +27,39 @@ class HomeScreen extends Component {
 		logDetails: "",
 		id: "",
 		imageSource: "",
+		isLoggedIn: false,
+		disableButton: false
 	};
 
 	onChangedUsernameHandler = (username) => { if(username) this.setState({ username: username }); }
 	onChangedPasswordHandler = (password) => { if(password) this.setState({ password: password }); }
 
 	onLoginPressHandler = () => {
+		// let disableButton = false
+		// console.log('[app js] disableButton at Start',disableButton)
 		console.log('[app js] Login btn pressed.');
-		
 		this.setState({
 			logUsername: "",
 			logPassword: "",
+			disableButton: true
 		});
 
-		if (!validator.isLength(this.state.username, { min: 5 })){
-            this.setState({ logUsername: "Min: 5" });
-            return;
+		if (!validator.isLength(this.state.username, { min: 5 })) {
+			this.setState({ 
+				logUsername: "Min: 5", 
+				disableButton: false
+			});
+			return;
 		}
-		
-		if(!validator.isLength(this.state.password,{min:5})){
-            this.setState({logPassword: "Min: 5"});
-            return;
+
+		if (!validator.isLength(this.state.password, { min: 5 })) {
+			this.setState({ 
+				logPassword: "Min: 5",
+				disableButton: false
+			});
+			return;
 		}
-		
+	
 		return fetch('https://app-api-testing.herokuapp.com/login', {
 			method: 'POST',
 			headers: {
@@ -62,22 +72,23 @@ class HomeScreen extends Component {
 			}),
 		}).then((response) => {
 			console.log('[app js] responseOnLogin: ', response);
-			if (response.status !== 200){
+			if (response.status !== 200) {
+				
 				console.log('[app js] responseOnLogin bad response: ', response);
 				// this.setState({log:"Cannot log in"})
 				Toast.show({
-					text:'Cannot log in',
+					text: 'Cannot log in',
 					buttonText: 'Ok',
 					position: 'top',
 					duration: 4000
-				})
+				});
+				this.setState({
+					disableButton:false
+				});
 				return;
-
-
 			}
 			response.json().then(data => {
-
-				console.log('[app js] componentDidMount json response: ', data);					
+				console.log('[app js] componentDidMount json response: ', data);
 				console.log("[app js] LOGGED IN!");
 				// go to feeds page
 				Toast.show({
@@ -85,7 +96,7 @@ class HomeScreen extends Component {
 					buttonText: 'Ok',
 					position: 'top',
 					duration: 4000
-				})
+				});
 				console.log('[app js] Response', data);
 				this.props.navigation.navigate('Feeds', data);
 			});
@@ -137,7 +148,7 @@ class HomeScreen extends Component {
 				</Content>
 				<Footer>
 					<FooterTab>
-						<Button onPress={this.onLoginPressHandler}>
+						<Button disabled = {this.state.disableButton} onPress={this.onLoginPressHandler}>
 							<Icon name = "log-in"/>
 							<Text style={{fontSize:15}}>Login</Text>
 						</Button>
