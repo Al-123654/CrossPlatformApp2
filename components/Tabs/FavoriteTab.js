@@ -13,26 +13,26 @@ import validator from 'validator';
 import Gallery from '../Gallery/Gallery';
 
 
-const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
-// const GET_USERS_FOLLOWED_URI = 'https://app-api-testing.herokuapp.com/api/users?followed=followed';
 
+const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
 
 class Favorite extends Component {
     constructor(props) {
         super(props);
 
         console.log('[FavoriteTab js] Check props:', this.props)
-        console.log('[FavoriteTab js] Global.userId check', global.userId);
+        // console.log('[FavoriteTab js] Global.userId check', global.userId);
 
         this.state = {
-            favImageArray: []
+            favImageArray: [],
+            userID: this.props.currentUserID
         }
 
     }
     // get images favorited by user only
     componentDidMount() {
 
-        fetch(GET_USERS_URI + global.userId + '?test=test', {
+        fetch(GET_USERS_URI + this.state.userID + '?fav=1', {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
@@ -40,6 +40,8 @@ class Favorite extends Component {
             }
         }).then(response => response.json())
             .then(response => {
+
+                console.log('[FavoriteTab js] response from server:', response);
 
                 let tempFav = [];
                 response.favImages.forEach((image, index) => {
@@ -60,11 +62,6 @@ class Favorite extends Component {
         console.log('[FavoriteTab js] clicked:', clicked);
         console.log('[FavoriteTab js] favImageArray at render:', this.state.favImageArray);
         if (this.state.favImageArray.length == 0) {
-            // gallery = (<Gallery
-            //     images={this.state.favImageArray}
-            //     clicked={clicked}
-            //     passedUserId={global.userId}
-            // />);
             return (
                 <Text>No images favorited</Text>
             )
@@ -74,12 +71,15 @@ class Favorite extends Component {
                     <Gallery
                         images={this.state.favImageArray}
                         clicked={clicked}
-                        passedUserId={global.userId}
+                        passedUserId={this.state.userID}
                     />
                 </Content>
 
             );
         }
+        return(
+            <Text>Favorite</Text>
+        )
 
     }
 }
