@@ -9,7 +9,8 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 import moment from 'moment';
 import validator from 'validator';
 
-const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
+// const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
+const LOGOUT_URI = 'http://localhost:5000/logout';
 
 // const resetAction = NavigationActions.reset({
 // 	index: 0,
@@ -38,8 +39,10 @@ class ImageScreen extends Component{
 
 		// INITIALIZE STATES
 		this.state = {
-			IMAGE_ROOT_URI: 'https://app-api-testing.herokuapp.com/api/images/',
-			COMMENT_URI: 'https://app-api-testing.herokuapp.com/api/comments/',
+			IMAGE_ROOT_URI: 'http://localhost:5000/api/images/',
+			COMMENT_URI: 'http://localhost:5000/api/comments/',
+			// IMAGE_ROOT_URI: 'https://app-api-testing.herokuapp.com/api/images/',
+			// COMMENT_URI: 'https://app-api-testing.herokuapp.com/api/comments/',
 			imageId: props.navigation.state.params.data._id,
 			userId: props.navigation.state.params.userId,
 			isImageFavorite: isFavorite,
@@ -52,7 +55,8 @@ class ImageScreen extends Component{
 			arrayOfComments: [],
 			areCommentsLoaded: false,
 			isLoggedOut: false,
-			isImageLoaded: false
+			isImageLoaded: false,
+			disableComment: false
 			
 		};
 
@@ -188,8 +192,10 @@ class ImageScreen extends Component{
 					console.log('[images js] tempCommentId', tempCommentId);
 					
 					this.setState({
-						commentId: tempCommentId
+						commentId: tempCommentId,
+						disableComment: true
 					})
+					console.log('[images js] status of disableComment at postComment:', this.state.disableComment)
 					console.log('[images js]postComment this.state.commentId', this.state.commentId)
 					Toast.show({
                         text: 'Comment posted',
@@ -259,13 +265,17 @@ class ImageScreen extends Component{
 								console.log('[images js] sortedArray at componentDidMount:', sortedArray);
 								this.setState({
 									areCommentsLoaded: true,
-									arrayOfComments: [...sortedArray]
+									arrayOfComments: [...sortedArray],
+									disableComment: false
 								});
+								console.log('[images js] status of disableComment at fetchComment:', this.state.disableComment)
 							} else if (commentArray.length == 1) {
 								this.setState({
 									areCommentsLoaded: true,
-									arrayOfComments: [...commentArray]
+									arrayOfComments: [...commentArray],
+									disableComment: false
 								})
+								console.log('[images js] status of disableComment at fetchComment:', this.state.disableComment)
 							}
 						}
 					})
@@ -276,8 +286,10 @@ class ImageScreen extends Component{
 		}
 		else if (this.state.commentId.length == 0) {
 			this.setState({
-				areCommentsLoaded: true
+				areCommentsLoaded: true,
+				disableComment: false
 			})
+			console.log('[images js] status of disableButton at fetchComment:', this.state.disableButton)
 		}
 	}
 	
@@ -296,12 +308,31 @@ class ImageScreen extends Component{
 		// }));
 	}
 
+
     render(){
 		let listOfComments = (<Spinner />);
 		let logoutLoader = (
 			<Button transparent onPress={this.onLogoutHandler}>
 				<Icon name='home' />
 			</Button>);
+		let canComment = (
+			<Button disabled={this.state.disableComment} full onPress={this.postComment}>
+				<Text>Post Comment</Text>
+			</Button>
+		)
+
+		if (this.state.disableComment){
+			canComment = (
+				<Button disabled={this.state.disableComment} full>
+					<Spinner/>
+				</Button>)
+		}else{
+			canComment = (
+				<Button disabled={this.state.disableComment}  full onPress={this.postComment}>
+					<Text>Post Comment</Text>
+				</Button>
+			)
+		}
 		
 
 		if(this.state.areCommentsLoaded){
@@ -377,9 +408,7 @@ class ImageScreen extends Component{
                 </Content>
 				<Footer>
 					<FooterTab >
-						<Button full onPress={this.postComment}>
-							<Text>Post Comment</Text>
-						</Button>
+						{canComment}
 					</FooterTab>
 				</Footer>
             </Container>
