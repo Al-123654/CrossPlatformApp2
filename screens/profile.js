@@ -8,13 +8,15 @@ import { Container, Header, Left, Body, Right, Icon, Title, Content, Text, Butto
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
 import Favorite from './../components/Tabs/FavoriteTab';
-import TabTwo from './../components/Tabs/TabTwo';
+import Wishlist from './../components/Tabs/WishlistTab';
 // import Tab3 from './tabThree';
 // import Tab4 from './tabFour';
 // import Tab5 from './tabOne';
 // import Tab6 from './tabOne';
 import Gallery from '../components/Gallery/Gallery';
 
+// const LOGOUT_URI = 'http://localhost:5000/logout';
+// const GET_IMAGES_URI = 'http://localhost:5000/api/images/';
 const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
 const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
 
@@ -27,8 +29,8 @@ class ProfileScreen extends Component{
         console.log('[profile js] constructor - passedParams: ', props.navigation.state.params);
 
         this.state={
-            passedId: props.navigation.state.params.data.id
-        }
+            passedId: props.navigation.state.params.userId
+        };
         console.log('[profile js] passedId:', this.state.passedId);
     }
     
@@ -140,10 +142,14 @@ class ProfileScreen extends Component{
                    >
                     <Favorite
                     clicked = {this.onImageClicked}
+                    currentUserID = {this.state.passedId}
                     />
                    </Tab>
-                   <Tab heading="Tab2">
-                       <TabTwo />
+                   <Tab heading="Wishlist">
+                       <Wishlist 
+                           clicked={this.onImageClicked}
+                           currentUserID={this.state.passedId}
+                        />
                    </Tab>
                </Tabs>
                <Footer>
