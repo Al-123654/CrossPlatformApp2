@@ -389,7 +389,7 @@ class FeedsScreen extends Component {
 							<Text>Explore</Text>
 						</Button>
 						<Button full onPress={() => { this.onProfilePressedHandler(this.state.passedId) }}>
-							
+							<Icon name= "ios-person"/>
 							<Text>Profile</Text>
 						</Button>
 					</FooterTab>
