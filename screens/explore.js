@@ -13,6 +13,8 @@ import {
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
+// const GET_USERS_URI = 'http://localhost:5000/api/users';
+// const LOGOUT_URI = 'http://localhost:5000/logout';
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users';
 const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
 
@@ -27,7 +29,8 @@ class ExploreScreen extends Component {
 		this.state = {
 			listOfUsers: "",
 			passedUserId: props.navigation.state.params.currentUserId,
-			log: ""
+			log: "",
+			listLoaded: false
 		};
 
 		// logs
@@ -171,34 +174,7 @@ class ExploreScreen extends Component {
 
 		console.log("[explore js] List of Users after looping: ", listOfUsersCopy);
 
-		return(
-			// <View>
-			// 	<Header 
-			// 		leftComponent={<CustomBackBtn clicked={this.onBackBtnPressed} />}
-			// 		centerComponent={{ text: "EXPLORE", style: { color: "#fff" } }}
-			// 		rightComponent={<CustomLogoutBtn clicked={this.onLogoutHandler} />}
-			// 	/>
-			// 	<List containerStyle={styles.outerList}>
-			// 		<FlatList
-			// 			data={listOfUsersCopy}
-			// 			renderItem={ ({item}) => (
-			// 				<TouchableOpacity
-			// 					onPress={()=>this.onListItemPressed(item._id, this.state.passedUserId)}
-			// 				>
-			// 					<ListItem
-			// 						title={item.username}
-			// 						subtitle={item.email}
-			// 						rightIcon={item.isFollowed ? <Icon name='remove'/> : <Icon name='add'/>}
-			// 						rightTitle={item.isFollowed ? 'Unfollow' : 'Follow'}
-			// 					/>
-			// 				</TouchableOpacity>
-							
-			// 			)}
-			// 			keyExtractor={item => item._id}
-			// 		/>
-			// 	</List>
-            // </View>
-            
+		return(    
             <Container>
                 <Header>
 					<Left>

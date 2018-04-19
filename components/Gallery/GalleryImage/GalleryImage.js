@@ -10,10 +10,17 @@ const WIDTH = Dimensions.get('window').width;
 
 export default class GalleryImage extends Component {
 	render() {
-		const { uri, index, onPress, imageId, passedUserId } = this.props;
+		const { uri, index, onPress, imageId, passedUserId, disabled } = this.props;
+		console.log('[GalleryImage js] props from Gallery:', this.props)
+		// console.log('[GalleryImage js] value of disabled:', disabled)
 		return (
 			<Button
-				onPress={() => onPress(imageId, passedUserId)}
+				// disabled = {disabled}
+				onPress={() => 
+					{
+						onPress(imageId, passedUserId)
+					}
+				}
 				style={{
 					backgroundColor: 'transparent',
 					borderRadius: 0,

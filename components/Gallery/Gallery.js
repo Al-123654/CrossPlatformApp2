@@ -6,6 +6,7 @@ import { Dimensions, View } from 'react-native';
 // import ImageViewer from 'ImageViewer';
 
 import GalleryImage from './GalleryImage/GalleryImage';
+// const GET_IMAGES_URI = 'http://localhost:5000/api/images/';
 const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
 
 export default class Gallery extends Component {
@@ -33,8 +34,9 @@ export default class Gallery extends Component {
 	};
 
 	render() {
-		const { images, clicked, passedUserId } = this.props;
+		const { images, clicked, passedUserId, disabled } = this.props;
 		const { index, shown } = this.state;
+		console.log ('[Gallery js] props carried over from feeds:', this.props);
 
 		return (
 			<View
@@ -53,7 +55,9 @@ export default class Gallery extends Component {
 							uri={GET_IMAGES_URI + image + '/display'} 
 							onPress={clicked} 
 							imageId={image}
-							passedUserId={passedUserId} />)
+							passedUserId={passedUserId} 
+							// disabled = {disabled}
+							/>)
 				)()
 				// (() =>
 				// images.map((image, idx) =>

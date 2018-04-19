@@ -63,6 +63,7 @@ class HomeScreen extends Component {
 			return;
 		}
 	
+		// return fetch('http://localhost:5000/login', {
 		return fetch('https://app-api-testing.herokuapp.com/login', {
 			method: 'POST',
 			headers: {

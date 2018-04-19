@@ -25,7 +25,8 @@ class RegisterScreen extends Component {
         logLname: "",
         logPassword: "",
         logEmail: "",
-        logDetails: ""
+        logDetails: "",
+        disableButton: false
     };
 
     onChangedUsernameHandler = (username) => {
@@ -82,6 +83,7 @@ class RegisterScreen extends Component {
             logLname: "",
             logPassword: "",
             logEmail: "",
+            disableButton: true
         });
         
         if (!validator.isAlphanumeric(this.state.username) ) {
@@ -117,6 +119,7 @@ class RegisterScreen extends Component {
             return;
         }        
 
+        // return fetch('http://localhost:5000/api/users', {
         return fetch('https://app-api-testing.herokuapp.com/api/users', {
             method: 'POST',
             headers: {
@@ -210,7 +213,7 @@ class RegisterScreen extends Component {
 				</Content>
 				<Footer>
 					<FooterTab>
-						<Button onPress={this.onRegisterFinishedHandler}>
+                        <Button disabled={this.state.disableButton} onPress={this.onRegisterFinishedHandler}>
                             <Icon name = "person-add"/>
 							<Text style={{fontSize:15}}>Register</Text>
 						</Button>
