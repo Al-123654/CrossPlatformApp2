@@ -36,13 +36,25 @@ class ImageScreen extends Component{
 				}
 			});
 		}
+		// check if image in wishlist
+		let inWishlist= false;
+		if (typeof props.navigation.state.params.data.wishlist !== 'undefined' && 
+		props.navigation.state.params.data.wishlist.length > 0){
+			props.navigation.state.params.data.wishlist.forEach(function(wishlistId){
+				console.log('[images js] constructor - wishlistId: ', wishlistId);
+				if(wishlistId == props.navigation.state.params.userId){
+					console.log('[images js] constructor - User already Favorited this image.');
+					inWishlist = true;
+				}
+			});
+		}
 
 		// INITIALIZE STATES
 		this.state = {
-			IMAGE_ROOT_URI: 'http://localhost:5000/api/images/',
-			COMMENT_URI: 'http://localhost:5000/api/comments/',
-			// IMAGE_ROOT_URI: 'https://app-api-testing.herokuapp.com/api/images/',
-			// COMMENT_URI: 'https://app-api-testing.herokuapp.com/api/comments/',
+			// IMAGE_ROOT_URI: 'http://localhost:5000/api/images/',
+			// COMMENT_URI: 'http://localhost:5000/api/comments/',
+			IMAGE_ROOT_URI: 'https://app-api-testing.herokuapp.com/api/images/',
+			COMMENT_URI: 'https://app-api-testing.herokuapp.com/api/comments/',
 			imageId: props.navigation.state.params.data._id,
 			userId: props.navigation.state.params.userId,
 			isImageFavorite: isFavorite,
@@ -56,7 +68,9 @@ class ImageScreen extends Component{
 			areCommentsLoaded: false,
 			isLoggedOut: false,
 			isImageLoaded: false,
-			disableComment: false
+			disableComment: false,
+			noOfWishlist: props.navigation.state.params.data.wishlist.length,
+			inImageWishlist: inWishlist
 			
 		};
 
@@ -122,11 +136,11 @@ class ImageScreen extends Component{
 		console.log('[images js] onFavoritePressHandler - Favorite btn Pressed!');
 		console.log('[images js] onFavoritePressHandler - imageUri: ', this.state.IMAGE_ROOT_URI);
 		console.log('[images js] onFavoritePressHandler - imageId: ', imageId);
-		console.log('[images js] onFavoritePressHandler - URI + imageId: ', this.state.IMAGE_ROOT_URI + imageId);
+		console.log('[images js] onFavoritePressHandler - URI + imageId: ' , this.state.IMAGE_ROOT_URI + imageId);
 
 		
 		// SEND REQUEST TO API
-        return fetch(this.state.IMAGE_ROOT_URI + imageId, {
+		return fetch(this.state.IMAGE_ROOT_URI + imageId + '/?fav=1', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -157,6 +171,46 @@ class ImageScreen extends Component{
 		})
 		.catch(error => console.log('[images js] onFavoritePressHandler - Error:', error));    
 	}
+	//CHECK IF IMAGE IN WISHLIST
+    onWishlistPressHandler = (imageId) => {
+		console.log('[images js] onWishlistPressHandler - Favorite btn Pressed!');
+		console.log('[images js] onWishlistPressHandler - imageUri: ', this.state.IMAGE_ROOT_URI);
+		console.log('[images js] onWishlistPressHandler - imageId: ', imageId);
+		console.log('[images js] onWishlistPressHandler - URI + imageId: ' , this.state.IMAGE_ROOT_URI + imageId);
+
+		
+		// SEND REQUEST TO API
+		return fetch(this.state.IMAGE_ROOT_URI + imageId + '/?wish=1', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+		})
+		.then((response) => response.json())
+		.then((responseJson) => {
+			console.log("[images js] onWishlistPressHandler - responseJson: ", responseJson);
+
+			// CHECK IF IMAGE WISHLISTED
+			let inWishlist = false;
+			const userId = this.state.userId;
+			console.log("[images js] onWishlistPressHandler - responseJson Favorites: ", responseJson.wishlist);
+			if (typeof responseJson.wishlist !== 'undefined' && responseJson.wishlist.length > 0) {
+				responseJson.wishlist.forEach(function(wishlistId){
+					console.log('[images js] onWishlistPressHandler - wishlistId: ', wishlistId);
+					if(wishlistId == userId){
+						console.log('[images js] onWishlistPressHandler - User already wishlist this image.');
+						inWishlist= true;
+					}
+				});
+			}
+			this.setState({
+				noOfWishlist: responseJson.wishlist.length,
+				inImageWishlist: inWishlist
+			});
+		})
+		.catch(error => console.log('[images js] onFavoritePressHandler - Error:', error));    
+	}
 	//ENTER COMMENT IN COMMENT BOX
 	createComment = (comment) => {
 		if(comment){
@@ -169,6 +223,9 @@ class ImageScreen extends Component{
 	//SAVE COMMENT TO API
 	postComment = () => {
 		if (validator.isLength(this.state.comment,{min:1, max: 200})){
+			this.setState({
+				disableComment: true
+			})
 			fetch(this.state.IMAGE_ROOT_URI + this.state.imageId + '/comments', {
 				method: 'POST',
 				headers: {
@@ -192,8 +249,7 @@ class ImageScreen extends Component{
 					console.log('[images js] tempCommentId', tempCommentId);
 					
 					this.setState({
-						commentId: tempCommentId,
-						disableComment: true
+						commentId: tempCommentId
 					})
 					console.log('[images js] status of disableComment at postComment:', this.state.disableComment)
 					console.log('[images js]postComment this.state.commentId', this.state.commentId)
@@ -226,7 +282,8 @@ class ImageScreen extends Component{
 
 		//FETCHING COMMENTS
 		if (this.state.commentId.length >= 1) {
-			console.log('[images js] commentId at componentDidMount:', this.state.commentId)
+			console.log('[images js] commentId at fetchComment:', this.state.commentId)
+			console.log('[images js] commentId.length at fetchComment:', this.state.commentId.length)
 			this.state.commentId.forEach((commentID, index) => {
 				return fetch(this.state.COMMENT_URI + commentID, {
 					method: 'GET',
@@ -237,18 +294,18 @@ class ImageScreen extends Component{
 				})
 					.then((response) => response.json())
 					.then((responseJson) => {
-						console.log("Response from server componentDidMount:", responseJson);
-						console.log("Comment to display componentDidMount:", responseJson.comment);
-						console.log("ID to display componentDidMount:", responseJson.owner);
-						console.log("Date created componentDidMount:", responseJson.date_created);
-						console.log("Owner componentDidMount :", responseJson.owner_username);
+						console.log("Response from server fetchComment:", responseJson);
+						console.log("Comment to display fetchComment:", responseJson.comment);
+						console.log("ID to display fetchComment:", responseJson.owner);
+						console.log("Date created fetchComment:", responseJson.date_created);
+						console.log("Owner fetchComment :", responseJson.owner_username);
 
 						commentArray.push(
 							responseJson
 						);
-						console.log('[images js] commentArray at componentDidMount:', commentArray);
-						console.log('[images js] Length of commentArray at componentDidMount', commentArray.length);
-						console.log('[images js] Length of commentId at componentDidMount', this.state.commentId.length);
+						console.log('[images js] commentArray at fetchComment:', commentArray);
+						console.log('[images js] Length of commentArray at fetchComment', commentArray.length);
+						console.log('[images js] Length of commentId at fetchComment', this.state.commentId.length);
 						if (this.state.commentId.length === commentArray.length) {
 							console.log('[images js] NO MORE IMAGES TO LOOP THROUGH');
 							//SORTING COMMENTS FROM NEWEST TO OLDEST
@@ -262,7 +319,7 @@ class ImageScreen extends Component{
 									}
 									return -1;
 								});
-								console.log('[images js] sortedArray at componentDidMount:', sortedArray);
+								console.log('[images js] sortedArray at fetchComment:', sortedArray);
 								this.setState({
 									areCommentsLoaded: true,
 									arrayOfComments: [...sortedArray],
@@ -308,6 +365,8 @@ class ImageScreen extends Component{
 		// }));
 	}
 
+	
+
 
     render(){
 		let listOfComments = (<Spinner />);
@@ -315,11 +374,9 @@ class ImageScreen extends Component{
 			<Button transparent onPress={this.onLogoutHandler}>
 				<Icon name='home' />
 			</Button>);
-		let canComment = (
-			<Button disabled={this.state.disableComment} full onPress={this.postComment}>
-				<Text>Post Comment</Text>
-			</Button>
-		)
+		let canComment;
+		let commentsToDisplay = (<Spinner/>);
+		let imageLoader = (<Spinner/>)
 
 		if (this.state.disableComment){
 			canComment = (
@@ -333,6 +390,7 @@ class ImageScreen extends Component{
 				</Button>
 			)
 		}
+
 		
 
 		if(this.state.areCommentsLoaded){
@@ -349,9 +407,12 @@ class ImageScreen extends Component{
 						</Body>
 					</ListItem>)
 				});
+				commentsToDisplay = listOfComments.slice(0,10);
+				imageLoader = <Image source={{ uri: this.state.IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} />
 			}else if (this.state.arrayOfComments.length === 0){
 				console.log('[images js] inside else if in render')
-				listOfComments = (<Text>No comments</Text>);
+				commentsToDisplay = (<Text>No comments</Text>);
+				imageLoader = <Image source={{ uri: this.state.IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} />
 			}
 			
 		}
@@ -377,19 +438,36 @@ class ImageScreen extends Component{
 					</Right>
                 </Header>
                 <Content>
-					<Image source={{ uri: this.state.IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} />
-					 
-					<Button
-						transparent style={{alignSelf:'flex-end', position: "relative"}}onPress={() =>{this.onFavoritePressHandler(this.state.imageId)}}
-					>
-						<Badge style={{position: "absolute", bottom: 0, right:1, zIndex:100}}>
-							<Text style={{fontSize:12}}>{this.state.noOfFavorite}</Text>
-						</Badge>
-						<Icon
-						style={{fontSize:35}}
-						name={this.state.isImageFavorite ? "ios-heart" : "ios-heart-outline"} 
-						/>
-					</Button>
+					{/* <Image source={{ uri: this.state.IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} /> */}
+					 {imageLoader}
+					 {/* Favorite Button */}
+					 <Row>
+						<Button
+							transparent style={{ alignSelf: 'flex-end', position: "relative" }} onPress={() => { this.onFavoritePressHandler(this.state.imageId) }}
+						>
+							<Badge style={{ position: "absolute", bottom: 0, right: 1, zIndex: 100 }}>
+								<Text style={{ fontSize: 12 }}>{this.state.noOfFavorite}</Text>
+							</Badge>
+							<Icon
+								style={{ fontSize: 35 }}
+								name={this.state.isImageFavorite ? "ios-heart" : "ios-heart-outline"}
+							/>
+						</Button>
+						{/* Wishlist button */}
+						<Button
+							transparent style={{ alignSelf: 'flex-start', position: "relative" }} onPress={() => { this.onWishlistPressHandler(this.state.imageId) }}
+						>
+							<Badge style={{ position: "absolute", bottom: 0, right: 1, zIndex: 100 }}>
+								<Text style={{ fontSize: 12 }}>{this.state.noOfWishlist}</Text>
+							</Badge>
+							<Icon
+								style={{ fontSize: 35 }}
+								name={this.state.inImageWishlist ? "ios-color-wand" : "ios-color-wand-outline"}
+							/>
+						</Button>
+					 </Row>
+					
+					
 					<Row style={styles.commentEntry}>
 						<Form style={{ width: '100%' }}>
 							<Item floatingLabel>
@@ -402,7 +480,8 @@ class ImageScreen extends Component{
 						<ListItem itemHeader first>
 							<Text style={{fontSize:12}}>COMMENTS</Text>
 						</ListItem>
-						{listOfComments}
+						{/* {listOfComments} */}
+						{commentsToDisplay}
 					</List>
 					
                 </Content>
