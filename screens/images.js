@@ -9,8 +9,8 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 import moment from 'moment';
 import validator from 'validator';
 
-// const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
-const LOGOUT_URI = 'http://localhost:5000/logout';
+const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
+// const LOGOUT_URI = 'http://localhost:5000/logout';
 
 // const resetAction = NavigationActions.reset({
 // 	index: 0,
