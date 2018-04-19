@@ -11,10 +11,15 @@ import {
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import Gallery from '../components/Gallery/Gallery';
 
+// const GET_USERS_URI = 'http://localhost:5000/api/users/';
+// const GET_USERS_FOLLOWED_URI = 'http://localhost:5000/api/users?followed=followed';
+// const GET_IMAGES_URI = 'http://localhost:5000/api/images/';
+// const LOGOUT_URI = 'http://localhost:5000/logout';
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
 const GET_USERS_FOLLOWED_URI = 'https://app-api-testing.herokuapp.com/api/users?followed=followed';
 const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
 const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
+const UPLOAD_URI = 'https://app-api-testing.herokuapp.com/upload';
 class FeedsScreen extends Component {
 	constructor(props) {
 		super(props);
@@ -37,10 +42,11 @@ class FeedsScreen extends Component {
 			 oneFollowMultiImageFlag: false,
 			 feedImagesArray: [],
 			 areImagesLoaded: false,
-			 disableButton: false,
-			 isLoggedOut: false
+			 disableButtonLogout: false,
+			 isLoggedOut: false,
+			 disableButtonImage: false
 		}
-		global.userId = this.state.passedId;
+		// global.userId = this.state.passedId;
         
         //check for number of follows and who
         console.log('[feeds js] Constructor - Number of followed users: ', this.state.followed.length);
@@ -189,7 +195,8 @@ class FeedsScreen extends Component {
 						}).then((response) => response.json())
 							.then((responseJson) => {
 								this.setState({
-									isLoggedOut: true
+									isLoggedOut: true,
+									disableButtonLogout: true
 								});
 								Toast.show({
                                     text: 'Logout successful',
@@ -270,8 +277,7 @@ class FeedsScreen extends Component {
                 console.log("[feeds js] PLATFORM PATH ",platformPath);
                 
 				RNFetchBlob.fetch('POST', 
-					'https://app-api-testing.herokuapp.com/upload',
-					// 'http://localhost:5000/upload',
+					UPLOAD_URI,
 					{},
 					[
 						{name:'sampleFile', filename:response.fileName, data:RNFetchBlob.wrap(platformPath)}
@@ -299,7 +305,7 @@ class FeedsScreen extends Component {
 		// 	disableButton: true
 		// });
         console.log("[feeds js] onImageClicked: ", imageId );
-        return fetch('https://app-api-testing.herokuapp.com/api/images/' + imageId, {
+        return fetch(GET_IMAGES_URI+ imageId, {
             method: 'GET',
             headers:{
                 Accept: 'application/json',
@@ -312,60 +318,25 @@ class FeedsScreen extends Component {
             this.props.navigation.navigate('Image', {
                 data: response,
 				userId: passedId,
-				// disabled:this.state.disableButton
+				// disabled:(this.state.disableButton)
             });
 		})
 			.catch(error => console.error('Error: ', error));
 	}
 
-	// onImageClicked2 = (imageId,passedId) => {
-        
-    //     return fetch('https://app-api-testing.herokuapp.com/api/images/' + imageId, {
-    //         method: 'GET',
-    //         headers:{
-    //             Accept: 'application/json',
-    //             'Content-Type': 'application/json'
-    //         }
-    //     }).then (response => response.json())
-    //     .catch(error => console.error('Error: ', error))
-    //     .then(response => {
-    //         this.props.navigation.navigate('Image', {
-    //             data: response,
-    //             following: passedId
-    //         });
-    //     });
-	// }
 	onBackBtnPressed = () => {
 		console.log('[feeds js] onBackBtnPressed');
 		this.props.navigation.goBack();
 	}
 
 	onProfilePressedHandler = (passedId) => {
-		// this.setState({
-		// 	disableButton: true
-		// });
-		console.log('[feeds js] passedId=', passedId)
-		console.log('[feeds js] onProfilePressedHandler clicked!');
-		return fetch(GET_USERS_URI + passedId + '?test=test', {
-			method: 'GET',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			}
-		}).then(response => response.json())
-		.then(response => {
-			console.log('[feeds js] Testing response', response)
-			this.props.navigation.navigate('Profile', {
-				data: response,
-				userId: passedId
-			});
-		})
-		
-		.catch (error => console.error('Error: ', error));
+		console.log('[feeds js] onProfilePressedHandler passedId', passedId);
+		this.props.navigation.navigate('Profile', {
+			userId: passedId
+		});
 	}
 
 	render() {
-		// let gallery = (<Text>No images available</Text>);
 		let gallery = (<Spinner/>);
 		let logoutLoader = (
 			<Button transparent onPress={this.onLogoutHandler}>
@@ -378,7 +349,7 @@ class FeedsScreen extends Component {
 					images={this.state.feedImagesArray}
 					clicked={this.onImageClicked}
 					passedUserId={this.state.passedId}
-				// disabled = {this.state.disableButton}
+					// disabled = {this.state.disableButton}
 				/>);
 			} else if (this.state.feedImagesArray.length === 0) {
 				gallery = (<Text>No images available</Text>);
@@ -387,7 +358,7 @@ class FeedsScreen extends Component {
 
 		if(this.state.isLoggedOut){
 			logoutLoader = (
-				<Button transparent disabled ={this.state.disableButton}>
+				<Button transparent disabled ={this.state.disableButtonLogout}>
 					<Spinner/>
 				</Button>
 			)
@@ -410,12 +381,15 @@ class FeedsScreen extends Component {
 				<Footer>
 					<FooterTab >
 						<Button full onPress={this.onImagePickerHandler}>
+							<Icon name="camera" />
 							<Text>Image Picker</Text>
 						</Button>
 						<Button  full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
+							<Icon name="navigate" />
 							<Text>Explore</Text>
 						</Button>
 						<Button full onPress={() => { this.onProfilePressedHandler(this.state.passedId) }}>
+							
 							<Text>Profile</Text>
 						</Button>
 					</FooterTab>
