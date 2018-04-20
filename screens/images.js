@@ -24,7 +24,7 @@ class ImageScreen extends Component{
 		super(props);
 		console.log('[images js] constructor - passedParams: ', props.navigation.state.params);
 
-		// check if image favorited
+		// check if image favorited from serverside
 		let isFavorite= false;
 		if (typeof props.navigation.state.params.data.favorite !== 'undefined' && 
 		props.navigation.state.params.data.favorite.length > 0){
@@ -36,7 +36,7 @@ class ImageScreen extends Component{
 				}
 			});
 		}
-		// check if image in wishlist
+		// check if image in wishlist from serverside
 		let inWishlist= false;
 		if (typeof props.navigation.state.params.data.wishlist !== 'undefined' && 
 		props.navigation.state.params.data.wishlist.length > 0){
@@ -45,6 +45,19 @@ class ImageScreen extends Component{
 				if(wishlistId == props.navigation.state.params.userId){
 					console.log('[images js] constructor - User already Favorited this image.');
 					inWishlist = true;
+				}
+			});
+		}
+
+		// check if image is tried from serverside
+		let inTriedlist = false;
+		if (typeof props.navigation.state.params.data.tried !== 'undefined' &&
+			props.navigation.state.params.data.tried.length > 0) {
+			props.navigation.state.params.data.tried.forEach(function (triedId) {
+				console.log('[images js] constructor - triedId: ', triedId);
+				if (triedId == props.navigation.state.params.userId) {
+					console.log('[images js] constructor - User already Favorited this image.');
+					inTriedlist = true;
 				}
 			});
 		}
@@ -67,10 +80,13 @@ class ImageScreen extends Component{
 			arrayOfComments: [],
 			areCommentsLoaded: false,
 			isLoggedOut: false,
-			isImageLoaded: false,
 			disableComment: false,
 			noOfWishlist: props.navigation.state.params.data.wishlist.length,
-			inImageWishlist: inWishlist
+			inImageWishlist: inWishlist,
+			moreComments1: [],
+			isMoreCommentsPressed: false,
+			noOfTriedlist: props.navigation.state.params.data.tried.length,
+			inImageTriedlist: inTriedlist,
 			
 		};
 
@@ -194,7 +210,7 @@ class ImageScreen extends Component{
 			// CHECK IF IMAGE WISHLISTED
 			let inWishlist = false;
 			const userId = this.state.userId;
-			console.log("[images js] onWishlistPressHandler - responseJson Favorites: ", responseJson.wishlist);
+			console.log("[images js] onWishlistPressHandler - responseJson Wishlist: ", responseJson.wishlist);
 			if (typeof responseJson.wishlist !== 'undefined' && responseJson.wishlist.length > 0) {
 				responseJson.wishlist.forEach(function(wishlistId){
 					console.log('[images js] onWishlistPressHandler - wishlistId: ', wishlistId);
@@ -209,7 +225,48 @@ class ImageScreen extends Component{
 				inImageWishlist: inWishlist
 			});
 		})
-		.catch(error => console.log('[images js] onFavoritePressHandler - Error:', error));    
+		.catch(error => console.log('[images js] onWishListPressHandler - Error:', error));    
+	}
+
+	// CHECK IF IMAGE IN TRIEDLIST
+	onTriedlistPressHandler = (imageId) => {
+		console.log('[images js] onTriedlistPressHandler - Tried btn Pressed!');
+		console.log('[images js] onTriedlistPressHandler - imageUri: ', this.state.IMAGE_ROOT_URI);
+		console.log('[images js] onTriedlistPressHandler - imageId: ', imageId);
+		console.log('[images js] onTriedlistPressHandler - URI + imageId: ', this.state.IMAGE_ROOT_URI + imageId);
+
+
+		// SEND REQUEST TO API
+		return fetch(this.state.IMAGE_ROOT_URI + imageId + '/?tried=1', {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+		})
+			.then((response) => response.json())
+			.then((responseJson) => {
+				console.log("[images js] onTriedlistPressHandler - responseJson: ", responseJson);
+
+				// CHECK IF IMAGE IN TRIEDLIST
+				let inTriedlist = false;
+				const userId = this.state.userId;
+				console.log("[images js] onTriedlistPressHandler - responseJson Tried: ", responseJson.tried);
+				if (typeof responseJson.tried !== 'undefined' && responseJson.tried.length > 0) {
+					responseJson.tried.forEach(function (triedId) {
+						console.log('[images js] onTriedlistPressHandler - triedId: ', triedId);
+						if (triedId == userId) {
+							console.log('[images js] onTriedlistPressHandler - User already tried this image.');
+							inTriedlist = true;
+						}
+					});
+				}
+				this.setState({
+					noOfTriedlist: responseJson.tried.length,
+					inImageTriedlist: inTriedlist
+				});
+			})
+			.catch(error => console.log('[images js] onTriedListPressHandler - Error:', error)); 
 	}
 	//ENTER COMMENT IN COMMENT BOX
 	createComment = (comment) => {
@@ -279,9 +336,11 @@ class ImageScreen extends Component{
 
 	fetchComments(){
 		let commentArray = [];
+		let firstPageComments = [];
+		let nextPageComments = [];
 
-		//FETCHING COMMENTS
-		if (this.state.commentId.length >= 1) {
+		// //FETCHING COMMENTS
+		if (this.state.commentId.length >= 1){
 			console.log('[images js] commentId at fetchComment:', this.state.commentId)
 			console.log('[images js] commentId.length at fetchComment:', this.state.commentId.length)
 			this.state.commentId.forEach((commentID, index) => {
@@ -309,39 +368,36 @@ class ImageScreen extends Component{
 						if (this.state.commentId.length === commentArray.length) {
 							console.log('[images js] NO MORE IMAGES TO LOOP THROUGH');
 							//SORTING COMMENTS FROM NEWEST TO OLDEST
-							if (commentArray.length > 1) {
-								let sortedArray = commentArray.sort(function (a, b) {
-									console.log('[images js] render a = ', a.date_created);
-									console.log('[images js] render b = ', b.date_created);
-									console.log('[images js] Comparing two times: ', moment(a.date_created).isBefore(b.date_created));
-									if (moment(a.date_created).isBefore(b.date_created)) {
-										return 1;
-									}
-									return -1;
-								});
-								console.log('[images js] sortedArray at fetchComment:', sortedArray);
+							let sortedArray = commentArray.sort(function (a,b) {
+								if(moment(a.date_created).isBefore(b.date_created)){
+									return 1;
+								}
+								return -1;
+							})
+							console.log('[images js] sortedArray:', sortedArray);
+							if(commentArray.length > 4){
+								firstPageComments =  commentArray.slice(0,4);
+								nextPageComments = commentArray.slice(4);
 								this.setState({
 									areCommentsLoaded: true,
-									arrayOfComments: [...sortedArray],
+									arrayOfComments: [...firstPageComments],
+									moreComments1:[...nextPageComments],
 									disableComment: false
-								});
-								console.log('[images js] status of disableComment at fetchComment:', this.state.disableComment)
-							} else if (commentArray.length == 1) {
+								})
+							}else{
 								this.setState({
 									areCommentsLoaded: true,
 									arrayOfComments: [...commentArray],
 									disableComment: false
 								})
-								console.log('[images js] status of disableComment at fetchComment:', this.state.disableComment)
 							}
 						}
 					})
 					.catch((error) => {
-						console.error(error)
+						console.log('[images js] error:', error)
 					});
 			})
-		}
-		else if (this.state.commentId.length == 0) {
+		}else{
 			this.setState({
 				areCommentsLoaded: true,
 				disableComment: false
@@ -358,15 +414,28 @@ class ImageScreen extends Component{
 	onBackBtnPressed = (disabled) => {
 		console.log('[image js] onBackBtnPressed');
 		this.props.navigation.goBack();
-		// this.props.navigation.dispatch(NavigationActions.reset({
-		// 	index: 0,
-		// 	key: null,
-		// 	actions: [NavigationActions.navigate({ routeName: 'Feeds' })]
-		// }));
 	}
 
-	
-
+	onMoreCommentsPressed(){
+		let evenMoreComments;
+		console.log('[images js] onMoreCommentsPressed');
+		console.log('[images js] moreComments1:', this.state.moreComments1)
+		if(this.state.moreComments1.length > 4){
+			evenMoreComments = this.state.moreComments1.slice(0,4)
+			console.log('[images js] additional Comments:', evenMoreComments)
+			this.setState({
+				// isMoreCommentsPressed: true,
+				arrayOfComments: [...this.state.arrayOfComments, ...evenMoreComments],
+				moreComments1: this.state.moreComments1.slice(4)
+			});
+			console.log('[images js] moreComments1 new slice:', this.state.moreComments1.slice(4));
+		}else{
+			this.setState({
+				// isMoreCommentsPressed: true,
+				arrayOfComments: [...this.state.arrayOfComments, ...this.state.moreComments1]
+			});
+		}
+	}
 
     render(){
 		let listOfComments = (<Spinner />);
@@ -377,12 +446,14 @@ class ImageScreen extends Component{
 		let canComment;
 		let commentsToDisplay = (<Spinner/>);
 		let imageLoader = (<Spinner/>)
+		let displayMoreCommentsButton;
 
 		if (this.state.disableComment){
 			canComment = (
 				<Button disabled={this.state.disableComment} full>
 					<Spinner/>
-				</Button>)
+				</Button>);
+			listOfComments = (<Spinner />);
 		}else{
 			canComment = (
 				<Button disabled={this.state.disableComment}  full onPress={this.postComment}>
@@ -390,31 +461,35 @@ class ImageScreen extends Component{
 				</Button>
 			)
 		}
-
 		
-
 		if(this.state.areCommentsLoaded){
 			console.log('[images js] arrayOfComments.length at render:',  this.state.arrayOfComments.length);
+			console.log('[images js] commentId.length at render:',  this.state.commentId.length);
 			if(this.state.arrayOfComments.length >= 1){
 				listOfComments = [];
+				
 				listOfComments = this.state.arrayOfComments.map(comment => {
 					return (<ListItem key={comment.date_created}>
 						<Body>
 							<Text style={{ fontWeight: 'bold', fontSize: 13 }}> {comment.owner_username}</Text>
 							<Text style={{ fontSize: 15 }}> {comment.comment}</Text>
 							<Text style={{ alignSelf: 'flex-end', fontSize: 10 }}>{moment(comment.date_created).startOf().fromNow()}</Text>
-
 						</Body>
 					</ListItem>)
-				});
-				commentsToDisplay = listOfComments.slice(0,10);
+				
+			});
+				if (this.state.arrayOfComments.length != this.state.commentId.length  ) {
+					console.log('[images js] arrayOfComments.length if more than 4 comments:', this.state.arrayOfComments);
+					displayMoreCommentsButton = <Button onPress={() => { this.onMoreCommentsPressed() }}>
+						<Text>More Comments</Text>
+					</Button>
+				}
 				imageLoader = <Image source={{ uri: this.state.IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} />
 			}else if (this.state.arrayOfComments.length === 0){
 				console.log('[images js] inside else if in render')
-				commentsToDisplay = (<Text>No comments</Text>);
+				listOfComments = (<Text>No comments</Text>);
 				imageLoader = <Image source={{ uri: this.state.IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} />
 			}
-			
 		}
 		if(this.state.isLoggedOut){
 			logoutLoader = (
@@ -465,6 +540,20 @@ class ImageScreen extends Component{
 								name={this.state.inImageWishlist ? "ios-color-wand" : "ios-color-wand-outline"}
 							/>
 						</Button>
+						{/* Triedlist button */}
+						<Button
+							transparent style={{ alignSelf: 'flex-start', position: "relative" }} onPress={() => { this.onTriedlistPressHandler(this.state.imageId) }}
+						>
+							<Badge style={{ position: "absolute", bottom: 0, right: 1, zIndex: 100 }}>
+								<Text style={{ fontSize: 12 }}>{this.state.noOfTriedlist}</Text>
+							</Badge>
+							<Icon
+								style={{ fontSize: 35 }}
+								name={this.state.inImageTriedlist ? "ios-checkmark-circle" : "ios-checkmark-circle-outline"}
+							/>
+
+						</Button>
+
 					 </Row>
 					
 					
@@ -480,14 +569,15 @@ class ImageScreen extends Component{
 						<ListItem itemHeader first>
 							<Text style={{fontSize:12}}>COMMENTS</Text>
 						</ListItem>
-						{/* {listOfComments} */}
-						{commentsToDisplay}
+						{listOfComments}
 					</List>
+					{displayMoreCommentsButton}
 					
                 </Content>
 				<Footer>
 					<FooterTab >
 						{canComment}
+
 					</FooterTab>
 				</Footer>
             </Container>
