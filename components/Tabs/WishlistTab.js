@@ -68,7 +68,7 @@ class Wishlist extends Component{
                     <Gallery
                         images={this.state.wishlistArray}
                         clicked={clicked}
-                        passedUserId={global.userId}
+                        passedUserId={this.state.userID}
                     />
                 </Content>
 
