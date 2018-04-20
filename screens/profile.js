@@ -9,7 +9,7 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 
 import Favorite from './../components/Tabs/FavoriteTab';
 import Wishlist from './../components/Tabs/WishlistTab';
-// import Tab3 from './tabThree';
+import TriedList from './../components/Tabs/TriedListTab.js';
 // import Tab4 from './tabFour';
 // import Tab5 from './tabOne';
 // import Tab6 from './tabOne';
@@ -151,6 +151,12 @@ class ProfileScreen extends Component{
                            currentUserID={this.state.passedId}
                         />
                    </Tab>
+                   <Tab heading="Triedlist">
+                        <TriedList
+                            clicked={this.onImageClicked}
+                            currentUserID = {this.state.passedId}
+                        />
+                    </Tab>
                </Tabs>
                <Footer>
                    <FooterTab >

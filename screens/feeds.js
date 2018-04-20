@@ -16,7 +16,7 @@ import Gallery from '../components/Gallery/Gallery';
 // const GET_IMAGES_URI = 'http://localhost:5000/api/images/';
 // const LOGOUT_URI = 'http://localhost:5000/logout';
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
-const GET_USERS_FOLLOWED_URI = 'https://app-api-testing.herokuapp.com/api/users?followed=followed';
+const GET_USERS_FOLLOWED_URI = 'https://app-api-testing.herokuapp.com/api/users?followed=1';
 const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
 const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
 const UPLOAD_URI = 'https://app-api-testing.herokuapp.com/upload';
