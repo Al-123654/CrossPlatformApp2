@@ -9,8 +9,8 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 import moment from 'moment';
 import validator from 'validator';
 
-const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
-// const LOGOUT_URI = 'http://localhost:5000/logout';
+// const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
+const LOGOUT_URI = 'http://localhost:5000/logout';
 
 // const resetAction = NavigationActions.reset({
 // 	index: 0,
@@ -64,10 +64,10 @@ class ImageScreen extends Component{
 
 		// INITIALIZE STATES
 		this.state = {
-			// IMAGE_ROOT_URI: 'http://localhost:5000/api/images/',
-			// COMMENT_URI: 'http://localhost:5000/api/comments/',
-			IMAGE_ROOT_URI: 'https://app-api-testing.herokuapp.com/api/images/',
-			COMMENT_URI: 'https://app-api-testing.herokuapp.com/api/comments/',
+			IMAGE_ROOT_URI: 'http://localhost:5000/api/images/',
+			COMMENT_URI: 'http://localhost:5000/api/comments/',
+			// IMAGE_ROOT_URI: 'https://app-api-testing.herokuapp.com/api/images/',
+			// COMMENT_URI: 'https://app-api-testing.herokuapp.com/api/comments/',
 			imageId: props.navigation.state.params.data._id,
 			userId: props.navigation.state.params.userId,
 			isImageFavorite: isFavorite,
@@ -83,10 +83,11 @@ class ImageScreen extends Component{
 			disableComment: false,
 			noOfWishlist: props.navigation.state.params.data.wishlist.length,
 			inImageWishlist: inWishlist,
-			moreComments1: [],
+			moreComments: [],
 			isMoreCommentsPressed: false,
 			noOfTriedlist: props.navigation.state.params.data.tried.length,
 			inImageTriedlist: inTriedlist,
+			postingComment: false
 			
 		};
 
@@ -281,7 +282,8 @@ class ImageScreen extends Component{
 	postComment = () => {
 		if (validator.isLength(this.state.comment,{min:1, max: 200})){
 			this.setState({
-				disableComment: true
+				disableComment: true,
+				postingComment: true
 			})
 			fetch(this.state.IMAGE_ROOT_URI + this.state.imageId + '/comments', {
 				method: 'POST',
@@ -304,6 +306,7 @@ class ImageScreen extends Component{
 						)
 					})
 					console.log('[images js] tempCommentId', tempCommentId);
+					console.log('[images js] postingComment just after user posts comment:',this.state.postingComment);
 					
 					this.setState({
 						commentId: tempCommentId
@@ -381,16 +384,19 @@ class ImageScreen extends Component{
 								this.setState({
 									areCommentsLoaded: true,
 									arrayOfComments: [...firstPageComments],
-									moreComments1:[...nextPageComments],
-									disableComment: false
+									moreComments:[...nextPageComments],
+									disableComment: false,
+									postingComment:false
 								})
 							}else{
 								this.setState({
 									areCommentsLoaded: true,
 									arrayOfComments: [...commentArray],
-									disableComment: false
+									disableComment: false,
+									postingComment: false
 								})
 							}
+							console.log('[images js] postingComments after fetchComments():',this.state.postingComment);
 						}
 					})
 					.catch((error) => {
@@ -400,9 +406,11 @@ class ImageScreen extends Component{
 		}else{
 			this.setState({
 				areCommentsLoaded: true,
-				disableComment: false
+				disableComment: false,
+				postingComment: false
 			})
 			console.log('[images js] status of disableButton at fetchComment:', this.state.disableButton)
+			console.log('[images js] postingComments after fetchComments():', this.state.postingComment);
 		}
 	}
 	
@@ -419,35 +427,36 @@ class ImageScreen extends Component{
 	onMoreCommentsPressed(){
 		let evenMoreComments;
 		console.log('[images js] onMoreCommentsPressed');
-		console.log('[images js] moreComments1:', this.state.moreComments1)
-		if(this.state.moreComments1.length > 4){
-			evenMoreComments = this.state.moreComments1.slice(0,4)
+		console.log('[images js] moreComments:', this.state.moreComments)
+		if(this.state.moreComments.length > 4){
+			evenMoreComments = this.state.moreComments.slice(0,4)
 			console.log('[images js] additional Comments:', evenMoreComments)
 			this.setState({
 				// isMoreCommentsPressed: true,
 				arrayOfComments: [...this.state.arrayOfComments, ...evenMoreComments],
-				moreComments1: this.state.moreComments1.slice(4)
+				moreComments: this.state.moreComments.slice(4)
 			});
-			console.log('[images js] moreComments1 new slice:', this.state.moreComments1.slice(4));
+			console.log('[images js] moreComments new slice:', this.state.moreComments.slice(4));
 		}else{
 			this.setState({
 				// isMoreCommentsPressed: true,
-				arrayOfComments: [...this.state.arrayOfComments, ...this.state.moreComments1]
+				arrayOfComments: [...this.state.arrayOfComments, ...this.state.moreComments]
 			});
 		}
 	}
 
     render(){
+		// initialise comments and image to display
 		let listOfComments = (<Spinner />);
 		let logoutLoader = (
 			<Button transparent onPress={this.onLogoutHandler}>
 				<Icon name='home' />
 			</Button>);
 		let canComment;
-		let commentsToDisplay = (<Spinner/>);
 		let imageLoader = (<Spinner/>)
 		let displayMoreCommentsButton;
 
+		// logic after user clicks postComment
 		if (this.state.disableComment){
 			canComment = (
 				<Button disabled={this.state.disableComment} full>
@@ -461,6 +470,8 @@ class ImageScreen extends Component{
 				</Button>
 			)
 		}
+
+		
 		
 		if(this.state.areCommentsLoaded){
 			console.log('[images js] arrayOfComments.length at render:',  this.state.arrayOfComments.length);
@@ -477,26 +488,32 @@ class ImageScreen extends Component{
 						</Body>
 					</ListItem>)
 				
-			});
-				if (this.state.arrayOfComments.length != this.state.commentId.length  ) {
-					console.log('[images js] arrayOfComments.length if more than 4 comments:', this.state.arrayOfComments);
+			}); 	
+			console.log('[images js] listOfComments.length:', listOfComments.length)
+				if (listOfComments.length >= 4 && listOfComments.length != this.state.commentId.length  ) {
+					console.log('[images js] arrayOfComments.length if more than 4 comments:', this.state.arrayOfComments.length);
 					displayMoreCommentsButton = <Button onPress={() => { this.onMoreCommentsPressed() }}>
 						<Text>More Comments</Text>
 					</Button>
 				}
 				imageLoader = <Image source={{ uri: this.state.IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} />
-			}else if (this.state.arrayOfComments.length === 0){
+			}else{
 				console.log('[images js] inside else if in render')
 				listOfComments = (<Text>No comments</Text>);
 				imageLoader = <Image source={{ uri: this.state.IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} />
 			}
-		}
+		} 
 		if(this.state.isLoggedOut){
 			logoutLoader = (
 				<Button transparent disabled={this.state.disableButton}>
 					<Spinner />
 				</Button>
 			)
+		}
+
+		if (this.state.postingComment) {
+			console.log('[image js] postingComment at render:', this.state.postingComment);
+			listOfComments = (<Spinner />);
 		}
         return (
        
