@@ -490,7 +490,7 @@ class ImageScreen extends Component{
 				
 			}); 	
 			console.log('[images js] listOfComments.length:', listOfComments.length)
-				if (listOfComments.length >= 4 && listOfComments.length != this.state.commentId.length  ) {
+				if (listOfComments.length >= 4 && listOfComments.length != this.state.commentId.length && !this.state.postingComment) {
 					console.log('[images js] arrayOfComments.length if more than 4 comments:', this.state.arrayOfComments.length);
 					displayMoreCommentsButton = <Button onPress={() => { this.onMoreCommentsPressed() }}>
 						<Text>More Comments</Text>
@@ -514,6 +514,7 @@ class ImageScreen extends Component{
 		if (this.state.postingComment) {
 			console.log('[image js] postingComment at render:', this.state.postingComment);
 			listOfComments = (<Spinner />);
+			
 		}
         return (
        
