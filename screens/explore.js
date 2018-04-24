@@ -4,7 +4,7 @@ import {
 	 Image, Alert , 
 	TouchableOpacity, TouchableHighlight
 } from 'react-native';
-import { StackNavigator } from 'react-navigation';
+import { StackNavigator, NavigationActions } from 'react-navigation';
 import { 
 	Container, Header, Left, Body, Right, Icon, 
 	Title, Content, Text, Button, Item, Input, 
@@ -87,9 +87,13 @@ class ExploreScreen extends Component {
                                     buttonText: 'Ok',
                                     position: 'top',
                                     duration: 4000
-                                })
-								this.props.navigation.navigate('Home');
-								console.log("[explore js] onLogoutPressHandler - LOGGED OUT");
+                                });
+								console.log("[explore js] onLogoutPressHandler - LOGGING OUT!");
+								const resetAction = NavigationActions.reset({
+									index: 0,
+									actions: [NavigationActions.navigate({ routeName: 'Home' })],
+								});
+								this.props.navigation.dispatch(resetAction);
 							})
 							.catch((error) => {
 								console.error(error);
