@@ -18,6 +18,7 @@ var ExploreScreen = require('./screens/explore.js');
 var ProfileScreen = require('./screens/profile.js')
 
 class HomeScreen extends Component {
+
 	state = {
 		username: "",
 		logUsername: "",
@@ -112,8 +113,10 @@ class HomeScreen extends Component {
 	
 	onRegisterPressHandler = () => {
 		console.log('[app js] Register btn pressed.');
-		this.props.navigation.navigate('Register');
+		// this.props.navigation.navigate('Register');
+		this.props.navigation.navigate({ key: 'Register1', routeName: 'Register'});
 	}
+
 	onLoginLoader = () => {
 		console.log('[app js] Loading login page')
 		
@@ -158,6 +161,7 @@ class HomeScreen extends Component {
 									<Input secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
 								</Item>
 								{this.state.logPassword.length > 0 ? (<Text style={styles.formLogText}>{this.state.logPassword}</Text>) : null}
+							
 							</Form>
 							<Button style={{alignSelf:'flex-end'}} transparent onPress={this.onRegisterPressHandler}>
 								<Text style={{fontSize:12}}>Register</Text>
