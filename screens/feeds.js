@@ -6,10 +6,12 @@ import RNFetchBlob from 'react-native-fetch-blob';
 import { 
 	Container, Header, Left, Body, Right, Icon, 
 	Title, Content, Text, Button, Item, Input, 
-	Form, Label, Thumbnail, Footer, FooterTab, Spinner , Toast
+	Form, Label, Thumbnail, Footer, FooterTab, Spinner, Toast, Drawer
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import Gallery from '../components/Gallery/Gallery';
+import Sidebar from '../components/Sidebar/SidebarMenu';
+import SidebarHeader from '../components/Sidebar/SidebarHeader'
 
 // const GET_USERS_URI = 'http://localhost:5000/api/users/';
 // const GET_USERS_FOLLOWED_URI = 'http://localhost:5000/api/users?followed=followed';
@@ -44,14 +46,23 @@ class FeedsScreen extends Component {
 			 areImagesLoaded: false,
 			 disableButtonLogout: false,
 			 isLoggedOut: false,
-			 disableButtonImage: false
+			 disableButtonImage: false,
+			 role: props.navigation.state.params.data.role,
+			 imagePickerEnabled: false
 		}
-		// global.userId = this.state.passedId;
+		
         
         //check for number of follows and who
         console.log('[feeds js] Constructor - Number of followed users: ', this.state.followed.length);
         console.log('[feeds js] Constructor - Followed users list: ', this.state.followed);
 	}
+
+	closeDrawer = () => {
+		this.drawer._root.close()
+	};
+	openDrawer = () => {
+		this.drawer._root.open()
+	};
 
 	componentDidMount(){
 		let userImagesArray = this.getUserImages();
@@ -232,75 +243,86 @@ class FeedsScreen extends Component {
 	}
 
 	onImagePickerHandler = () => {
-        let imagePickerOptions = {
-            title: 'Select Image',
-            storageOptions: {
-                skipBackup: true,
-            }
-        };
+		if(this.state.role == 2){
+			let imagePickerOptions = {
+				title: 'Select Image',
+				storageOptions: {
+					skipBackup: true,
+				}
+			};
 
-        ImagePicker.showImagePicker(imagePickerOptions, (response) => {
+			ImagePicker.showImagePicker(imagePickerOptions, (response) => {
 
-			console.log('[feeds js] Image Picker Response: ', response.fileSize);
-			this.setState({log:''});
-            if (response.didCancel) {
-                console.log('[feeds js] User cancelled the picker.');
-            } else if (response.error) {
-                console.log('[feeds js] ImagePicker Error:', response.error);
-            } else if (response.customButton) {
-                console.log('[feeds js] User tapped custom button: ', response.customButton);
-            } else {
-                let source = { uri: response.uri };
-                this.setState({
-                    imageSource: source,
-                    log: "Image chosen"
-                });
+				console.log('[feeds js] Image Picker Response: ', response.fileSize);
+				this.setState({ log: '' });
+				if (response.didCancel) {
+					console.log('[feeds js] User cancelled the picker.');
+				} else if (response.error) {
+					console.log('[feeds js] ImagePicker Error:', response.error);
+				} else if (response.customButton) {
+					console.log('[feeds js] User tapped custom button: ', response.customButton);
+				} else {
+					let source = { uri: response.uri };
+					this.setState({
+						imageSource: source,
+						log: "Image chosen"
+					});
 
-                console.log('[feeds js] IMAGE CHOSEN: ', source);
+					console.log('[feeds js] IMAGE CHOSEN: ', source);
 
-                let platformPath = '';
-                if (Platform.OS == 'ios') {
-                    console.log("[feeds js] PATH OF IMAGE SELECTED IOS: ", response.uri);
-                    platformPath = response.uri.replace(/^file?\:\/\//i, "");
-                    console.log('[feeds js] SPECIAL CHARACTERS REMOVED: ', platformPath);
-                } else if (Platform.OS == 'android') {
-                    console.log("[feeds js] PATH OF IMAGE SELECTED ANDROID: ", response.path);
-                    platformPath = response.path;
-                }
-
-                if (platformPath == '') {
-                    return this.setState({
-                        log: "Platform path empty"
-                    });
-                }
-                console.log('[feeds js] TEST:',response.uri);
-                console.log("[feeds js] PLATFORM PATH ",platformPath);
-                
-				RNFetchBlob.fetch('POST', 
-					UPLOAD_URI,
-					{},
-					[
-						{name:'sampleFile', filename:response.fileName, data:RNFetchBlob.wrap(platformPath)}
-					])
-				.then((res) => {
-					// console.log('[user js] Response from server - ', res);
-					console.log('[feeds js] Status code - ', res.respInfo.status);
-					if(res.respInfo.status == 200){
-						console.log('[feeds js] UPLOAD OK');
-						this.setState({log: 'Upload ok!'});
-					}else{
-						console.log('[feeds js] UPLOAD FAILED - ', res);
-						this.setState({log: 'Upload failed!'});
+					let platformPath = '';
+					if (Platform.OS == 'ios') {
+						console.log("[feeds js] PATH OF IMAGE SELECTED IOS: ", response.uri);
+						platformPath = response.uri.replace(/^file?\:\/\//i, "");
+						console.log('[feeds js] SPECIAL CHARACTERS REMOVED: ', platformPath);
+					} else if (Platform.OS == 'android') {
+						console.log("[feeds js] PATH OF IMAGE SELECTED ANDROID: ", response.path);
+						platformPath = response.path;
 					}
-				})
-				.catch((err) => {
-					console.log('[feeds js] showImagePicker: ', res);
-				});
-            }
-        });
+
+					if (platformPath == '') {
+						return this.setState({
+							log: "Platform path empty"
+						});
+					}
+					console.log('[feeds js] TEST:', response.uri);
+					console.log("[feeds js] PLATFORM PATH ", platformPath);
+
+					RNFetchBlob.fetch('POST',
+						UPLOAD_URI,
+						{},
+						[
+							{ name: 'sampleFile', filename: response.fileName, data: RNFetchBlob.wrap(platformPath) }
+						])
+						.then((res) => {
+							// console.log('[user js] Response from server - ', res);
+							console.log('[feeds js] Status code - ', res.respInfo.status);
+							if (res.respInfo.status == 200) {
+								console.log('[feeds js] UPLOAD OK');
+								this.setState({ log: 'Upload ok!' });
+							} else {
+								console.log('[feeds js] UPLOAD FAILED - ', res);
+								this.setState({ log: 'Upload failed!' });
+							}
+						})
+						.catch((err) => {
+							console.log('[feeds js] showImagePicker: ', res);
+						});
+				}
+			});
+		}
+		
+// 		else{
+// 			Toast.show({
+// 				text: 'Access denied',
+//                 buttonText: 'Ok',
+//                 position: 'top',
+//           		duration: 4000
+// 			})
+// 		}
 	}
 	
-	onImageClicked = (imageId,passedId,disabled) => {
+	onImageClicked = (imageId,passedId) => {
 		// this.setState({
 		// 	disableButton: true
 		// });
@@ -315,11 +337,17 @@ class FeedsScreen extends Component {
         
         .then(response => {
             console.log('[feeds js] IMAGE DETAILS TRANSFER ', response)
-            this.props.navigation.navigate('Image', {
-                data: response,
-				userId: passedId,
-				// disabled:(this.state.disableButton)
-            });
+            // this.props.navigation.navigate('Image', {
+            //     data: response,
+			// 	userId: passedId,
+			// 	// disabled:(this.state.disableButton)
+			// });
+			// this.props.navigation.navigate({ key: 'MyScreen1', routeName: 'ProfileScreen', params: { ...} })
+			this.props.navigation.navigate({ key: 'Images1', routeName: 'Image', params: { 
+					data:response,
+					userId: passedId,
+				} 
+			})
 		})
 			.catch(error => console.error('Error: ', error));
 	}
@@ -338,6 +366,7 @@ class FeedsScreen extends Component {
 
 	render() {
 		let gallery = (<Spinner/>);
+		let imagePickerButton;
 		let logoutLoader = (
 			<Button transparent onPress={this.onLogoutHandler}>
 				<Icon name='home' />
@@ -363,6 +392,17 @@ class FeedsScreen extends Component {
 				</Button>
 			)
 		}
+
+		if(this.state.role == 2){
+			imagePickerButton = (
+				<Button full onPress={this.onImagePickerHandler}>
+					<Icon name="camera" />
+					<Text>Image Picker</Text>
+				</Button>
+			)
+		}else{
+			imagePickerButton = null;
+		}
        
         return (
 			<Container>
@@ -376,14 +416,24 @@ class FeedsScreen extends Component {
 					</Right>
 				</Header>
 				<Content>
+					<Drawer
+						ref={(ref) => { this.drawer = ref; }}
+						content={<Sidebar />}
+						onClose={() => this.closeDrawer()} >
+
+						{/* <SidebarHeader
+							openDrawer={this.openDrawer.bind(this)}
+						/> */}
+					</Drawer>
 					{gallery}
 				</Content>
 				<Footer>
 					<FooterTab >
-						<Button full onPress={this.onImagePickerHandler}>
+						{/* <Button disabled = {this.state.imagePickerEnabled} full onPress={this.onImagePickerHandler}>
 							<Icon name="camera" />
 							<Text>Image Picker</Text>
-						</Button>
+						</Button> */}
+						{imagePickerButton}
 						<Button  full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
 							<Icon name="navigate" />
 							<Text>Explore</Text>
