@@ -10,6 +10,7 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 import Favorite from './../components/Tabs/FavoriteTab';
 import Wishlist from './../components/Tabs/WishlistTab';
 import Cravelist from './../components/Tabs/CravelistTab.js';
+import Triedlist from './../components/Tabs/TriedlistTab'
 // import Tab4 from './tabFour';
 // import Tab5 from './tabOne';
 // import Tab6 from './tabOne';
