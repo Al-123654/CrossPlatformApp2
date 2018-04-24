@@ -10,8 +10,8 @@ import {
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import Gallery from '../components/Gallery/Gallery';
-import Sidebar from '../components/Sidebar/SidebarMenu';
-import SidebarHeader from '../components/Sidebar/SidebarHeader'
+// import Sidebar from '../components/Sidebar/SidebarMenu';
+// import SidebarHeader from '../components/Sidebar/SidebarHeader'
 
 // const GET_USERS_URI = 'http://localhost:5000/api/users/';
 // const GET_USERS_FOLLOWED_URI = 'http://localhost:5000/api/users?followed=followed';
@@ -239,8 +239,12 @@ class FeedsScreen extends Component {
 		console.log('[feeds js] onExplorePressedHandler clicked!');
 		// this.props.navigation.navigate('User', data);
 		console.log('[feeds js] ID passed by app js: ', currentUserId);
-		this.props.navigation.navigate('Explore', {currentUserId:currentUserId});
-	}
+		// this.props.navigation.navigate('Explore', {currentUserId:currentUserId});
+		this.props.navigation.navigate({ key: 'Explore1', routeName: 'Explore', params: {
+				currentUserId:currentUserId
+			} 
+		})
+	};
 
 	onImagePickerHandler = () => {
 		if(this.state.role == 2){
@@ -350,7 +354,7 @@ class FeedsScreen extends Component {
 			})
 		})
 			.catch(error => console.error('Error: ', error));
-	}
+	};
 
 	onBackBtnPressed = () => {
 		console.log('[feeds js] onBackBtnPressed');
@@ -359,8 +363,12 @@ class FeedsScreen extends Component {
 
 	onProfilePressedHandler = (passedId) => {
 		console.log('[feeds js] onProfilePressedHandler passedId', passedId);
-		this.props.navigation.navigate('Profile', {
-			userId: passedId
+		// this.props.navigation.navigate('Profile', {
+		// 	userId: passedId
+		// });
+		this.props.navigation.navigate({ key: 'Profile1', routeName: 'Profile', params: {
+				userId:passedId	
+			} 
 		});
 	}
 
@@ -416,15 +424,7 @@ class FeedsScreen extends Component {
 					</Right>
 				</Header>
 				<Content>
-					<Drawer
-						ref={(ref) => { this.drawer = ref; }}
-						content={<Sidebar />}
-						onClose={() => this.closeDrawer()} >
-
-						{/* <SidebarHeader
-							openDrawer={this.openDrawer.bind(this)}
-						/> */}
-					</Drawer>
+					
 					{gallery}
 				</Content>
 				<Footer>
