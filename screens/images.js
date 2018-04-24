@@ -9,8 +9,8 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 import moment from 'moment';
 import validator from 'validator';
 
-// const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
-const LOGOUT_URI = 'http://localhost:5000/logout';
+const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
+// const LOGOUT_URI = 'http://localhost:5000/logout';
 
 // const resetAction = NavigationActions.reset({
 // 	index: 0,
@@ -64,10 +64,10 @@ class ImageScreen extends Component{
 
 		// INITIALIZE STATES
 		this.state = {
-			IMAGE_ROOT_URI: 'http://localhost:5000/api/images/',
-			COMMENT_URI: 'http://localhost:5000/api/comments/',
-			// IMAGE_ROOT_URI: 'https://app-api-testing.herokuapp.com/api/images/',
-			// COMMENT_URI: 'https://app-api-testing.herokuapp.com/api/comments/',
+			// IMAGE_ROOT_URI: 'http://localhost:5000/api/images/',
+			// COMMENT_URI: 'http://localhost:5000/api/comments/',
+			IMAGE_ROOT_URI: 'https://app-api-testing.herokuapp.com/api/images/',
+			COMMENT_URI: 'https://app-api-testing.herokuapp.com/api/comments/',
 			imageId: props.navigation.state.params.data._id,
 			userId: props.navigation.state.params.userId,
 			isImageFavorite: isFavorite,
@@ -379,8 +379,8 @@ class ImageScreen extends Component{
 							})
 							console.log('[images js] sortedArray:', sortedArray);
 							if(commentArray.length > 4){
-								firstPageComments =  commentArray.slice(0,4);
-								nextPageComments = commentArray.slice(4);
+								firstPageComments =  commentArray.slice(0,20);
+								nextPageComments = commentArray.slice(20);
 								this.setState({
 									areCommentsLoaded: true,
 									arrayOfComments: [...firstPageComments],
@@ -428,15 +428,15 @@ class ImageScreen extends Component{
 		let evenMoreComments;
 		console.log('[images js] onMoreCommentsPressed');
 		console.log('[images js] moreComments:', this.state.moreComments)
-		if(this.state.moreComments.length > 4){
-			evenMoreComments = this.state.moreComments.slice(0,4)
+		if(this.state.moreComments.length > 20){
+			evenMoreComments = this.state.moreComments.slice(0,20)
 			console.log('[images js] additional Comments:', evenMoreComments)
 			this.setState({
 				// isMoreCommentsPressed: true,
 				arrayOfComments: [...this.state.arrayOfComments, ...evenMoreComments],
-				moreComments: this.state.moreComments.slice(4)
+				moreComments: this.state.moreComments.slice(20)
 			});
-			console.log('[images js] moreComments new slice:', this.state.moreComments.slice(4));
+			console.log('[images js] moreComments new slice:', this.state.moreComments.slice(20));
 		}else{
 			this.setState({
 				// isMoreCommentsPressed: true,
@@ -620,14 +620,11 @@ const styles = StyleSheet.create({
 		width: 59,
 		height: 59
 	},
-	favoritesCount: {
-	},
+	
 	commentEntry:{
 		flex:1,
-		flexDirection: 'column'
-	},
-	commentButton:{
-		marginTop:40
+		flexDirection: 'column',
+		marginRight: 20
 	},
 	commentDisplay:{
 
