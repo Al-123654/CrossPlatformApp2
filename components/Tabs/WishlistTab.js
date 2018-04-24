@@ -12,8 +12,9 @@ import moment from 'moment';
 import validator from 'validator';
 import Gallery from '../Gallery/Gallery';
 
+// const GET_USERS_URI = 'http://localhost:5000/api/users/';
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
-// const GET_USERS_WISHLIST_URI = 'https://app-api-testing.herokuapp.com/api/users?wishlist=1';
+const GET_USERS_WISHLIST_URI = 'https://app-api-testing.herokuapp.com/api/users?wishlist=1';
 
 class Wishlist extends Component{
     constructor(props){

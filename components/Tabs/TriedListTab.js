@@ -13,16 +13,16 @@ import validator from 'validator';
 import Gallery from '../Gallery/Gallery';
 
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
-// const GET_USERS_WISHLIST_URI = 'https://app-api-testing.herokuapp.com/api/users?wishlist=1';
+const GET_USERS_WISHLIST_URI = 'https://app-api-testing.herokuapp.com/api/users?crave=1';
 
-class TriedList extends Component {
+class Triedlist extends Component {
     constructor(props) {
         super(props);
 
-        console.log('[TriedListTab js] Check props:', this.props)
+        console.log('[TriedlistTab js] Check props:', this.props)
 
         this.state = {
-           triedlistArray: [],
+            triedlistArray: [],
             userID: this.props.currentUserID
         }
     }
@@ -39,13 +39,13 @@ class TriedList extends Component {
         }).then(response => response.json())
             .then(response => {
 
-                let tempTriedList = [];
+                let tempTriedlist = [];
                 response.triedImages.forEach((image, index) => {
-                    console.log('[TriedList Tab js] To push images into array:', image._id)
-                    tempTriedList.push(image._id);
+                    console.log('[Triedlist Tab js] To push images into array:', image._id)
+                    tempTriedlist.push(image._id);
                 })
-                this.setState({triedlistArray: [...tempTriedList] });
-                console.log('[TriedList Tab js]triedlistArray check:', this.state.triedlistArray);
+                this.setState({ triedlistArray: [...tempTriedlist] });
+                console.log('[Triedlist Tab js]triedlistArray check:', this.state.triedlistArray);
             })
             .catch(error => console.error('Error:', error));
 
@@ -55,9 +55,9 @@ class TriedList extends Component {
     render() {
 
         const { clicked } = this.props;
-        console.log('[TriedList Tab js] Checking length of array:', this.state.triedlistArray.length);
-        console.log('[TriedList Tab js] clicked:', clicked);
-        console.log('[TriedList Tab js]triedlistArray at render:', this.state.triedlistArray);
+        console.log('[Triedlist Tab js] Checking length of array:', this.state.triedlistArray.length);
+        console.log('[Triedlist Tab js] clicked:', clicked);
+        console.log('[Triedlist Tab js]triedlistArray at render:', this.state.triedlistArray);
         if (this.state.triedlistArray.length == 0) {
             return (
                 <Text>No images in triedlist</Text>
@@ -74,8 +74,8 @@ class TriedList extends Component {
 
             );
         }
-       
+
     }
 }
 
-export default TriedList;
+export default Triedlist;
