@@ -61,6 +61,17 @@ class ImageScreen extends Component{
 				}
 			});
 		}
+		let inCravelist = false;
+		if (typeof props.navigation.state.params.data.craving !== 'undefined' &&
+			props.navigation.state.params.data.craving.length > 0) {
+			props.navigation.state.params.data.craving.forEach(function (cravingId) {
+				console.log('[images js] constructor - cravingId: ', cravingId);
+				if (cravingId == props.navigation.state.params.userId) {
+					console.log('[images js] constructor - User already Favorited this image.');
+					inCravelist = true;
+				}
+			});
+		}
 
 		// INITIALIZE STATES
 		this.state = {
@@ -87,7 +98,9 @@ class ImageScreen extends Component{
 			isMoreCommentsPressed: false,
 			noOfTriedlist: props.navigation.state.params.data.tried.length,
 			inImageTriedlist: inTriedlist,
-			postingComment: false
+			postingComment: false,
+			inImageCravelist: inCravelist,
+			noOfCravelist: props.navigation.state.params.data.craving.length
 			
 		};
 
@@ -268,6 +281,45 @@ class ImageScreen extends Component{
 				});
 			})
 			.catch(error => console.log('[images js] onTriedListPressHandler - Error:', error)); 
+	}
+	onCravelistPressHandler = (imageId) => {
+		console.log('[images js] onCravelistPressHandler - Crave btn Pressed!');
+		console.log('[images js] onCravelistPressHandler - imageUri: ', this.state.IMAGE_ROOT_URI);
+		console.log('[images js] onCravelistPressHandler - imageId: ', imageId);
+		console.log('[images js] onCravelistPressHandler - URI + imageId: ', this.state.IMAGE_ROOT_URI + imageId);
+
+
+		// SEND REQUEST TO API
+		return fetch(this.state.IMAGE_ROOT_URI + imageId + '/?crave=1', {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+		})
+			.then((response) => response.json())
+			.then((responseJson) => {
+				console.log("[images js] onCravelistPressHandler - responseJson: ", responseJson);
+
+				// CHECK IF IMAGE IN TRIEDLIST
+				let inCravelist = false;
+				const userId = this.state.userId;
+				console.log("[images js] onCravelistPressHandler - responseJson Crave: ", responseJson.craving);
+				if (typeof responseJson.craving !== 'undefined' && responseJson.craving.length > 0) {
+					responseJson.craving.forEach(function (cravingId) {
+						console.log('[images js] onCravelistPressHandler - cravingId: ', cravingId);
+						if (cravingId == userId) {
+							console.log('[images js] onCravelistPressHandler - User already craving this image.');
+							inCravelist = true;
+						}
+					});
+				}
+				this.setState({
+					noOfCravelist: responseJson.craving.length,
+					inImageCravelist: inCravelist
+				});
+			})
+			.catch(error => console.log('[images js] onCraveListPressHandler - Error:', error)); 
 	}
 	//ENTER COMMENT IN COMMENT BOX
 	createComment = (comment) => {
@@ -568,6 +620,18 @@ class ImageScreen extends Component{
 							<Icon
 								style={{ fontSize: 35 }}
 								name={this.state.inImageTriedlist ? "ios-checkmark-circle" : "ios-checkmark-circle-outline"}
+							/>
+
+						</Button>
+						<Button
+							transparent style={{ alignSelf: 'flex-start', position: "relative" }} onPress={() => { this.onCravelistPressHandler(this.state.imageId) }}
+						>
+							<Badge style={{ position: "absolute", bottom: 0, right: 1, zIndex: 100 }}>
+								<Text style={{ fontSize: 12 }}>{this.state.noOfCravelist}</Text>
+							</Badge>
+							<Icon
+								style={{ fontSize: 35 }}
+								name={this.state.inImageCravelist ? "ios-happy" : "ios-happy-outline"}
 							/>
 
 						</Button>
