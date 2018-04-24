@@ -372,6 +372,47 @@ class FeedsScreen extends Component {
 		});
 	}
 
+	onImageDelete(imageId){
+		console.log('[feeds js] Testing long press');
+		console.log('[feeds js] imageId at onImageDelete:', imageId);
+		Alert.alert(
+			'Delete image?',
+			'This cannot be undone',
+			[
+				{
+					text: 'OK', onPress: () => {
+						return fetch(GET_IMAGES_URI + imageId, {
+							method: 'DELETE',
+							headers: {
+								Accept: 'application/json',
+								'Content-Type': 'application/json'
+							},
+						}).then((response) => response.json())
+							.then((responseJson) => {
+								
+								Toast.show({
+                                    text: 'Image deleted',
+                                    buttonText: 'Ok',
+                                    position: 'top',
+                                    duration: 4000
+                                })
+
+							})
+							.catch((error) => {
+								console.error(error);
+							});
+						console.log('[feeds js] Image should be deleted')
+					}
+				},
+				{
+					text: 'Cancel', onPress: () => {
+						style: 'cancel'
+					}
+				}
+			]
+		)
+	}
+
 	render() {
 		let gallery = (<Spinner/>);
 		let imagePickerButton;
@@ -385,6 +426,7 @@ class FeedsScreen extends Component {
 				gallery = (<Gallery
 					images={this.state.feedImagesArray}
 					clicked={this.onImageClicked}
+					longclick={this.onImageDelete}
 					passedUserId={this.state.passedId}
 					// disabled = {this.state.disableButton}
 				/>);

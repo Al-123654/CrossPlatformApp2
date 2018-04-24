@@ -10,7 +10,7 @@ const WIDTH = Dimensions.get('window').width;
 
 export default class GalleryImage extends Component {
 	render() {
-		const { uri, index, onPress, imageId, passedUserId, disabled } = this.props;
+		const { uri, index, onPress, imageId, passedUserId, disabled, onLongPress } = this.props;
 		console.log('[GalleryImage js] props from Gallery:', this.props)
 		// console.log('[GalleryImage js] value of disabled:', disabled)
 		return (
@@ -19,6 +19,11 @@ export default class GalleryImage extends Component {
 				onPress={() => 
 					{
 						onPress(imageId, passedUserId)
+					}
+				}
+				onLongPress={()=>
+					{
+						onLongPress(imageId,passedUserId)
 					}
 				}
 				style={{

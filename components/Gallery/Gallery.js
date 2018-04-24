@@ -34,7 +34,7 @@ export default class Gallery extends Component {
 	};
 
 	render() {
-		const { images, clicked, passedUserId, disabled } = this.props;
+		const { images, clicked, passedUserId, disabled, longclick } = this.props;
 		const { index, shown } = this.state;
 		console.log ('[Gallery js] props carried over from feeds:', this.props);
 
@@ -53,7 +53,8 @@ export default class Gallery extends Component {
 							index={idx} 
 							key={idx} 
 							uri={GET_IMAGES_URI + image + '/display'} 
-							onPress={clicked} 
+							onPress={clicked}
+							onLongPress={longclick} 
 							imageId={image}
 							passedUserId={passedUserId} 
 							// disabled = {disabled}
