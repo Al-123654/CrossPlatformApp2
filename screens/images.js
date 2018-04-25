@@ -144,8 +144,14 @@ class ImageScreen extends Component{
                                     position: 'top',
                                     duration: 4000
                                 })
-								this.props.navigation.navigate('Home');
-								console.log("[images js] onLogoutPressHandler - LOGGED OUT");
+								// this.props.navigation.navigate('Home');
+								// console.log("[images js] onLogoutPressHandler - LOGGED OUT");
+								console.log("[images js] onLogoutPressHandler - LOGGING OUT!");
+								const resetAction = NavigationActions.reset({
+									index: 0,
+									actions: [NavigationActions.navigate({ routeName: 'Home' })],
+								});
+								this.props.navigation.dispatch(resetAction);
 							})
 							.catch((error) => {
 								console.error(error);
