@@ -54,7 +54,8 @@ class FeedsScreen extends Component {
         
         //check for number of follows and who
         console.log('[feeds js] Constructor - Number of followed users: ', this.state.followed.length);
-        console.log('[feeds js] Constructor - Followed users list: ', this.state.followed);
+		console.log('[feeds js] Constructor - Followed users list: ', this.state.followed);
+		console.log('[feeds js] Constructor - Role of current user:', this.state.role)
 	}
 
 	closeDrawer = () => {
@@ -113,6 +114,12 @@ class FeedsScreen extends Component {
 						feedImagesArray: [...userImagesArray , ...tempFeedImagesArray],
 						areImagesLoaded: true
 					});
+				}else{
+					console.log('[feeds js] No images from follow')
+					this.setState({
+						feedImagesArray:[...userImagesArray],
+						areImagesLoaded: true
+					})
 				}
 			})
 			.catch(error => console.log('[feeds js] componentDidMount - ONE followed fetch error: ', error));
@@ -321,15 +328,6 @@ class FeedsScreen extends Component {
 				}
 			});
 		}
-		
-// 		else{
-// 			Toast.show({
-// 				text: 'Access denied',
-//                 buttonText: 'Ok',
-//                 position: 'top',
-//           		duration: 4000
-// 			})
-// 		}
 	}
 	
 	onImageClicked = (imageId,passedId) => {
@@ -378,36 +376,54 @@ class FeedsScreen extends Component {
 		});
 	}
 
-	onImageDelete(imageId){
+onImageDelete = (imageId) => {
+		
 		console.log('[feeds js] Testing long press');
 		console.log('[feeds js] imageId at onImageDelete:', imageId);
+		console.log('[feeds js] Role of user at onImageDelete:', this.state.role);
+
 		Alert.alert(
 			'Delete image?',
 			'This cannot be undone',
 			[
 				{
 					text: 'OK', onPress: () => {
-						return fetch(GET_IMAGES_URI + imageId, {
-							method: 'DELETE',
-							headers: {
-								Accept: 'application/json',
-								'Content-Type': 'application/json'
-							},
-						}).then((response) => response.json())
-							.then((responseJson) => {
-								
-								Toast.show({
-                                    text: 'Image deleted',
-                                    buttonText: 'Ok',
-                                    position: 'top',
-                                    duration: 4000
-                                })
+						if (this.state.role == 2) {
+							return fetch(GET_IMAGES_URI + imageId, {
+								method: 'DELETE',
+								headers: {
+									Accept: 'application/json',
+									'Content-Type': 'application/json'
+								},
+							}).then((response) => {
+								console.log('feeds js] onImageDelete: ', response);
+								if (response.status !== 200) {
 
-							})
-							.catch((error) => {
-								console.error(error);
+									console.log('feeds js] onImageDelete bad response: ', response);
+									console.log('[feeds js] onImageDelete testing Json.parse:', JSON.parse(response._bodyInit));
+
+
+									// this.setState({log:"Cannot log in"})
+									Toast.show({
+										text: JSON.parse(response._bodyInit).message,
+										buttonText: 'Ok',
+										position: 'top',
+										duration: 4000
+									});
+									return;
+								}
+							}).catch((error) => {
+								console.log(error);
 							});
-						console.log('[feeds js] Image should be deleted')
+						} else {
+							Toast.show({
+								text: 'Cannot delete,Invalid role',
+								buttonText: 'OK',
+								position: 'top',
+								duration: 4000
+							})
+						}
+
 					}
 				},
 				{
@@ -417,9 +433,11 @@ class FeedsScreen extends Component {
 				}
 			]
 		)
+
 	}
 
 	render() {
+		console.log('[feeds js] Role of user at onImageDelete:', this.state.role);
 		let gallery = (<Spinner/>);
 		let imagePickerButton;
 		let logoutLoader = (
@@ -477,10 +495,6 @@ class FeedsScreen extends Component {
 				</Content>
 				<Footer>
 					<FooterTab >
-						{/* <Button disabled = {this.state.imagePickerEnabled} full onPress={this.onImagePickerHandler}>
-							<Icon name="camera" />
-							<Text>Image Picker</Text>
-						</Button> */}
 						{imagePickerButton}
 						<Button  full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
 							<Icon name="navigate" />
