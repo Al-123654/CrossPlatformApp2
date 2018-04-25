@@ -109,10 +109,16 @@ class ProfileScreen extends Component{
         }).then(response => response.json())
             .then(response => {
                 console.log('[FavoriteTab js] response from api:', response)
-                this.props.navigation.navigate('Image', {
-                    data: response,
-                    userId: passedId
-                });
+                // this.props.navigation.navigate('Image', {
+                //     data: response,
+                //     userId: passedId
+                // });
+                this.props.navigation.navigate({
+                    key: 'ProfileImages', routeName: 'Image', params: {
+                        data: response,
+                        userId: passedId,
+                    }
+                })
             })
             .catch(error => console.error('Error: ', error));
         console.log('[profile js] onImageClicked')
