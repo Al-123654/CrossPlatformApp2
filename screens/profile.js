@@ -124,6 +124,18 @@ class ProfileScreen extends Component{
         console.log('[profile js] onImageClicked')
 
     }
+    onFavLongClick = (imageId, passedId) => {
+        console.log('[profile js] Testing FavLongClick function')
+    }
+    onTriedLongClick = (imageId, passedId) => {
+        console.log('[profile js] Testing TriedLongClick function')
+    }
+    onWishLongClick = (imageId, passedId) => {
+        console.log('[profile js] Testing WishLongClick function')
+    }
+    onCraveLongClick = (imageId, passedId) => {
+        console.log('[profile js] Testing CraveLongClick function')
+    }
 
     
     render(){
@@ -154,24 +166,28 @@ class ProfileScreen extends Component{
                    >
                     <Favorite
                     clicked = {this.onImageClicked}
+                    longclick = {this.onFavLongClick}
                     currentUserID = {this.state.passedId}
                     />
                    </Tab>
                    <Tab heading="Wishlist">
                        <Wishlist 
                            clicked={this.onImageClicked}
+                           longclick={this.onWishLongClick}
                            currentUserID={this.state.passedId}
                         />
                    </Tab>
                    <Tab heading="Cravelist">
                         <Cravelist
                             clicked={this.onImageClicked}
+                           longclick={this.onCraveLongClick}
                             currentUserID = {this.state.passedId}
                         />
                     </Tab>
                    <Tab heading="Triedlist">
                         <Triedlist
                             clicked={this.onImageClicked}
+                           longclick={this.onTriedLongClick}
                             currentUserID = {this.state.passedId}
                         />
                     </Tab>

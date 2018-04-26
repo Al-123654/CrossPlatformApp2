@@ -55,6 +55,7 @@ class Cravelist extends Component {
     render() {
 
         const { clicked } = this.props;
+        const { longclick } = this.props;
         console.log('[Cravelist Tab js] Checking length of array:', this.state.cravelistArray.length);
         console.log('[Cravelist Tab js] clicked:', clicked);
         console.log('[Cravelist Tab js]cravelistArray at render:', this.state.cravelistArray);
@@ -68,6 +69,7 @@ class Cravelist extends Component {
                     <Gallery
                         images={this.state.cravelistArray}
                         clicked={clicked}
+                        longclick={longclick}
                         passedUserId={this.state.userID}
                     />
                 </Content>

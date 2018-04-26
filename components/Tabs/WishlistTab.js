@@ -56,6 +56,7 @@ class Wishlist extends Component{
     render(){
 
         const { clicked } = this.props;
+        const { longclick } = this.props;
         console.log('[Wishlist Tab js] Checking length of array:', this.state.wishlistArray.length);
         console.log('[Wishlist Tab js] clicked:', clicked);
         console.log('[Wishlist Tab js] wishlistArray at render:', this.state.wishlistArray);
@@ -69,6 +70,7 @@ class Wishlist extends Component{
                     <Gallery
                         images={this.state.wishlistArray}
                         clicked={clicked}
+                        longclick={longclick}
                         passedUserId={this.state.userID}
                     />
                 </Content>

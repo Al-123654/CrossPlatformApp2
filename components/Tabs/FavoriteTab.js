@@ -59,6 +59,7 @@ class Favorite extends Component {
 
     render() {
         const { clicked } = this.props;
+        const {longclick} = this.props;
         console.log('[FavoriteTab js] Checking length of array:', this.state.favImageArray.length);
         console.log('[FavoriteTab js] clicked:', clicked);
         console.log('[FavoriteTab js] favImageArray at render:', this.state.favImageArray);
@@ -72,6 +73,7 @@ class Favorite extends Component {
                     <Gallery
                         images={this.state.favImageArray}
                         clicked={clicked}
+                        longclick={longclick}
                         passedUserId={this.state.userID}
                     />
                 </Content>
