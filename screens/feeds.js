@@ -51,7 +51,7 @@ class FeedsScreen extends Component {
 			 disableButtonImage: false,
 			 role: props.navigation.state.params.data.role,
 			 imagePickerEnabled: false,
-			//  deletingImage:false,
+			
 
 		}
 		console.log('[feeds js] Current states:', this.state);
@@ -108,8 +108,6 @@ class FeedsScreen extends Component {
 							areImagesLoaded: true,
 							
 						});
-						// console.log('[feeds js] feedImagesArray:', this.state.feedImagesArray);
-						
 					} else {
 						console.log('[feeds js] testing for userImagesArray', [...userImagesArray]);
 						console.log('[feeds js] No images from follow')
@@ -149,7 +147,6 @@ class FeedsScreen extends Component {
 									</Button>
 								);
 							});
-							// tempFeedImagesArray = [...tempFeedImagesArray, ...tempFeedImagesArray2];
 							tempFeedImagesArray = [...tempFeedImagesArray, ...followedUser.images];
 						}
 					});
@@ -176,23 +173,10 @@ class FeedsScreen extends Component {
 			console.log("[feeds js] getUserImages Image Count: ", this.state.images.length);
 
 			if(this.state.images.length >= 1 ){
-				// userImagesArray = this.state.images.map((imageId, index) => {
-				// 	return (
-				// 		<Button 
-				// 			transparent style={styles.thumbnail} 
-				// 			onPress={() => this.onImageClicked(imageId, this.state.passedId)} 
-				// 			key={imageId} >
-				// 				<Thumbnail 
-				// 					large square source={{ uri: GET_IMAGES_URI + imageId + '/display' }} 
-				// 				/>
-				// 		</Button>
-				// 	); 
-				// });
 				userImagesArray = [...this.state.images];
 			}
 		}
 		console.log("[feeds js] getUserImages userImagesArray: ", userImagesArray);
-		// return userImagesArray;
 		return [...userImagesArray];
 	}
 	
@@ -223,8 +207,6 @@ class FeedsScreen extends Component {
                                     position: 'top',
                                     duration: 4000
                                 })
-								// this.props.navigation.navigate('Home');
-								// console.log("[feeds js] onLogoutPressHandler - LOGGED OUT");
 								console.log("[feeds js] onLogoutPressHandler - LOGGING OUT!");
 								const resetAction = NavigationActions.reset({
 									index: 0,
@@ -251,9 +233,7 @@ class FeedsScreen extends Component {
 	// when Explore btn is clicked
 	onExplorePressedHandler = (currentUserId) => {
 		console.log('[feeds js] onExplorePressedHandler clicked!');
-		// this.props.navigation.navigate('User', data);
 		console.log('[feeds js] ID passed by app js: ', currentUserId);
-		// this.props.navigation.navigate('Explore', {currentUserId:currentUserId});
 		this.props.navigation.navigate({ key: 'Explore1', routeName: 'Explore', params: {
 				currentUserId:currentUserId
 			} 
@@ -345,12 +325,7 @@ class FeedsScreen extends Component {
         }).then (response => response.json())
         
         .then(response => {
-            console.log('[feeds js] IMAGE DETAILS TRANSFER ', response)
-            // this.props.navigation.navigate('Image', {
-            //     data: response,
-			// 	userId: passedId,
-			// 	// disabled:(this.state.disableButton)
-			// });
+            console.log('[feeds js] IMAGE DETAILS TRANSFER ', response);
 			// this.props.navigation.navigate({ key: 'MyScreen1', routeName: 'ProfileScreen', params: { ...} })
 			this.props.navigation.navigate({ key: 'Images1', routeName: 'Image', params: { 
 					data:response,
@@ -369,106 +344,92 @@ class FeedsScreen extends Component {
 
 	onProfilePressedHandler = (passedId) => {
 		console.log('[feeds js] onProfilePressedHandler passedId', passedId);
-		// this.props.navigation.navigate('Profile', {
-		// 	userId: passedId
-		// });
+		
 		this.props.navigation.navigate({ key: 'Profile1', routeName: 'Profile', params: {
 				userId:passedId	
 			} 
 		});
 	}
 
-onImageDelete = (imageId) => {
+	onImageDelete = (imageId) => {
 		
-		let newImageArray = [...this.state.feedImagesArray];
-		console.log('[feeds js] Current array of images: ', newImageArray);
-		console.log('[feeds js] Testing long press');
-		console.log('[feeds js] imageId at onImageDelete:', imageId);
-		console.log('[feeds js] Role of user at onImageDelete:', this.state.role);
-	console.log('[feeds js] Finding the imageId in newImageArray to delete', newImageArray.findIndex(function (el) {
-		return el == imageId
-		}));
-		// console.log('[feeds js] feedImagesArray before deletion:', this.state.feedImagesArray);
-		
-		// console.log('[feeds js] newImageArray = ', newImageArray);
-		let deleteIndex = newImageArray.findIndex(function (el) {
+			let newImageArray = [...this.state.feedImagesArray];
+			console.log('[feeds js] Current array of images: ', newImageArray);
+			console.log('[feeds js] Testing long press');
+			console.log('[feeds js] imageId at onImageDelete:', imageId);
+			console.log('[feeds js] Role of user at onImageDelete:', this.state.role);
+			console.log('[feeds js] Finding the imageId in newImageArray to delete', newImageArray.findIndex(function (el) {
 			return el == imageId
-		});
-		
-		// console.log('[feeds js] deleteIndex = ', deleteIndex);
-		// function deletingImageId(imageId){
-		// 	return imageId
-		// }
-		Alert.alert(
-			'Delete image?',
-			'This cannot be undone',
-			[
-				{
-					text: 'OK', onPress: () => {
-						if (this.state.role == 2) {
-							return fetch(GET_IMAGES_URI + imageId, {
-								method: 'DELETE',
-								headers: {
-									Accept: 'application/json',
-									'Content-Type': 'application/json'
-								},
-							}).then((response) => {
-								console.log('feeds js] onImageDelete: ', response);
-								if (response.status !== 200) {
+			}));
+			let deleteIndex = newImageArray.findIndex(function (el) {
+				return el == imageId
+			});
+			
+			Alert.alert(
+				'Delete image?',
+				'This cannot be undone',
+				[
+					{
+						text: 'OK', onPress: () => {
+							if (this.state.role == 2) {
+								return fetch(GET_IMAGES_URI + imageId, {
+									method: 'DELETE',
+									headers: {
+										Accept: 'application/json',
+										'Content-Type': 'application/json'
+									},
+								}).then((response) => {
+									console.log('feeds js] onImageDelete: ', response);
+									if (response.status !== 200) {
 
-									console.log('feeds js] onImageDelete bad response: ', response);
-									console.log('[feeds js] onImageDelete testing Json.parse:', JSON.parse(response._bodyInit));
-									
-									Toast.show({
-										text: JSON.parse(response._bodyInit).message,
-										buttonText: 'Ok',
-										position: 'top',
-										duration: 4000
-									});									
-									return;
-								}else{
-									Toast.show({
-										text: 'Image deleted',
-										buttonText: 'Ok',
-										position: 'top',
-										duration: 4000
-									});
-									// findIndex(this.state.feedImagesArray);
-									// delete(imageId);
-									// this.setState({
-									// 	feedImagesArray: this.state.feedImagesArray
-									// });
-									let removeImage = newImageArray.splice(deleteIndex, 1);
-									console.log('[feeds js] image removed from array: ', removeImage);
-									console.log('[feeds js] new array of images: ', newImageArray);
-									this.setState({
-										feedImagesArray: [...newImageArray]
-									});
-								}
-							}).catch((error) => {
-								console.log(error);
-							});
-						} else {
-							Toast.show({
-								text: 'Cannot delete,Invalid role',
-								buttonText: 'OK',
-								position: 'top',
-								duration: 4000
-							})
+										console.log('feeds js] onImageDelete bad response: ', response);
+										console.log('[feeds js] onImageDelete testing Json.parse:', JSON.parse(response._bodyInit));
+										
+										Toast.show({
+											text: JSON.parse(response._bodyInit).message,
+											buttonText: 'Ok',
+											position: 'top',
+											duration: 4000
+										});									
+										return;
+									}else{
+										Toast.show({
+											text: 'Image deleted',
+											buttonText: 'Ok',
+											position: 'top',
+											duration: 4000
+										});
+										let removeImage = newImageArray.splice(deleteIndex, 1);
+										console.log('[feeds js] image removed from array: ', removeImage);
+										console.log('[feeds js] new array of images: ', newImageArray);
+										this.setState({
+											feedImagesArray: [...newImageArray]
+										});
+									}
+								}).catch((error) => {
+									console.log(error);
+								});
+							} else {
+								Toast.show({
+									text: 'Cannot delete,Invalid role',
+									buttonText: 'OK',
+									position: 'top',
+									duration: 4000
+								})
+							}
+						}
+						
+					},
+					{
+						text: 'Cancel', onPress: () => {
+							style: 'cancel'
 						}
 					}
-					
-				},
-				{
-					text: 'Cancel', onPress: () => {
-						style: 'cancel'
-					}
-				}
-			]
-		)
-		// this.componentDidMount();
+				]
+			)
+			
 
-	}
+		}
 
 	render() {
 		console.log('[feeds js] Role of user at onImageDelete:', this.state.role);
@@ -486,7 +447,6 @@ onImageDelete = (imageId) => {
 					clicked={this.onImageClicked}
 					longclick={this.onImageDelete}
 					passedUserId={this.state.passedId}
-					// disabled = {this.state.disableButton}
 				/>);
 			} else if (this.state.feedImagesArray.length === 0) {
 				gallery = (<Text>No images available</Text>);
