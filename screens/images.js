@@ -10,19 +10,19 @@ import moment from 'moment';
 import validator from 'validator';
 
 const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
+const IMAGE_ROOT_URI = 'https://app-api-testing.herokuapp.com/api/images/';
+const COMMENT_URI = 'https://app-api-testing.herokuapp.com/api/comments/';
 // const LOGOUT_URI = 'http://localhost:5000/logout';
 
-// const resetAction = NavigationActions.reset({
-// 	index: 0,
-// 	actions: [
-// 		NavigationActions.navigate({ routeName: 'Feeds' })
-// 	]
-// })
+
 
 class ImageScreen extends Component{
     constructor(props) {
 		super(props);
 		console.log('[images js] constructor - passedParams: ', props.navigation.state.params);
+		console.log('[images js] constructor - passedParams-userData: ', props.navigation.state.params.userData);
+		console.log('[images js] constructor - passedParams-message: ', props.navigation.state.params.userData.message);
+		console.log('[images js] constructor - passedParams-userData.data: ', props.navigation.state.params.userData.data);
 
 		// check if image favorited from serverside
 		let isFavorite= false;
@@ -75,10 +75,8 @@ class ImageScreen extends Component{
 
 		// INITIALIZE STATES
 		this.state = {
-			// IMAGE_ROOT_URI: 'http://localhost:5000/api/images/',
-			// COMMENT_URI: 'http://localhost:5000/api/comments/',
-			IMAGE_ROOT_URI: 'https://app-api-testing.herokuapp.com/api/images/',
-			COMMENT_URI: 'https://app-api-testing.herokuapp.com/api/comments/',
+			
+			
 			imageId: props.navigation.state.params.data._id,
 			userId: props.navigation.state.params.userId,
 			isImageFavorite: isFavorite,
@@ -100,7 +98,8 @@ class ImageScreen extends Component{
 			inImageTriedlist: inTriedlist,
 			postingComment: false,
 			inImageCravelist: inCravelist,
-			noOfCravelist: props.navigation.state.params.data.craving.length
+			noOfCravelist: props.navigation.state.params.data.craving.length,
+			canDeleteImage: false
 			
 		};
 
@@ -170,13 +169,13 @@ class ImageScreen extends Component{
     //FAVORITE THE IMAGE
     onFavoritePressHandler = (imageId) => {
 		console.log('[images js] onFavoritePressHandler - Favorite btn Pressed!');
-		console.log('[images js] onFavoritePressHandler - imageUri: ', this.state.IMAGE_ROOT_URI);
+		console.log('[images js] onFavoritePressHandler - imageUri: ',IMAGE_ROOT_URI);
 		console.log('[images js] onFavoritePressHandler - imageId: ', imageId);
-		console.log('[images js] onFavoritePressHandler - URI + imageId: ' , this.state.IMAGE_ROOT_URI + imageId);
+		console.log('[images js] onFavoritePressHandler - URI + imageId: ' ,IMAGE_ROOT_URI + imageId);
 
 		
 		// SEND REQUEST TO API
-		return fetch(this.state.IMAGE_ROOT_URI + imageId + '/?fav=1', {
+		return fetch (IMAGE_ROOT_URI + imageId + '/?fav=1', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -210,13 +209,13 @@ class ImageScreen extends Component{
 	//CHECK IF IMAGE IN WISHLIST
     onWishlistPressHandler = (imageId) => {
 		console.log('[images js] onWishlistPressHandler - Favorite btn Pressed!');
-		console.log('[images js] onWishlistPressHandler - imageUri: ', this.state.IMAGE_ROOT_URI);
+		console.log('[images js] onWishlistPressHandler - imageUri: ',IMAGE_ROOT_URI);
 		console.log('[images js] onWishlistPressHandler - imageId: ', imageId);
-		console.log('[images js] onWishlistPressHandler - URI + imageId: ' , this.state.IMAGE_ROOT_URI + imageId);
+		console.log('[images js] onWishlistPressHandler - URI + imageId: ' ,IMAGE_ROOT_URI + imageId);
 
 		
 		// SEND REQUEST TO API
-		return fetch(this.state.IMAGE_ROOT_URI + imageId + '/?wish=1', {
+		return fetch (IMAGE_ROOT_URI + imageId + '/?wish=1', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -251,13 +250,13 @@ class ImageScreen extends Component{
 	// CHECK IF IMAGE IN TRIEDLIST
 	onTriedlistPressHandler = (imageId) => {
 		console.log('[images js] onTriedlistPressHandler - Tried btn Pressed!');
-		console.log('[images js] onTriedlistPressHandler - imageUri: ', this.state.IMAGE_ROOT_URI);
+		console.log('[images js] onTriedlistPressHandler - imageUri: ',IMAGE_ROOT_URI);
 		console.log('[images js] onTriedlistPressHandler - imageId: ', imageId);
-		console.log('[images js] onTriedlistPressHandler - URI + imageId: ', this.state.IMAGE_ROOT_URI + imageId);
+		console.log('[images js] onTriedlistPressHandler - URI + imageId: ',IMAGE_ROOT_URI + imageId);
 
 
 		// SEND REQUEST TO API
-		return fetch(this.state.IMAGE_ROOT_URI + imageId + '/?tried=1', {
+		return fetch (IMAGE_ROOT_URI + imageId + '/?tried=1', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
@@ -290,13 +289,13 @@ class ImageScreen extends Component{
 	}
 	onCravelistPressHandler = (imageId) => {
 		console.log('[images js] onCravelistPressHandler - Crave btn Pressed!');
-		console.log('[images js] onCravelistPressHandler - imageUri: ', this.state.IMAGE_ROOT_URI);
+		console.log('[images js] onCravelistPressHandler - imageUri: ',IMAGE_ROOT_URI);
 		console.log('[images js] onCravelistPressHandler - imageId: ', imageId);
-		console.log('[images js] onCravelistPressHandler - URI + imageId: ', this.state.IMAGE_ROOT_URI + imageId);
+		console.log('[images js] onCravelistPressHandler - URI + imageId: ',IMAGE_ROOT_URI + imageId);
 
 
 		// SEND REQUEST TO API
-		return fetch(this.state.IMAGE_ROOT_URI + imageId + '/?crave=1', {
+		return fetch (IMAGE_ROOT_URI + imageId + '/?crave=1', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
@@ -343,7 +342,7 @@ class ImageScreen extends Component{
 				disableComment: true,
 				postingComment: true
 			})
-			fetch(this.state.IMAGE_ROOT_URI + this.state.imageId + '/comments', {
+			fetch (IMAGE_ROOT_URI + this.state.imageId + '/comments', {
 				method: 'POST',
 				headers: {
 					Accept: 'application/json',
@@ -405,7 +404,7 @@ class ImageScreen extends Component{
 			console.log('[images js] commentId at fetchComment:', this.state.commentId)
 			console.log('[images js] commentId.length at fetchComment:', this.state.commentId.length)
 			this.state.commentId.forEach((commentID, index) => {
-				return fetch(this.state.COMMENT_URI + commentID, {
+				return fetch(COMMENT_URI + commentID, {
 					method: 'GET',
 					headers: {
 						Accept: 'application/json',
@@ -503,6 +502,68 @@ class ImageScreen extends Component{
 		}
 	}
 
+	onDeleteImageBtnPressed = () => {
+		console.log('[images js] imageId:', this.state.imageId)
+		let imagesToFeeds = [...this.props.navigation.state.params.userData.data.images]
+		console.log('[images js] imagesToFeeds: ', imagesToFeeds);
+		console.log('Finding the index of the image to delete',this.props.navigation.state.params.userData.data.images.indexOf(this.state.imageId));
+		let feedsImageIndexDelete = this.props.navigation.state.params.userData.data.images.indexOf(this.state.imageId);
+		Alert.alert(	
+		'Delete image?',
+			'This cannot be undone',
+			[
+				{
+					text: 'OK', onPress: () => {
+						return fetch(IMAGE_ROOT_URI + this.state.imageId, {
+							method: 'DELETE',
+							headers: {
+								Accept: 'application/json',
+								'Content-Type': 'application/json'
+							},
+						}).then((response) => {
+							console.log('[images js] onImageDelete: ', response);
+							if (response.status !== 200) {
+
+								console.log('[images js] onImageDelete bad response: ', response);
+								console.log('[images js] onImageDelete testing Json.parse:', JSON.parse(response._bodyInit));
+
+								Toast.show({
+									text: JSON.parse(response._bodyInit).message,
+									buttonText: 'Ok',
+									position: 'top',
+									duration: 4000
+								});
+								return;
+							} else {
+							
+								Toast.show({
+									text: 'Image deleted',
+									buttonText: 'Ok',
+									position: 'top',
+									duration: 4000
+								});
+							}
+							console.log('Navigate back to feeds.');
+							let removeImage = imagesToFeeds.splice(feedsImageIndexDelete, 1);
+							console.log('[images js] userData sent back to feeds:', imagesToFeeds);
+							this.props.navigation.state.params.userData.data.images =  imagesToFeeds;
+							console.log('images js] this.props.navigation.state.params.userData with new image array: ', this.props.navigation.state.params.userData);
+							this.props.navigation.replace('Feeds', this.props.navigation.state.params.userData);
+						}).catch((error) => {
+							console.log(error);
+						});
+					}
+
+				},
+				{
+					text: 'Cancel', onPress: () => {
+						style: 'cancel'
+					}
+				}
+			]
+		)
+	}
+
     render(){
 		// initialise comments and image to display
 		let listOfComments = (<Spinner />);
@@ -513,6 +574,11 @@ class ImageScreen extends Component{
 		let canComment;
 		let imageLoader = (<Spinner/>)
 		let displayMoreCommentsButton;
+		let deleteImageButton = (
+			<Button  full onPress={this.onDeleteImageBtnPressed}>
+				<Text>Delete Image</Text>
+			</Button>
+		)
 
 		// logic after user clicks postComment
 		if (this.state.disableComment){
@@ -523,7 +589,7 @@ class ImageScreen extends Component{
 			listOfComments = (<Spinner />);
 		}else{
 			canComment = (
-				<Button disabled={this.state.disableComment}  full onPress={this.postComment}>
+				<Button full onPress={this.postComment}>
 					<Text>Post Comment</Text>
 				</Button>
 			)
@@ -554,11 +620,11 @@ class ImageScreen extends Component{
 						<Text>More Comments</Text>
 					</Button>
 				}
-				imageLoader = <Image source={{ uri: this.state.IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} />
+				imageLoader = <Image source={{ uri:IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} />
 			}else{
 				console.log('[images js] inside else if in render')
 				listOfComments = (<Text>No comments</Text>);
-				imageLoader = <Image source={{ uri: this.state.IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} />
+				imageLoader = <Image source={{ uri:IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} />
 			}
 		} 
 		if(this.state.isLoggedOut){
@@ -589,7 +655,7 @@ class ImageScreen extends Component{
 					</Right>
                 </Header>
                 <Content>
-					{/* <Image source={{ uri: this.state.IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} /> */}
+					{/* <Image source={{ uri:IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} /> */}
 					 {imageLoader}
 					 {/* Favorite Button */}
 					 <Row>
@@ -641,6 +707,7 @@ class ImageScreen extends Component{
 							/>
 
 						</Button>
+						{deleteImageButton}
 
 					 </Row>
 					
