@@ -466,14 +466,40 @@ class FeedsScreen extends Component {
 		}
 
 		if(this.state.role == 2){
-			imagePickerButton = (
-				<Button full onPress={this.onImagePickerHandler}>
-					<Icon name="camera" />
-					<Text>Image Picker</Text>
-				</Button>
+			footers = (
+				<Footer>
+					<FooterTab>
+						<Button full onPress={this.onImagePickerHandler}>
+							<Icon name="camera" />
+							<Text>Image Picker</Text>
+						</Button>
+						<Button full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
+							<Icon name="navigate" />
+							<Text>Explore</Text>
+						</Button>
+						<Button full onPress={() => { this.onProfilePressedHandler(this.state.passedId) }}>
+							<Icon name="ios-person" />
+							<Text>Profile</Text>
+						</Button>
+					</FooterTab>
+				</Footer>
 			)
+			
 		}else{
-			imagePickerButton = null;
+			footers = (
+				<Footer>
+					<FooterTab>
+						<Button full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
+							<Icon name="navigate" />
+							<Text>Explore</Text>
+						</Button>
+						<Button full onPress={() => { this.onProfilePressedHandler(this.state.passedId) }}>
+							<Icon name="ios-person" />
+							<Text>Profile</Text>
+						</Button>
+					</FooterTab>
+				</Footer>
+			)
 		}
        
         return (
@@ -491,7 +517,7 @@ class FeedsScreen extends Component {
 					
 					{gallery}
 				</Content>
-				<Footer>
+				{/* <Footer>
 					<FooterTab >
 						{imagePickerButton}
 						<Button  full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
@@ -503,7 +529,8 @@ class FeedsScreen extends Component {
 							<Text>Profile</Text>
 						</Button>
 					</FooterTab>
-				</Footer>
+				</Footer> */}
+				{footers}
 			</Container>
         );
     }
