@@ -121,12 +121,10 @@ class ExploreScreen extends Component {
 	}
 
 	onChangedSearchHandler = (text) => {
-		if(text && text.length >= 4){
+		if(text && text.length >= 1){
 			console.log('[explore js] text in searchbox: ', text);
-			if(this.state.searchTerm !== text){
-				console.log('[explore js] Save text into state! ');
-				this.setState({searchTerm: text});
-			}
+			console.log('[explore js] Save text into state! ');
+			this.setState({searchTerm: text});
 		}
 	}
 
@@ -218,12 +216,27 @@ class ExploreScreen extends Component {
 				listOfUsers = (
 					<List dataArray = {listOfUsersCopy}
 						renderRow={(item) =>
-							<ListItem 
-								style={styles.listItem}
-								button 
-								onPress={() => this.onListItemPressed(item._id, this.state.passedUserId)}>
-								<Text style={{color:'#007594'}}>{item.username}</Text>
-								<Text style={{color:'#000000',fontSize:12}}>{item.isFollowed ? 'Unfollow' : 'Follow'}</Text>
+							// <ListItem 
+							// 	style={styles.listItem}
+							// 	button 
+							// 	onPress={() => this.onListItemPressed(item._id, this.state.passedUserId)}>
+							// 	<Text style={{color:'#007594'}}>{item.username}</Text>
+							// 	<Text style={{color:'#000000',fontSize:12}}>{item.isFollowed ? 'Unfollow' : 'Follow'}</Text>
+							// </ListItem>
+							<ListItem icon>
+								<Left>
+									<Icon name="ios-person-outline" onPress={() => console.log("Clicked person icon!")} />
+								</Left>
+								<Body>
+									<Text>{item.username}</Text>
+								</Body>
+								<Right>
+									<Button bordered primary small
+										onPress={() => this.onListItemPressed(item._id, this.state.passedUserId)}
+										>
+										<Text>{item.isFollowed ? 'Unfollow' : 'Follow'}</Text>
+									</Button>
+								</Right>
 							</ListItem>
 						}>
 					</List>
@@ -251,15 +264,22 @@ class ExploreScreen extends Component {
 					</Right>
                 </Header>
                 <Content>
-					<Item>
-						<Icon name="ios-search" />
-						<Input placeholder="Search" onChangeText={(text) => this.onChangedSearchHandler(text)}/>
-						<Icon name="ios-people" />
-					</Item>
-					<Button transparent onPress={this.onSubmitSearchHandler}>
-						<Text>Search</Text>
-					</Button>
-                    {listOfUsers}
+					<Grid style={{padding:10}}>
+						<Row>
+							<Item style={{width:'100%'}}>
+								<Icon name="ios-search" />
+								<Input placeholder="Search" onChangeText={(text) => this.onChangedSearchHandler(text)}/>
+							</Item>
+						</Row>
+						<Row>
+							<Button transparent onPress={this.onSubmitSearchHandler}>
+								<Text>Search</Text>
+							</Button>
+						</Row>
+						<Row>
+							{listOfUsers}
+						</Row>
+					</Grid>
                 </Content>
             </Container>
 				
