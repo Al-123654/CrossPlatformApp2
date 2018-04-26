@@ -27,10 +27,11 @@ class ExploreScreen extends Component {
 
 		// initialize state
 		this.state = {
-			listOfUsers: "",
+			searchTerm: null,
+			listOfUsers: null,
 			passedUserId: props.navigation.state.params.currentUserId,
 			log: "",
-			listLoaded: false
+			listLoadedCount: 0
 		};
 
 		// logs
@@ -39,27 +40,6 @@ class ExploreScreen extends Component {
 		console.log('[images js] constructor - passedUserId: ', this.state.passedUserId);
 		console.log('[images js] constructor - log: ', this.state.log);
     }
-
-	componentDidMount(){
-		this.fetchListofUsers();
-	}
-
-	fetchListofUsers = () => {
-		fetch(GET_USERS_URI)
-		.then(response=>{
-			console.log('[explore js] fetchListofUsers - response: ', response);
-			if(response.status !== 200){
-				console.log('[explore js] fetchListofUsers - bad response: ', response);
-				return;
-			}
-			response.json().then(data=>{
-				console.log('[explore js] fetchListofUsers - json response: ', data);
-				this.setState({listOfUsers:[...data]});
-				console.log('[explore js] fetchListofUsers - listOfUsers state: ', this.state.listOfUsers);
-			});
-		})
-		.catch(err=>console.log('[explore js] fetchListofUsers - error: ', err));
-	}
 
 	onBackBtnPressed = () => {
 		console.log('[explore js] onBackBtnPressed');
@@ -123,7 +103,6 @@ class ExploreScreen extends Component {
 				'content-type': 'application/json'
 			},
 			body: JSON.stringify({
-				email:'app@mail.com',
 				following:itemId
 			})
 		})
@@ -135,48 +114,126 @@ class ExploreScreen extends Component {
 			}
 			response.json().then(data=>{
 				console.log('[explore js] onListItemPressed json response: ', data);
-				this.fetchListofUsers();
+				this.fetchUsers();
 			});
 		})
 		.catch(err=>console.log('[explore js] onListItemPressed error: ', err));
 	}
 
-    render() {
-		// copy list of users from state
-		let listOfUsersCopy = [...this.state.listOfUsers];
-		let currentlyFollowingList = [];
-
-		// remove currently logged in user from list
-		let indexToRemove = "";
-		listOfUsersCopy.forEach((user,index)=>{
-			if(user._id == this.state.passedUserId){
-				console.log("[explore js] Found a match at index: ", index);
-				indexToRemove = index;
-				// save currently following list
-				console.log("[explore js] Following list: ", user.following);
-				currentlyFollowingList = [...user.following];
+	onChangedSearchHandler = (text) => {
+		if(text && text.length >= 4){
+			console.log('[explore js] text in searchbox: ', text);
+			if(this.state.searchTerm !== text){
+				console.log('[explore js] Save text into state! ');
+				this.setState({searchTerm: text});
 			}
-		});
-		console.log("[explore js] indexToRemove type: ", typeof indexToRemove);
-		if(typeof indexToRemove == 'number'){
-			listOfUsersCopy.splice(indexToRemove, 1);
 		}
+	}
 
-		console.log("[explore js] Currently following: ", currentlyFollowingList);
+	onSubmitSearchHandler = () => {
+		console.log("[explore js] Clicked search btn onSubmitSearchHandler!");
+		this.fetchUsers();
+	}
 
-		// loop through list of users
-		for (var i = 0; i < listOfUsersCopy.length; i++) {
-			console.log('[explore js] ID lisOfUsersCopy: ', listOfUsersCopy[i]._id );
-			for (var j = 0; j < currentlyFollowingList.length; j++) {
-				console.log('[explore js] ID currentlyFollowingList: ', currentlyFollowingList[j] );
-				if (listOfUsersCopy[i]._id == currentlyFollowingList[j]) {
-					console.log('[explore js] Found a match!');
-					listOfUsersCopy[i].isFollowed = true;
+	fetchUsers = () => {
+		console.log("[explore js] In fetchUsers!");
+		if(this.state.searchTerm){
+			fetch(GET_USERS_URI + '/?username=' + this.state.searchTerm)
+			.then(response => {
+				console.log("[explore js] Response from api: ", response);
+				if (response.status !== 200) {
+					Toast.show({
+						text: 'Search failed!',
+						buttonText: 'Ok',
+						position: 'top',
+						duration: 2000
+					});
+					return;
 				}
-			}
-		}
 
-		console.log("[explore js] List of Users after looping: ", listOfUsersCopy);
+				// if fetch ok
+				response.json().then(respObj => {
+					console.log('[explore js] Response object: ', respObj);
+					console.log('[explore js] Search ok!!!');
+					console.log('[explore js] Response object data: ', respObj.data);
+
+					// check data contents
+					if(respObj.data){
+						if(respObj.data.length === 0){
+							// if no results
+							this.setState({listOfUsers: []});
+						}else{
+							// if more than one results
+							this.setState({listOfUsers: respObj.data});
+						}
+					}
+				});
+			})
+			.catch(error => console.log("[explore js] Error fetching search results: ", error));
+		}
+	}
+
+    render() {
+
+		let listOfUsers = (<Text>Search for users</Text>);
+		if(this.state.listOfUsers){
+
+			if(this.state.listOfUsers.length >= 1){
+				// copy list of users from state
+				let listOfUsersCopy = [...this.state.listOfUsers];
+				let currentlyFollowingList = [];
+
+				// remove currently logged in user from list
+				let indexToRemove = "";
+				listOfUsersCopy.forEach((user,index)=>{
+					if(user._id == this.state.passedUserId){
+						console.log("[explore js] Found a match at index: ", index);
+						indexToRemove = index;
+						// save currently following list
+						console.log("[explore js] Following list: ", user.following);
+						currentlyFollowingList = [...user.following];
+					}
+				});
+
+				console.log("[explore js] indexToRemove type: ", typeof indexToRemove);
+				if(typeof indexToRemove == 'number'){
+					listOfUsersCopy.splice(indexToRemove, 1);
+				}
+
+				console.log("[explore js] Currently following: ", currentlyFollowingList);
+
+				// loop through list of users
+				for (var i = 0; i < listOfUsersCopy.length; i++) {
+					console.log('[explore js] ID lisOfUsersCopy: ', listOfUsersCopy[i]._id );
+					for (var j = 0; j < currentlyFollowingList.length; j++) {
+						console.log('[explore js] ID currentlyFollowingList: ', currentlyFollowingList[j] );
+						if (listOfUsersCopy[i]._id == currentlyFollowingList[j]) {
+							console.log('[explore js] Found a match!');
+							listOfUsersCopy[i].isFollowed = true;
+						}
+					}
+				}
+
+				console.log("[explore js] List of Users after looping: ", listOfUsersCopy);
+				listOfUsers = (
+					<List dataArray = {listOfUsersCopy}
+						renderRow={(item) =>
+							<ListItem 
+								style={styles.listItem}
+								button 
+								onPress={() => this.onListItemPressed(item._id, this.state.passedUserId)}>
+								<Text style={{color:'#007594'}}>{item.username}</Text>
+								<Text style={{color:'#000000',fontSize:12}}>{item.isFollowed ? 'Unfollow' : 'Follow'}</Text>
+							</ListItem>
+						}>
+					</List>
+				);
+			}else{
+				listOfUsers = (
+					<Text>No users found!</Text>
+				);
+			}		
+		}
 
 		return(    
             <Container>
@@ -194,17 +251,15 @@ class ExploreScreen extends Component {
 					</Right>
                 </Header>
                 <Content>
-                    <List dataArray = {listOfUsersCopy}
-						renderRow={(item) =>
-							<ListItem 
-								style={styles.listItem}
-								button 
-								onPress={() => this.onListItemPressed(item._id, this.state.passedUserId)}>
-								<Text style={{color:'#007594'}}>{item.username}</Text>
-								<Text style={{color:'#000000',fontSize:12}}>{item.isFollowed ? 'Unfollow' : 'Follow'}</Text>
-							</ListItem>
-						}>
-                    </List>
+					<Item>
+						<Icon name="ios-search" />
+						<Input placeholder="Search" onChangeText={(text) => this.onChangedSearchHandler(text)}/>
+						<Icon name="ios-people" />
+					</Item>
+					<Button transparent onPress={this.onSubmitSearchHandler}>
+						<Text>Search</Text>
+					</Button>
+                    {listOfUsers}
                 </Content>
             </Container>
 				
