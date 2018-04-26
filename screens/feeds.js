@@ -27,8 +27,10 @@ class FeedsScreen extends Component {
 		super(props);
 		
         // call props.navigation.state.params here
-        const { params } = this.props.navigation.state;
-
+		const { params } = this.props.navigation.state;
+		console.log('[feeds js] Data carried over:', this.props.navigation.state);
+		console.log('[feeds js] Data carried over- params:', this.props.navigation.state.params);
+		console.log('[feeds js] Data carried over- params.data:', this.props.navigation.state.params.data);
         //initialize states
         this.state = {
              passedUsername : props.navigation.state.params.data.username,
@@ -48,9 +50,11 @@ class FeedsScreen extends Component {
 			 isLoggedOut: false,
 			 disableButtonImage: false,
 			 role: props.navigation.state.params.data.role,
-			 imagePickerEnabled: false
+			 imagePickerEnabled: false,
+			//  deletingImage:false,
+
 		}
-		
+		console.log('[feeds js] Current states:', this.state);
         
         //check for number of follows and who
         console.log('[feeds js] Constructor - Number of followed users: ', this.state.followed.length);
@@ -65,103 +69,100 @@ class FeedsScreen extends Component {
 		this.drawer._root.open()
 	};
 
-	componentDidMount(){
+	
+
+	componentDidMount = () => {
 		let userImagesArray = this.getUserImages();
 		console.log('[feeds js] componentDidMount - userImagesArray: ', userImagesArray);
 
 		console.log('[feeds js] componentDidMount - Number of following: ', this.state.followed.length);
 		let tempFeedImagesArray = [];
-		if(this.state.followed.length === 0){
+		if (this.state.followed.length === 0) {
 			// 0 FOLLOWED
 			console.log('[feed js] Check No Follow Array:', [...userImagesArray, ...tempFeedImagesArray])
 			this.setState({
 				feedImagesArray: [...userImagesArray, ...tempFeedImagesArray],
-				areImagesLoaded: true
+				areImagesLoaded: true,
+				
 			});
-		}else if(this.state.followed.length === 1){
+			
+		} else if (this.state.followed.length === 1) {
 			// ONE FOLLOWED
 			console.log('[feeds js] componentDidMount - One followed: ', this.state.followed);
 			console.log('[feeds js] componentDidMount - One followed Contents: ', this.state.followed[0]);
 			const followedId = this.state.followed[0];
 
-			return fetch(GET_USERS_URI+followedId)
-			.then(response => response.json())
-			.then(response => {
-				console.log('[feeds js] componentDidMount - fetch response: ', response);
-				console.log('[feeds js] componentDidMount - fetch response images: ', response.images);
-				console.log('[feeds js] componentDidMount - fetch response images length: ', response.images.length);
+			return fetch(GET_USERS_URI + followedId)
+				.then(response => response.json())
+				.then(response => {
+					console.log('[feeds js] componentDidMount - fetch response: ', response);
+					console.log('[feeds js] componentDidMount - fetch response images: ', response.images);
+					console.log('[feeds js] componentDidMount - fetch response images length: ', response.images.length);
 
-				if(response.images.length >= 1){
-					// save images
-					// tempFeedImagesArray = response.images.map((imageId, index) => {
-					// 	let tempImageUri = GET_IMAGES_URI + imageId + '/display';
-					// 	return (
-					// 		<Button 
-					// 			transparent style={styles.thumbnail} 
-					// 			onPress={() => this.onImageClicked(imageId, this.state.passedId)} 
-					// 			key={imageId} 
-					// 		>
-					// 			<Thumbnail
-					// 				large square source={{ uri: tempImageUri }}
-					// 			/>
-					// 		</Button>
-					// 	);
-					// });
-					tempFeedImagesArray = [...response.images];
-					
-					console.log('[feed js] Check Single Follow Array:', [...userImagesArray, ...tempFeedImagesArray])
-					this.setState({
-						feedImagesArray: [...userImagesArray , ...tempFeedImagesArray],
-						areImagesLoaded: true
-					});
-				}else{
-					console.log('[feeds js] No images from follow')
-					this.setState({
-						feedImagesArray:[...userImagesArray],
-						areImagesLoaded: true
-					})
-				}
-			})
-			.catch(error => console.log('[feeds js] componentDidMount - ONE followed fetch error: ', error));
-		}else if(this.state.followed.length > 1){
+					if (response.images.length >= 1) {
+						tempFeedImagesArray = [...response.images];
+
+						console.log('[feed js] Check Single Follow Array:', [...userImagesArray, ...tempFeedImagesArray])
+						this.setState({
+							feedImagesArray: [...userImagesArray, ...tempFeedImagesArray],
+							areImagesLoaded: true,
+							
+						});
+						// console.log('[feeds js] feedImagesArray:', this.state.feedImagesArray);
+						
+					} else {
+						console.log('[feeds js] testing for userImagesArray', [...userImagesArray]);
+						console.log('[feeds js] No images from follow')
+						this.setState({
+							feedImagesArray: [...userImagesArray],
+							areImagesLoaded: true,
+							
+						})
+						
+					}
+				})
+				.catch(error => console.log('[feeds js] componentDidMount - ONE followed fetch error: ', error));
+		} else if (this.state.followed.length > 1) {
 			// MULTIPLE FOLLOWED
 			console.log('[feeds js] componentDidMount - Multiple followed: ', this.state.followed);
 			return fetch(GET_USERS_FOLLOWED_URI)
-			.then(response => response.json())
-			.then(response => {
-				// save images
-				console.log('[feeds js] componentDidMount - Multiple followed response: ', response);
-				
-				// loop through followed users
-				response.data.forEach((followedUser,index) => {
-					// check image array length
-					if(followedUser.images.length >= 1){
-						let tempFeedImagesArray2 = followedUser.images.map((imageId,index) => {
-							let tempImageUri = GET_IMAGES_URI + imageId + '/display';
-							return(
-								<Button 
-									transparent style={styles.thumbnail}
-									onPress={() => this.onImageClicked(imageId, this.state.passedId)} 
-									key={imageId} 
-								>
-									<Thumbnail
-										large square source={{ uri: tempImageUri }}
-									/>
-								</Button>
-							);
-						});
-						// tempFeedImagesArray = [...tempFeedImagesArray, ...tempFeedImagesArray2];
-						tempFeedImagesArray = [...tempFeedImagesArray, ...followedUser.images];
-					}
-				});
-				console.log('[feed js] Check Multiple Follow Array:', [...userImagesArray, ...tempFeedImagesArray])
-				this.setState({
-					feedImagesArray: [...userImagesArray, ...tempFeedImagesArray],
-					areImagesLoaded: true
-				});
-				console.log('[feeds js] componentDidMount - Multiple feedImagesArray: ', this.state.feedImagesArray);
-			})
-			.catch(error => console.log('[feeds js] componentDidMount - MULTIPLE followed fetch error: ', error));
+				.then(response => response.json())
+				.then(response => {
+					// save images
+					console.log('[feeds js] componentDidMount - Multiple followed response: ', response);
+
+					// loop through followed users
+					response.data.forEach((followedUser, index) => {
+						// check image array length
+						if (followedUser.images.length >= 1) {
+							let tempFeedImagesArray2 = followedUser.images.map((imageId, index) => {
+								let tempImageUri = GET_IMAGES_URI + imageId + '/display';
+								return (
+									<Button
+										transparent style={styles.thumbnail}
+										onPress={() => this.onImageClicked(imageId, this.state.passedId)}
+										key={imageId}
+									>
+										<Thumbnail
+											large square source={{ uri: tempImageUri }}
+										/>
+									</Button>
+								);
+							});
+							// tempFeedImagesArray = [...tempFeedImagesArray, ...tempFeedImagesArray2];
+							tempFeedImagesArray = [...tempFeedImagesArray, ...followedUser.images];
+						}
+					});
+					console.log('[feed js] Check Multiple Follow Array:', [...userImagesArray, ...tempFeedImagesArray])
+					this.setState({
+						feedImagesArray: [...userImagesArray, ...tempFeedImagesArray],
+						areImagesLoaded: true,
+						
+					});
+					
+					console.log('[feeds js] componentDidMount - Multiple feedImagesArray: ', this.state.feedImagesArray);
+				})
+				.catch(error => console.log('[feeds js] componentDidMount - MULTIPLE followed fetch error: ', error));
 		}
 	}
 	//DISPLAY USER IMAGES
@@ -354,6 +355,7 @@ class FeedsScreen extends Component {
 			this.props.navigation.navigate({ key: 'Images1', routeName: 'Image', params: { 
 					data:response,
 					userId: passedId,
+					userData: this.props.navigation.state.params
 				} 
 			})
 		})
@@ -378,10 +380,25 @@ class FeedsScreen extends Component {
 
 onImageDelete = (imageId) => {
 		
+		let newImageArray = [...this.state.feedImagesArray];
+		console.log('[feeds js] Current array of images: ', newImageArray);
 		console.log('[feeds js] Testing long press');
 		console.log('[feeds js] imageId at onImageDelete:', imageId);
 		console.log('[feeds js] Role of user at onImageDelete:', this.state.role);
-
+	console.log('[feeds js] Finding the imageId in newImageArray to delete', newImageArray.findIndex(function (el) {
+		return el == imageId
+		}));
+		// console.log('[feeds js] feedImagesArray before deletion:', this.state.feedImagesArray);
+		
+		// console.log('[feeds js] newImageArray = ', newImageArray);
+		let deleteIndex = newImageArray.findIndex(function (el) {
+			return el == imageId
+		});
+		
+		// console.log('[feeds js] deleteIndex = ', deleteIndex);
+		// function deletingImageId(imageId){
+		// 	return imageId
+		// }
 		Alert.alert(
 			'Delete image?',
 			'This cannot be undone',
@@ -401,16 +418,32 @@ onImageDelete = (imageId) => {
 
 									console.log('feeds js] onImageDelete bad response: ', response);
 									console.log('[feeds js] onImageDelete testing Json.parse:', JSON.parse(response._bodyInit));
-
-
-									// this.setState({log:"Cannot log in"})
+									
 									Toast.show({
 										text: JSON.parse(response._bodyInit).message,
 										buttonText: 'Ok',
 										position: 'top',
 										duration: 4000
-									});
+									});									
 									return;
+								}else{
+									Toast.show({
+										text: 'Image deleted',
+										buttonText: 'Ok',
+										position: 'top',
+										duration: 4000
+									});
+									// findIndex(this.state.feedImagesArray);
+									// delete(imageId);
+									// this.setState({
+									// 	feedImagesArray: this.state.feedImagesArray
+									// });
+									let removeImage = newImageArray.splice(deleteIndex, 1);
+									console.log('[feeds js] image removed from array: ', removeImage);
+									console.log('[feeds js] new array of images: ', newImageArray);
+									this.setState({
+										feedImagesArray: [...newImageArray]
+									});
 								}
 							}).catch((error) => {
 								console.log(error);
@@ -423,8 +456,8 @@ onImageDelete = (imageId) => {
 								duration: 4000
 							})
 						}
-
 					}
+					
 				},
 				{
 					text: 'Cancel', onPress: () => {
@@ -433,6 +466,7 @@ onImageDelete = (imageId) => {
 				}
 			]
 		)
+		// this.componentDidMount();
 
 	}
 
@@ -465,6 +499,10 @@ onImageDelete = (imageId) => {
 					<Spinner/>
 				</Button>
 			)
+		}
+
+		if(!this.state.areImagesLoaded){
+			gallery = (<Spinner/>);
 		}
 
 		if(this.state.role == 2){
