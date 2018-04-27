@@ -566,7 +566,9 @@ class ImageScreen extends Component{
 
 	onDeleteImageBtnPressed = () => {
 		const imageIdToDelete = this.state.imageId;
-		let passedData = [...this.props.navigation.state.params.userData];
+		let passedData = {...this.props.navigation.state.params.userData};
+		console.log('[images js] onDeleteImageBtnPressed this.props.navigation.state.params.userData: ', this.props.navigation.state.params.userData);
+		console.log('[images js] onDeleteImageBtnPressed passedData: ', passedData);
 		let imagesFromFeeds = [...passedData.data.images];
 		console.log('[images js] onDeleteImageBtnPressed imagesFromFeeds: ', imagesFromFeeds);
 		// console.log('[images js] onDeleteImageBtnPressed index of image to delete: ', imagesFromFeeds.findIndex(function(el){
@@ -580,7 +582,7 @@ class ImageScreen extends Component{
 		console.log('[images js] onDeleteImageBtnPressed index of image to delete: ', imageIndexToDelete);
 
 		// slice 1 from images array
-		let removedImageId = imagesToFeeds.splice(imageIndexToDelete, 1);
+		let removedImageId = imagesFromFeeds.splice(imageIndexToDelete, 1);
 		console.log('[images js] onDeleteImageBtnPressed image id deleted: ', imageIndexToDelete);
 
 		// update passedData
