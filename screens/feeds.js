@@ -51,7 +51,6 @@ class FeedsScreen extends Component {
 			 disableButtonImage: false,
 			 role: props.navigation.state.params.data.role,
 			 imagePickerEnabled: false,
-			 imageIndexToDelete : props.navigation.state.params.imageIndexToDelete >= 0 ?  props.navigation.state.params.imageIndexToDelete : null,
 			 imageIdToDelete : props.navigation.state.params.imageIdToDelete ?  props.navigation.state.params.imageIdToDelete : null
 		}
 		console.log('[feeds js] Current states:', this.state);
@@ -202,7 +201,7 @@ class FeedsScreen extends Component {
 		let deleteIndex = newImageArray.findIndex(function (el) {
 			return el === imageId
 		});
-		
+			
 		if (this.state.role === 2) {
 			return fetch(GET_IMAGES_URI + imageId, {
 				method: 'DELETE',
@@ -231,9 +230,7 @@ class FeedsScreen extends Component {
 						position: 'top',
 						duration: 4000
 					});
-					let removeImage = newImageArray.splice(deleteIndex, 1);
-					console.log('[feeds js] image removed from array: ', removeImage);
-					console.log('[feeds js] new array of images: ', newImageArray);
+					
 					if(this.state.imageIdToDelete){
 						this.setState({
 							feedImagesArray: [...newImageArray],
@@ -241,6 +238,9 @@ class FeedsScreen extends Component {
 							imageIndexToDelete: null
 						});
 					}else{
+						let removeImage = newImageArray.splice(deleteIndex, 1);
+						console.log('[feeds js] image removed from array: ', removeImage);
+						console.log('[feeds js] new array of images: ', newImageArray);
 						this.setState({
 							feedImagesArray: [...newImageArray]
 						});

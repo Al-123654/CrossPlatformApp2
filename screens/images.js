@@ -565,9 +565,9 @@ class ImageScreen extends Component{
 	// }
 
 	onDeleteImageBtnPressed = () => {
-		console.log('[images js] onDeleteImageBtnPressed imageId:', this.state.imageId);
 		const imageIdToDelete = this.state.imageId;
-		const imagesFromFeeds = [...this.props.navigation.state.params.userData.data.images];
+		let passedData = [...this.props.navigation.state.params.userData];
+		let imagesFromFeeds = [...passedData.data.images];
 		console.log('[images js] onDeleteImageBtnPressed imagesFromFeeds: ', imagesFromFeeds);
 		// console.log('[images js] onDeleteImageBtnPressed index of image to delete: ', imagesFromFeeds.findIndex(function(el){
 		// 	return el === imageIdToDelete;
@@ -575,10 +575,20 @@ class ImageScreen extends Component{
 		const imageIndexToDelete = imagesFromFeeds.findIndex(function(el){
 			return el === imageIdToDelete;
 		});
+
+		console.log('[images js] onDeleteImageBtnPressed image Id to delete:', this.state.imageId);
 		console.log('[images js] onDeleteImageBtnPressed index of image to delete: ', imageIndexToDelete);
+
+		// slice 1 from images array
+		let removedImageId = imagesToFeeds.splice(imageIndexToDelete, 1);
+		console.log('[images js] onDeleteImageBtnPressed image id deleted: ', imageIndexToDelete);
+
+		// update passedData
+		passedData.data.images = [...imagesFromFeeds];
+		console.log('[images js] onDeleteImageBtnPressed image array passed back after slice: ', passedData.data.images);
+
 		this.props.navigation.replace('Feeds', {
-			data: this.props.navigation.state.params.userData.data,
-			imageIndexToDelete: imageIndexToDelete,
+			data: passedData.data,
 			imageIdToDelete: imageIdToDelete
 		});
 	}
