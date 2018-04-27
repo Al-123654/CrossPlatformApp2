@@ -502,66 +502,85 @@ class ImageScreen extends Component{
 		}
 	}
 
-	onDeleteImageBtnPressed = () => {
-		console.log('[images js] imageId:', this.state.imageId)
-		let imagesToFeeds = [...this.props.navigation.state.params.userData.data.images]
-		console.log('[images js] imagesToFeeds: ', imagesToFeeds);
-		console.log('Finding the index of the image to delete',this.props.navigation.state.params.userData.data.images.indexOf(this.state.imageId));
-		let feedsImageIndexDelete = this.props.navigation.state.params.userData.data.images.indexOf(this.state.imageId);
-		Alert.alert(	
-		'Delete image?',
-			'This cannot be undone',
-			[
-				{
-					text: 'OK', onPress: () => {
-						return fetch(IMAGE_ROOT_URI + this.state.imageId, {
-							method: 'DELETE',
-							headers: {
-								Accept: 'application/json',
-								'Content-Type': 'application/json'
-							},
-						}).then((response) => {
-							console.log('[images js] onImageDelete: ', response);
-							if (response.status !== 200) {
+	// onDeleteImageBtnPressed = () => {
+	// 	console.log('[images js] imageId:', this.state.imageId)
+	// 	let imagesToFeeds = [...this.props.navigation.state.params.userData.data.images]
+	// 	console.log('[images js] imagesToFeeds: ', imagesToFeeds);
+	// 	console.log('Finding the index of the image to delete',this.props.navigation.state.params.userData.data.images.indexOf(this.state.imageId));
+	// 	let feedsImageIndexDelete = this.props.navigation.state.params.userData.data.images.indexOf(this.state.imageId);
+	// 	Alert.alert(	
+	// 	'Delete image?',
+	// 		'This cannot be undone',
+	// 		[
+	// 			{
+	// 				text: 'OK', onPress: () => {
+	// 					return fetch(IMAGE_ROOT_URI + this.state.imageId, {
+	// 						method: 'DELETE',
+	// 						headers: {
+	// 							Accept: 'application/json',
+	// 							'Content-Type': 'application/json'
+	// 						},
+	// 					}).then((response) => {
+	// 						console.log('[images js] onImageDelete: ', response);
+	// 						if (response.status !== 200) {
 
-								console.log('[images js] onImageDelete bad response: ', response);
-								console.log('[images js] onImageDelete testing Json.parse:', JSON.parse(response._bodyInit));
+	// 							console.log('[images js] onImageDelete bad response: ', response);
+	// 							console.log('[images js] onImageDelete testing Json.parse:', JSON.parse(response._bodyInit));
 
-								Toast.show({
-									text: JSON.parse(response._bodyInit).message,
-									buttonText: 'Ok',
-									position: 'top',
-									duration: 4000
-								});
-								return;
-							} else {
+	// 							Toast.show({
+	// 								text: JSON.parse(response._bodyInit).message,
+	// 								buttonText: 'Ok',
+	// 								position: 'top',
+	// 								duration: 4000
+	// 							});
+	// 							return;
+	// 						} else {
 							
-								Toast.show({
-									text: 'Image deleted',
-									buttonText: 'Ok',
-									position: 'top',
-									duration: 4000
-								});
-							}
-							console.log('Navigate back to feeds.');
-							let removeImage = imagesToFeeds.splice(feedsImageIndexDelete, 1);
-							console.log('[images js] userData sent back to feeds:', imagesToFeeds);
-							this.props.navigation.state.params.userData.data.images =  imagesToFeeds;
-							console.log('images js] this.props.navigation.state.params.userData with new image array: ', this.props.navigation.state.params.userData);
-							this.props.navigation.replace('Feeds', this.props.navigation.state.params.userData);
-						}).catch((error) => {
-							console.log(error);
-						});
-					}
+	// 							Toast.show({
+	// 								text: 'Image deleted',
+	// 								buttonText: 'Ok',
+	// 								position: 'top',
+	// 								duration: 4000
+	// 							});
+	// 						}
+	// 						console.log('Navigate back to feeds.');
+	// 						let removeImage = imagesToFeeds.splice(feedsImageIndexDelete, 1);
+	// 						console.log('[images js] userData sent back to feeds:', imagesToFeeds);
+	// 						this.props.navigation.state.params.userData.data.images =  imagesToFeeds;
+	// 						console.log('images js] this.props.navigation.state.params.userData with new image array: ', this.props.navigation.state.params.userData);
+	// 						this.props.navigation.replace('Feeds', this.props.navigation.state.params.userData);
+	// 					}).catch((error) => {
+	// 						console.log(error);
+	// 					});
+	// 				}
 
-				},
-				{
-					text: 'Cancel', onPress: () => {
-						style: 'cancel'
-					}
-				}
-			]
-		)
+	// 			},
+	// 			{
+	// 				text: 'Cancel', onPress: () => {
+	// 					style: 'cancel'
+	// 				}
+	// 			}
+	// 		]
+	// 	)
+	// }
+
+	onDeleteImageBtnPressed = () => {
+		console.log('[images js] onDeleteImageBtnPressed imageId:', this.state.imageId);
+		const imageIdToDelete = this.state.imageId;
+		const imagesFromFeeds = [...this.props.navigation.state.params.userData.data.images];
+		console.log('[images js] onDeleteImageBtnPressed imagesFromFeeds: ', imagesFromFeeds);
+		// console.log('[images js] onDeleteImageBtnPressed index of image to delete: ', imagesFromFeeds.findIndex(function(el){
+		// 	return el === imageIdToDelete;
+		// }));
+		const imageIndexToDelete = imagesFromFeeds.findIndex(function(el){
+			return el === imageIdToDelete;
+		});
+		console.log('[images js] onDeleteImageBtnPressed index of image to delete: ', imageIndexToDelete);
+		this.props.navigation.replace('Feeds', {
+			data: this.props.navigation.state.params.userData.data,
+			imageIndexToDelete: imageIndexToDelete,
+			imageIdToDelete: imageIdToDelete
+		});
 	}
 
     render(){

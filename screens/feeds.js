@@ -51,8 +51,8 @@ class FeedsScreen extends Component {
 			 disableButtonImage: false,
 			 role: props.navigation.state.params.data.role,
 			 imagePickerEnabled: false,
-			
-
+			 imageIndexToDelete : props.navigation.state.params.imageIndexToDelete >= 0 ?  props.navigation.state.params.imageIndexToDelete : null,
+			 imageIdToDelete : props.navigation.state.params.imageIdToDelete ?  props.navigation.state.params.imageIdToDelete : null
 		}
 		console.log('[feeds js] Current states:', this.state);
         
@@ -68,8 +68,6 @@ class FeedsScreen extends Component {
 	openDrawer = () => {
 		this.drawer._root.open()
 	};
-
-	
 
 	componentDidMount = () => {
 		let userImagesArray = this.getUserImages();
@@ -162,6 +160,105 @@ class FeedsScreen extends Component {
 				.catch(error => console.log('[feeds js] componentDidMount - MULTIPLE followed fetch error: ', error));
 		}
 	}
+
+	componentDidUpdate(){
+		console.log("[feeds js] componentDidUpdate!");
+		console.log("[feeds js] componentDidUpdate feedImagesArray: ", this.state.feedImagesArray);
+		if(this.state.imageIndexToDelete !== null && this.state.imageIdToDelete){
+			console.log("[feeds js] componentDidUpdate feedImagesArray from images: ", this.state.feedImagesArray);
+			console.log("[feeds js] componentDidUpdate imageIndexToDelete: ", this.state.imageIndexToDelete);
+			console.log("[feeds js] componentDidUpdate imageIdToDelete: ", this.state.imageIdToDelete);
+			this.onImageDelete(this.state.imageIdToDelete);
+		}
+	}
+
+	onImageDelete = (imageId) => {
+		if(this.state.imageIdToDelete){
+			this.deleteImage(imageId);
+		}else{
+			Alert.alert(
+				'Delete image?',
+				'This cannot be undone',
+				[
+					{
+						text: 'OK', onPress: () => { this.deleteImage(imageId); }
+					},
+					{
+						text: 'Cancel', onPress: () => { style: 'cancel' }
+					}
+				]
+			)
+		}	
+	}
+
+	deleteImage = (imageId) => {
+		let newImageArray = [...this.state.feedImagesArray];
+		console.log('[feeds js] deleteImage Current array of images: ', newImageArray);
+		console.log('[feeds js] deleteImage imageId:', imageId);
+		console.log('[feeds js] deleteImage Role of user:', this.state.role);
+		console.log('[feeds js] deleteImage Finding the index to delete', newImageArray.findIndex(function (el) {
+			return el === imageId
+		}));
+		let deleteIndex = newImageArray.findIndex(function (el) {
+			return el === imageId
+		});
+		
+		if (this.state.role === 2) {
+			return fetch(GET_IMAGES_URI + imageId, {
+				method: 'DELETE',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
+				},
+			}).then((response) => {
+				console.log('feeds js] onImageDelete: ', response);
+				if (response.status !== 200) {
+
+					console.log('feeds js] onImageDelete bad response: ', response);
+					console.log('[feeds js] onImageDelete testing Json.parse:', JSON.parse(response._bodyInit));
+					
+					Toast.show({
+						text: JSON.parse(response._bodyInit).message,
+						buttonText: 'Ok',
+						position: 'top',
+						duration: 4000
+					});									
+					return;
+				}else{
+					Toast.show({
+						text: 'Image deleted',
+						buttonText: 'Ok',
+						position: 'top',
+						duration: 4000
+					});
+					let removeImage = newImageArray.splice(deleteIndex, 1);
+					console.log('[feeds js] image removed from array: ', removeImage);
+					console.log('[feeds js] new array of images: ', newImageArray);
+					if(this.state.imageIdToDelete){
+						this.setState({
+							feedImagesArray: [...newImageArray],
+							imageIdToDelete: null,
+							imageIndexToDelete: null
+						});
+					}else{
+						this.setState({
+							feedImagesArray: [...newImageArray]
+						});
+					}
+				}
+			}).catch((error) => {
+				console.log(error);
+			});
+		} else {
+			Toast.show({
+				text: 'Cannot delete,Invalid role',
+				buttonText: 'OK',
+				position: 'top',
+				duration: 4000
+			})
+		}
+	}
+
 	//DISPLAY USER IMAGES
 	getUserImages(){
 		let userImagesArray = [];
@@ -180,7 +277,6 @@ class FeedsScreen extends Component {
 		return [...userImagesArray];
 	}
 	
-
 	onLogoutHandler = () => {
 
 		Alert.alert(
@@ -351,85 +447,85 @@ class FeedsScreen extends Component {
 		});
 	}
 
-	onImageDelete = (imageId) => {
+	// onImageDelete = (imageId) => {
 		
-			let newImageArray = [...this.state.feedImagesArray];
-			console.log('[feeds js] Current array of images: ', newImageArray);
-			console.log('[feeds js] Testing long press');
-			console.log('[feeds js] imageId at onImageDelete:', imageId);
-			console.log('[feeds js] Role of user at onImageDelete:', this.state.role);
-			console.log('[feeds js] Finding the imageId in newImageArray to delete', newImageArray.findIndex(function (el) {
-			return el == imageId
-			}));
-			let deleteIndex = newImageArray.findIndex(function (el) {
-				return el == imageId
-			});
+	// 		let newImageArray = [...this.state.feedImagesArray];
+	// 		console.log('[feeds js] Current array of images: ', newImageArray);
+	// 		console.log('[feeds js] Testing long press');
+	// 		console.log('[feeds js] imageId at onImageDelete:', imageId);
+	// 		console.log('[feeds js] Role of user at onImageDelete:', this.state.role);
+	// 		console.log('[feeds js] Finding the imageId in newImageArray to delete', newImageArray.findIndex(function (el) {
+	// 		return el == imageId
+	// 		}));
+	// 		let deleteIndex = newImageArray.findIndex(function (el) {
+	// 			return el == imageId
+	// 		});
 			
-			Alert.alert(
-				'Delete image?',
-				'This cannot be undone',
-				[
-					{
-						text: 'OK', onPress: () => {
-							if (this.state.role == 2) {
-								return fetch(GET_IMAGES_URI + imageId, {
-									method: 'DELETE',
-									headers: {
-										Accept: 'application/json',
-										'Content-Type': 'application/json'
-									},
-								}).then((response) => {
-									console.log('feeds js] onImageDelete: ', response);
-									if (response.status !== 200) {
+	// 		Alert.alert(
+	// 			'Delete image?',
+	// 			'This cannot be undone',
+	// 			[
+	// 				{
+	// 					text: 'OK', onPress: () => {
+	// 						if (this.state.role == 2) {
+	// 							return fetch(GET_IMAGES_URI + imageId, {
+	// 								method: 'DELETE',
+	// 								headers: {
+	// 									Accept: 'application/json',
+	// 									'Content-Type': 'application/json'
+	// 								},
+	// 							}).then((response) => {
+	// 								console.log('feeds js] onImageDelete: ', response);
+	// 								if (response.status !== 200) {
 
-										console.log('feeds js] onImageDelete bad response: ', response);
-										console.log('[feeds js] onImageDelete testing Json.parse:', JSON.parse(response._bodyInit));
+	// 									console.log('feeds js] onImageDelete bad response: ', response);
+	// 									console.log('[feeds js] onImageDelete testing Json.parse:', JSON.parse(response._bodyInit));
 										
-										Toast.show({
-											text: JSON.parse(response._bodyInit).message,
-											buttonText: 'Ok',
-											position: 'top',
-											duration: 4000
-										});									
-										return;
-									}else{
-										Toast.show({
-											text: 'Image deleted',
-											buttonText: 'Ok',
-											position: 'top',
-											duration: 4000
-										});
-										let removeImage = newImageArray.splice(deleteIndex, 1);
-										console.log('[feeds js] image removed from array: ', removeImage);
-										console.log('[feeds js] new array of images: ', newImageArray);
-										this.setState({
-											feedImagesArray: [...newImageArray]
-										});
-									}
-								}).catch((error) => {
-									console.log(error);
-								});
-							} else {
-								Toast.show({
-									text: 'Cannot delete,Invalid role',
-									buttonText: 'OK',
-									position: 'top',
-									duration: 4000
-								})
-							}
-						}
+	// 									Toast.show({
+	// 										text: JSON.parse(response._bodyInit).message,
+	// 										buttonText: 'Ok',
+	// 										position: 'top',
+	// 										duration: 4000
+	// 									});									
+	// 									return;
+	// 								}else{
+	// 									Toast.show({
+	// 										text: 'Image deleted',
+	// 										buttonText: 'Ok',
+	// 										position: 'top',
+	// 										duration: 4000
+	// 									});
+	// 									let removeImage = newImageArray.splice(deleteIndex, 1);
+	// 									console.log('[feeds js] image removed from array: ', removeImage);
+	// 									console.log('[feeds js] new array of images: ', newImageArray);
+	// 									this.setState({
+	// 										feedImagesArray: [...newImageArray]
+	// 									});
+	// 								}
+	// 							}).catch((error) => {
+	// 								console.log(error);
+	// 							});
+	// 						} else {
+	// 							Toast.show({
+	// 								text: 'Cannot delete,Invalid role',
+	// 								buttonText: 'OK',
+	// 								position: 'top',
+	// 								duration: 4000
+	// 							})
+	// 						}
+	// 					}
 						
-					},
-					{
-						text: 'Cancel', onPress: () => {
-							style: 'cancel'
-						}
-					}
-				]
-			)
+	// 				},
+	// 				{
+	// 					text: 'Cancel', onPress: () => {
+	// 						style: 'cancel'
+	// 					}
+	// 				}
+	// 			]
+	// 		)
 			
 
-		}
+	// 	}
 
 	render() {
 		console.log('[feeds js] Role of user at onImageDelete:', this.state.role);
