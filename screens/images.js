@@ -14,15 +14,13 @@ const IMAGE_ROOT_URI = 'https://app-api-testing.herokuapp.com/api/images/';
 const COMMENT_URI = 'https://app-api-testing.herokuapp.com/api/comments/';
 // const LOGOUT_URI = 'http://localhost:5000/logout';
 
-
-
 class ImageScreen extends Component{
     constructor(props) {
 		super(props);
 		console.log('[images js] constructor - passedParams: ', props.navigation.state.params);
-		console.log('[images js] constructor - passedParams-userData: ', props.navigation.state.params.userData);
-		console.log('[images js] constructor - passedParams-message: ', props.navigation.state.params.userData.message);
-		console.log('[images js] constructor - passedParams-userData.data: ', props.navigation.state.params.userData.data);
+		console.log('[images js] constructor - passedParams: userData ', props.navigation.state.params.userData);
+		console.log('[images js] constructor - passedParams: message ', props.navigation.state.params.userData.message);
+		console.log('[images js] constructor - passedParams: imagesDisplayed ', props.navigation.state.params.imagesDisplayed);
 
 		// check if image favorited from serverside
 		let isFavorite= false;
@@ -75,8 +73,6 @@ class ImageScreen extends Component{
 
 		// INITIALIZE STATES
 		this.state = {
-			
-			
 			imageId: props.navigation.state.params.data._id,
 			userId: props.navigation.state.params.userId,
 			isImageFavorite: isFavorite,
@@ -99,8 +95,8 @@ class ImageScreen extends Component{
 			postingComment: false,
 			inImageCravelist: inCravelist,
 			noOfCravelist: props.navigation.state.params.data.craving.length,
-			canDeleteImage: false
-			
+			canDeleteImage: false,
+			imagesFromFeeds: props.navigation.state.params.imagesDisplayed
 		};
 
 		// logs
@@ -116,7 +112,6 @@ class ImageScreen extends Component{
 		console.log('[images js] onBackBtnPressed');
 		this.props.navigation.goBack();
 	}
-
 
 	onLogoutHandler = () => {
 
@@ -332,7 +327,7 @@ class ImageScreen extends Component{
 			this.setState({
 				comment:comment
 			});
-			console.log('Comment being entered:', comment);
+			console.log('[images js] createComment - Comment being entered:', comment);
 		}
 	}
 	//SAVE COMMENT TO API
@@ -354,7 +349,7 @@ class ImageScreen extends Component{
 			})
 				.then((response) => response.json())
 				.then((responseJson) => {
-					console.log('[images js] response from server postComment:', responseJson);
+					console.log('[images js] postComment - response from server postComment:', responseJson);
 					//DISPLAY THE NEW COMMENT ON SCREEN WITH PREVIOUS COMMENTS
 					let tempCommentId = [];
 					responseJson.comments.forEach((comments, index) => {
@@ -362,14 +357,14 @@ class ImageScreen extends Component{
 							comments
 						)
 					})
-					console.log('[images js] tempCommentId', tempCommentId);
-					console.log('[images js] postingComment just after user posts comment:',this.state.postingComment);
+					console.log('[images js] postComment - tempCommentId', tempCommentId);
+					console.log('[images js] postComment - postingComment just after user posts comment:',this.state.postingComment);
 					
 					this.setState({
 						commentId: tempCommentId
 					})
-					console.log('[images js] status of disableComment at postComment:', this.state.disableComment)
-					console.log('[images js]postComment this.state.commentId', this.state.commentId)
+					console.log('[images js] postComment - status of disableComment at postComment:', this.state.disableComment)
+					console.log('[images js] postComment - this.state.commentId', this.state.commentId)
 					Toast.show({
                         text: 'Comment posted',
                         buttonText: 'Ok',
@@ -382,7 +377,7 @@ class ImageScreen extends Component{
 					console.error(error)
 				});
 			
-			console.log('[images js] commentId after comment posted', this.state.commentId)
+			console.log('[images js] postComment - commentId after comment posted', this.state.commentId)
 			
 		}else{
 			Toast.show({
@@ -401,8 +396,8 @@ class ImageScreen extends Component{
 
 		// //FETCHING COMMENTS
 		if (this.state.commentId.length >= 1){
-			console.log('[images js] commentId at fetchComment:', this.state.commentId)
-			console.log('[images js] commentId.length at fetchComment:', this.state.commentId.length)
+			console.log('[images js] fetchComments - commentId at fetchComment:', this.state.commentId)
+			console.log('[images js] fetchComments - commentId.length at fetchComment:', this.state.commentId.length)
 			this.state.commentId.forEach((commentID, index) => {
 				return fetch(COMMENT_URI + commentID, {
 					method: 'GET',
@@ -413,20 +408,20 @@ class ImageScreen extends Component{
 				})
 					.then((response) => response.json())
 					.then((responseJson) => {
-						console.log("Response from server fetchComment:", responseJson);
-						console.log("Comment to display fetchComment:", responseJson.comment);
-						console.log("ID to display fetchComment:", responseJson.owner);
-						console.log("Date created fetchComment:", responseJson.date_created);
-						console.log("Owner fetchComment :", responseJson.owner_username);
+						console.log("[images js] fetchComments - Response from server fetchComment:", responseJson);
+						console.log("[images js] fetchComments - Comment to display fetchComment:", responseJson.comment);
+						console.log("[images js] fetchComments - ID to display fetchComment:", responseJson.owner);
+						console.log("[images js] fetchComments - Date created fetchComment:", responseJson.date_created);
+						console.log("[images js] fetchComments - Owner fetchComment :", responseJson.owner_username);
 
 						commentArray.push(
 							responseJson
 						);
-						console.log('[images js] commentArray at fetchComment:', commentArray);
-						console.log('[images js] Length of commentArray at fetchComment', commentArray.length);
-						console.log('[images js] Length of commentId at fetchComment', this.state.commentId.length);
+						console.log('[images js] fetchComments - commentArray at fetchComment:', commentArray);
+						console.log('[images js] fetchComments - Length of commentArray at fetchComment', commentArray.length);
+						console.log('[images js] fetchComments - Length of commentId at fetchComment', this.state.commentId.length);
 						if (this.state.commentId.length === commentArray.length) {
-							console.log('[images js] NO MORE IMAGES TO LOOP THROUGH');
+							console.log('[images js] fetchComments - NO MORE IMAGES TO LOOP THROUGH');
 							//SORTING COMMENTS FROM NEWEST TO OLDEST
 							let sortedArray = commentArray.sort(function (a,b) {
 								if(moment(a.date_created).isBefore(b.date_created)){
@@ -434,7 +429,7 @@ class ImageScreen extends Component{
 								}
 								return -1;
 							})
-							console.log('[images js] sortedArray:', sortedArray);
+							console.log('[images js] fetchComments - sortedArray:', sortedArray);
 							if(commentArray.length > 4){
 								firstPageComments =  commentArray.slice(0,20);
 								nextPageComments = commentArray.slice(20);
@@ -453,11 +448,11 @@ class ImageScreen extends Component{
 									postingComment: false
 								})
 							}
-							console.log('[images js] postingComments after fetchComments():',this.state.postingComment);
+							console.log('[images js] fetchComments - postingComments after fetchComments():',this.state.postingComment);
 						}
 					})
 					.catch((error) => {
-						console.log('[images js] error:', error)
+						console.log('[images js] fetchComments - error:', error)
 					});
 			})
 		}else{
@@ -466,14 +461,14 @@ class ImageScreen extends Component{
 				disableComment: false,
 				postingComment: false
 			})
-			console.log('[images js] status of disableButton at fetchComment:', this.state.disableButton)
-			console.log('[images js] postingComments after fetchComments():', this.state.postingComment);
+			console.log('[images js] fetchComments - status of disableButton at fetchComment:', this.state.disableButton)
+			console.log('[images js] fetchComments - postingComments after fetchComments():', this.state.postingComment);
 		}
 	}
 	
 	
 	componentDidMount(){
-		console.log('[images js] inside componentDidMount');
+		console.log('[images js] componentDidMount');
 		this.fetchComments();
 	}
 	onBackBtnPressed = (disabled) => {
@@ -484,16 +479,16 @@ class ImageScreen extends Component{
 	onMoreCommentsPressed(){
 		let evenMoreComments;
 		console.log('[images js] onMoreCommentsPressed');
-		console.log('[images js] moreComments:', this.state.moreComments)
+		console.log('[images js] onMoreCommentsPressed - moreComments:', this.state.moreComments)
 		if(this.state.moreComments.length > 20){
 			evenMoreComments = this.state.moreComments.slice(0,20)
-			console.log('[images js] additional Comments:', evenMoreComments)
+			console.log('[images js] onMoreCommentsPressed - additional Comments:', evenMoreComments)
 			this.setState({
 				// isMoreCommentsPressed: true,
 				arrayOfComments: [...this.state.arrayOfComments, ...evenMoreComments],
 				moreComments: this.state.moreComments.slice(20)
 			});
-			console.log('[images js] moreComments new slice:', this.state.moreComments.slice(20));
+			console.log('[images js] onMoreCommentsPressed - moreComments new slice:', this.state.moreComments.slice(20));
 		}else{
 			this.setState({
 				// isMoreCommentsPressed: true,
@@ -502,96 +497,27 @@ class ImageScreen extends Component{
 		}
 	}
 
-	// onDeleteImageBtnPressed = () => {
-	// 	console.log('[images js] imageId:', this.state.imageId)
-	// 	let imagesToFeeds = [...this.props.navigation.state.params.userData.data.images]
-	// 	console.log('[images js] imagesToFeeds: ', imagesToFeeds);
-	// 	console.log('Finding the index of the image to delete',this.props.navigation.state.params.userData.data.images.indexOf(this.state.imageId));
-	// 	let feedsImageIndexDelete = this.props.navigation.state.params.userData.data.images.indexOf(this.state.imageId);
-	// 	Alert.alert(	
-	// 	'Delete image?',
-	// 		'This cannot be undone',
-	// 		[
-	// 			{
-	// 				text: 'OK', onPress: () => {
-	// 					return fetch(IMAGE_ROOT_URI + this.state.imageId, {
-	// 						method: 'DELETE',
-	// 						headers: {
-	// 							Accept: 'application/json',
-	// 							'Content-Type': 'application/json'
-	// 						},
-	// 					}).then((response) => {
-	// 						console.log('[images js] onImageDelete: ', response);
-	// 						if (response.status !== 200) {
-
-	// 							console.log('[images js] onImageDelete bad response: ', response);
-	// 							console.log('[images js] onImageDelete testing Json.parse:', JSON.parse(response._bodyInit));
-
-	// 							Toast.show({
-	// 								text: JSON.parse(response._bodyInit).message,
-	// 								buttonText: 'Ok',
-	// 								position: 'top',
-	// 								duration: 4000
-	// 							});
-	// 							return;
-	// 						} else {
-							
-	// 							Toast.show({
-	// 								text: 'Image deleted',
-	// 								buttonText: 'Ok',
-	// 								position: 'top',
-	// 								duration: 4000
-	// 							});
-	// 						}
-	// 						console.log('Navigate back to feeds.');
-	// 						let removeImage = imagesToFeeds.splice(feedsImageIndexDelete, 1);
-	// 						console.log('[images js] userData sent back to feeds:', imagesToFeeds);
-	// 						this.props.navigation.state.params.userData.data.images =  imagesToFeeds;
-	// 						console.log('images js] this.props.navigation.state.params.userData with new image array: ', this.props.navigation.state.params.userData);
-	// 						this.props.navigation.replace('Feeds', this.props.navigation.state.params.userData);
-	// 					}).catch((error) => {
-	// 						console.log(error);
-	// 					});
-	// 				}
-
-	// 			},
-	// 			{
-	// 				text: 'Cancel', onPress: () => {
-	// 					style: 'cancel'
-	// 				}
-	// 			}
-	// 		]
-	// 	)
-	// }
-
 	onDeleteImageBtnPressed = () => {
 		const imageIdToDelete = this.state.imageId;
-		let passedData = {...this.props.navigation.state.params.userData};
-		console.log('[images js] onDeleteImageBtnPressed this.props.navigation.state.params.userData: ', this.props.navigation.state.params.userData);
-		console.log('[images js] onDeleteImageBtnPressed passedData: ', passedData);
-		let imagesFromFeeds = [...passedData.data.images];
-		console.log('[images js] onDeleteImageBtnPressed imagesFromFeeds: ', imagesFromFeeds);
-		// console.log('[images js] onDeleteImageBtnPressed index of image to delete: ', imagesFromFeeds.findIndex(function(el){
-		// 	return el === imageIdToDelete;
-		// }));
+		const passedData = {...this.props.navigation.state.params.userData};
+		console.log('[images js] onDeleteImageBtnPressed - imagesFromFeeds: ', this.state.imagesFromFeeds);
+		let imagesFromFeeds = [...this.state.imagesFromFeeds];
+		
 		const imageIndexToDelete = imagesFromFeeds.findIndex(function(el){
 			return el === imageIdToDelete;
 		});
 
-		console.log('[images js] onDeleteImageBtnPressed image Id to delete:', this.state.imageId);
-		console.log('[images js] onDeleteImageBtnPressed index of image to delete: ', imageIndexToDelete);
+		console.log('[images js] onDeleteImageBtnPressed - image Id to delete:', this.state.imageId);
+		console.log('[images js] onDeleteImageBtnPressed - index of image to delete: ', imageIndexToDelete);
 
 		// slice 1 from images array
 		let removedImageId = imagesFromFeeds.splice(imageIndexToDelete, 1);
-		console.log('[images js] onDeleteImageBtnPressed image id deleted: ', imageIndexToDelete);
-
-		// update passedData
-		passedData.data.images = [...imagesFromFeeds];
-		console.log('[images js] onDeleteImageBtnPressed image array passed back after slice: ', passedData.data.images);
+		console.log('[images js] onDeleteImageBtnPressed - image id deleted: ', imageIndexToDelete);
 
 		this.props.navigation.replace('Feeds', {
 			data: passedData.data,
-			imageIdToDelete: imageIdToDelete
+			imageIdToDelete: imageIdToDelete,
+			processedImages: imagesFromFeeds
 		});
 	}
 
@@ -629,8 +555,8 @@ class ImageScreen extends Component{
 		
 		
 		if(this.state.areCommentsLoaded){
-			console.log('[images js] arrayOfComments.length at render:',  this.state.arrayOfComments.length);
-			console.log('[images js] commentId.length at render:',  this.state.commentId.length);
+			console.log('[images js] render - arrayOfComments.length at render:',  this.state.arrayOfComments.length);
+			console.log('[images js] render - commentId.length at render:',  this.state.commentId.length);
 			if(this.state.arrayOfComments.length >= 1){
 				listOfComments = [];
 				
@@ -644,16 +570,16 @@ class ImageScreen extends Component{
 					</ListItem>)
 				
 			}); 	
-			console.log('[images js] listOfComments.length:', listOfComments.length)
+			console.log('[images js] render - listOfComments.length:', listOfComments.length)
 				if (listOfComments.length >= 4 && listOfComments.length != this.state.commentId.length && !this.state.postingComment) {
-					console.log('[images js] arrayOfComments.length if more than 4 comments:', this.state.arrayOfComments.length);
+					console.log('[images js] render - arrayOfComments.length if more than 4 comments:', this.state.arrayOfComments.length);
 					displayMoreCommentsButton = <Button onPress={() => { this.onMoreCommentsPressed() }}>
 						<Text>More Comments</Text>
 					</Button>
 				}
 				imageLoader = <Image source={{ uri:IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} />
 			}else{
-				console.log('[images js] inside else if in render')
+				console.log('[images js] render - inside else if in render')
 				listOfComments = (<Text>No comments</Text>);
 				imageLoader = <Image source={{ uri:IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} />
 			}
@@ -667,7 +593,7 @@ class ImageScreen extends Component{
 		}
 
 		if (this.state.postingComment) {
-			console.log('[image js] postingComment at render:', this.state.postingComment);
+			console.log('[image js] render - postingComment at render:', this.state.postingComment);
 			listOfComments = (<Spinner />);
 			
 		}
