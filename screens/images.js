@@ -511,14 +511,19 @@ class ImageScreen extends Component{
 		console.log('[images js] onDeleteImageBtnPressed - index of image to delete: ', imageIndexToDelete);
 
 		// slice 1 from images array
-		let removedImageId = imagesFromFeeds.splice(imageIndexToDelete, 1);
-		console.log('[images js] onDeleteImageBtnPressed - image id deleted: ', imageIndexToDelete);
+		// let removedImageId = imagesFromFeeds.splice(imageIndexToDelete, 1);
+		// console.log('[images js] onDeleteImageBtnPressed - image id deleted: ', imageIndexToDelete);
 
 		this.props.navigation.replace('Feeds', {
 			data: passedData.data,
 			imageIdToDelete: imageIdToDelete,
 			processedImages: imagesFromFeeds
 		});
+
+		// this.props.navigation.replace('Feeds', {
+		// 	data: passedData.data,
+		// 	imageIdToDelete: imageIdToDelete,
+		// });
 	}
 
     render(){

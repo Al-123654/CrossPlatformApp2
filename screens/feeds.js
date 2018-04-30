@@ -31,25 +31,25 @@ class FeedsScreen extends Component {
 		console.log('[feeds js] constructor - Data carried over: ', this.props.navigation.state);
 		console.log('[feeds js] constructor - Data carried over: params ', this.props.navigation.state.params);
 		console.log('[feeds js] constructor - Data carried over: params.data ', this.props.navigation.state.params.data);
-		console.log('[feeds js] constructor - Data carried over: params.processedImages ', this.props.navigation.state.params.processedImages);
+		// console.log('[feeds js] constructor - Data carried over: params.processedImages ', this.props.navigation.state.params.processedImages);
 
         //initialize states
         this.state = {
-             passedUsername : props.navigation.state.params.data.username,
-             fname : props.navigation.state.params.data.fname,
-             lname : props.navigation.state.params.data.lname,
-             email : props.navigation.state.params.data.email,
-             passedId : props.navigation.state.params.data._id,
-             images : props.navigation.state.params.data.images,
-             followed : props.navigation.state.params.data.following,
-			 feedImagesArray: props.navigation.state.params.processedImages ?  props.navigation.state.params.processedImages : null,
-			 areImagesLoaded: false,
-			 disableButtonLogout: false,
-			 isLoggedOut: false,
-			 role: props.navigation.state.params.data.role,
-			 imageIdToDelete : props.navigation.state.params.imageIdToDelete ?  props.navigation.state.params.imageIdToDelete : null,
-			 userImages: null,
-			 followedImages: null
+			passedUsername : props.navigation.state.params.data.username,
+			fname : props.navigation.state.params.data.fname,
+			lname : props.navigation.state.params.data.lname,
+			email : props.navigation.state.params.data.email,
+			passedId : props.navigation.state.params.data._id,
+			images : props.navigation.state.params.data.images,
+			followed : props.navigation.state.params.data.following,
+			feedImagesArray: props.navigation.state.params.processedImages ?  props.navigation.state.params.processedImages : null,
+			areImagesLoaded: false,
+			disableButtonLogout: false,
+			isLoggedOut: false,
+			role: props.navigation.state.params.data.role,
+			imageIdToDelete : props.navigation.state.params.imageIdToDelete ?  props.navigation.state.params.imageIdToDelete : null,
+			userImages: null,
+			followedImages: null
 		}
 		console.log('[feeds js] constructor - Current states:', this.state);
 	}
@@ -73,13 +73,13 @@ class FeedsScreen extends Component {
 		}
 	}
 
-	// TODO: logic for updating feedImagesArray
 	componentDidUpdate(prevProps, prevState){
 		console.log("[feeds js] componentDidUpdate - is imageIdToDelete set? ", this.state.imageIdToDelete);
 		console.log("[feeds js] componentDidUpdate - is userImages set? ", this.state.userImages);
 		console.log("[feeds js] componentDidUpdate - is followedImages set? ", this.state.followedImages);
 		console.log("[feeds js] componentDidUpdate - is feedImagesArray set? ", this.state.feedImagesArray);
 
+		// load user images and followed images only when states are available
 		if( this.state.imageIdToDelete === null && this.state.userImages !== null && this.state.followedImages !== null && this.state.feedImagesArray === null ){
 			console.log("[feeds js] componentDidUpdate - state update!");
 			this.setState({
@@ -87,13 +87,6 @@ class FeedsScreen extends Component {
 				areImagesLoaded: true
 			});
 		}
-		// if(!this.state.imageIdToDelete && this.state.userImages && this.state.followedImages && this.state.feedImagesArray.length === 0){
-		// 	console.log("[feeds js] componentDidUpdate - state update!");
-		// 	this.setState({
-		// 		feedImagesArray: [...this.state.userImages, ...this.state.followedImages ],
-		// 		areImagesLoaded: true
-		// 	});
-		// }
 	}
 
 	onImageDelete = (imageId) => {
@@ -145,8 +138,19 @@ class FeedsScreen extends Component {
 						buttonText: 'Ok',
 						position: 'top',
 						duration: 4000
-					});									
-					return;
+					});
+					
+					if(response.status !== 401){
+						return;
+					}else {
+						// unauthorized 401
+						if(this.state.imageIdToDelete){
+							this.setState({
+								imageIdToDelete: null,
+								areImagesLoaded: true
+							});
+						}
+					}
 				}else{
 					Toast.show({
 						text: 'Image deleted',
@@ -156,14 +160,18 @@ class FeedsScreen extends Component {
 					});
 					
 					if(this.state.imageIdToDelete){
+						let removeImage = newImageArray.splice(deleteIndex, 1);
+						console.log('[feeds js] deleteImage - from images js - image removed from array: ', removeImage);
+						console.log('[feeds js] deleteImage - from images js - new array of images: ', newImageArray);
 						this.setState({
 							imageIdToDelete: null,
-							areImagesLoaded: true
+							areImagesLoaded: true,
+							feedImagesArray: [...newImageArray]
 						});
 					}else{
 						let removeImage = newImageArray.splice(deleteIndex, 1);
-						console.log('[feeds js] deleteImage - image removed from array: ', removeImage);
-						console.log('[feeds js] deleteImage - new array of images: ', newImageArray);
+						console.log('[feeds js] deleteImage - from long press - image removed from array: ', removeImage);
+						console.log('[feeds js] deleteImage - from long press - new array of images: ', newImageArray);
 						this.setState({
 							feedImagesArray: [...newImageArray]
 						});
