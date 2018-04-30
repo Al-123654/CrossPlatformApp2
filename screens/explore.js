@@ -30,6 +30,7 @@ class ExploreScreen extends Component {
 			searchTerm: null,
 			listOfUsers: null,
 			passedUserId: props.navigation.state.params.currentUserId,
+			currentUserDetails: null,
 			log: "",
 			listLoadedCount: 0
 		};
@@ -39,7 +40,11 @@ class ExploreScreen extends Component {
 		console.log('[images js] constructor - listOfUsers: ', this.state.listOfUsers);
 		console.log('[images js] constructor - passedUserId: ', this.state.passedUserId);
 		console.log('[images js] constructor - log: ', this.state.log);
-    }
+	}
+	
+	componentDidMount(){
+		this.fetchCurrentUser();
+	}
 
 	onBackBtnPressed = () => {
 		console.log('[explore js] onBackBtnPressed');
@@ -171,6 +176,34 @@ class ExploreScreen extends Component {
 		}
 	}
 
+	fetchCurrentUser = () => {
+		console.log("[explore js] fetchCurrentUser");
+		fetch(GET_USERS_URI + '/' + this.state.passedUserId)
+			.then(response => {
+				console.log("[explore js] fetchCurrentUser - Response from api: ", response);
+				if (response.status !== 200) {
+					Toast.show({
+						text: 'Lookup failed!',
+						buttonText: 'Ok',
+						position: 'top',
+						duration: 2000
+					});
+					return;
+				}
+
+				// if fetch ok
+				response.json().then(respObj => {
+					console.log('[explore js] fetchCurrentUser - Response object: ', respObj);
+					console.log('[explore js] fetchCurrentUser - Lookup ok!!!');
+
+					if(respObj){
+						this.setState({currentUserDetails: respObj});
+					}
+				});
+			})
+			.catch(error => console.log("[explore js] fetchCurrentUser - Error fetching search results: ", error));
+	}
+
     render() {
 
 		let listOfUsers = (<Text>Search for users</Text>);
@@ -181,21 +214,25 @@ class ExploreScreen extends Component {
 				let listOfUsersCopy = [...this.state.listOfUsers];
 				let currentlyFollowingList = [];
 
-				// remove currently logged in user from list
+				// remove currently logged in user from list if full list
 				let indexToRemove = "";
 				listOfUsersCopy.forEach((user,index)=>{
-					if(user._id == this.state.passedUserId){
+					if(user._id === this.state.passedUserId){
 						console.log("[explore js] Found a match at index: ", index);
 						indexToRemove = index;
 						// save currently following list
 						console.log("[explore js] Following list: ", user.following);
 						currentlyFollowingList = [...user.following];
-					}
+					}	
 				});
 
 				console.log("[explore js] indexToRemove type: ", typeof indexToRemove);
 				if(typeof indexToRemove == 'number'){
 					listOfUsersCopy.splice(indexToRemove, 1);
+				}else {
+					// TODO: save currently following list
+					console.log("[explore js] Following list: ", this.state.currentUserDetails.following);
+					currentlyFollowingList = [...this.state.currentUserDetails.following];
 				}
 
 				console.log("[explore js] Currently following: ", currentlyFollowingList);
