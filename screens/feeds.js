@@ -42,7 +42,7 @@ class FeedsScreen extends Component {
              passedId : props.navigation.state.params.data._id,
              images : props.navigation.state.params.data.images,
              followed : props.navigation.state.params.data.following,
-			 feedImagesArray: props.navigation.state.params.processedImages ?  props.navigation.state.params.processedImages : [],
+			 feedImagesArray: props.navigation.state.params.processedImages ?  props.navigation.state.params.processedImages : null,
 			 areImagesLoaded: false,
 			 disableButtonLogout: false,
 			 isLoggedOut: false,
@@ -79,6 +79,14 @@ class FeedsScreen extends Component {
 		console.log("[feeds js] componentDidUpdate - is userImages set? ", this.state.userImages);
 		console.log("[feeds js] componentDidUpdate - is followedImages set? ", this.state.followedImages);
 		console.log("[feeds js] componentDidUpdate - is feedImagesArray set? ", this.state.feedImagesArray);
+
+		if( this.state.imageIdToDelete === null && this.state.userImages !== null && this.state.followedImages !== null && this.state.feedImagesArray === null ){
+			console.log("[feeds js] componentDidUpdate - state update!");
+			this.setState({
+				feedImagesArray: [...this.state.userImages, ...this.state.followedImages ],
+				areImagesLoaded: true
+			});
+		}
 		// if(!this.state.imageIdToDelete && this.state.userImages && this.state.followedImages && this.state.feedImagesArray.length === 0){
 		// 	console.log("[feeds js] componentDidUpdate - state update!");
 		// 	this.setState({
@@ -426,14 +434,15 @@ class FeedsScreen extends Component {
 
 	render() {
 		console.log('[feeds js] render - Role of user at onImageDelete:', this.state.role);
+		console.log('[feeds js] render - feedImagesArray:', this.state.feedImagesArray);
 		let gallery = (<Spinner/>);
 		let imagePickerButton;
 		let logoutLoader = (
 			<Button transparent onPress={this.onLogoutHandler}>
 				<Icon name='home' />
 			</Button>);
-		console.log('[feeds js] render - feedImagesArray length:', this.state.feedImagesArray.length) 
-		if(this.state.areImagesLoaded){
+		
+		if(this.state.feedImagesArray && this.state.areImagesLoaded){
 			if (this.state.feedImagesArray.length > 0) {
 				gallery = (<Gallery
 					images={this.state.feedImagesArray}
