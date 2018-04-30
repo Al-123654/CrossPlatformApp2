@@ -47,7 +47,9 @@ class FeedsScreen extends Component {
 			 disableButtonLogout: false,
 			 isLoggedOut: false,
 			 role: props.navigation.state.params.data.role,
-			 imageIdToDelete : props.navigation.state.params.imageIdToDelete ?  props.navigation.state.params.imageIdToDelete : null
+			 imageIdToDelete : props.navigation.state.params.imageIdToDelete ?  props.navigation.state.params.imageIdToDelete : null,
+			 userImages: null,
+			 followedImages: null
 		}
 		console.log('[feeds js] constructor - Current states:', this.state);
 	}
@@ -66,17 +68,24 @@ class FeedsScreen extends Component {
 			console.log("[feeds js] componentDidMount - imageIdToDelete: ", this.state.imageIdToDelete);
 			this.onImageDelete(this.state.imageIdToDelete);
 		}else{
-			let userImagesArray = this.getUserImages();
-			console.log('[feeds js] componentDidMount - userImagesArray: ', userImagesArray);
-
-			let followedImagesArray = this.getFollowedImages();
-			console.log('[feeds js] componentDidMount - followedImagesArray: ', followedImagesArray);
-
-			this.setState({
-				feedImagesArray: [...userImagesArray, ...followedImagesArray],
-				areImagesLoaded: true,
-			});
+			this.getUserImages();
+			this.getFollowedImages();
 		}
+	}
+
+	// TODO: logic for updating feedImagesArray
+	componentDidUpdate(prevProps, prevState){
+		console.log("[feeds js] componentDidUpdate - is imageIdToDelete set? ", this.state.imageIdToDelete);
+		console.log("[feeds js] componentDidUpdate - is userImages set? ", this.state.userImages);
+		console.log("[feeds js] componentDidUpdate - is followedImages set? ", this.state.followedImages);
+		console.log("[feeds js] componentDidUpdate - is feedImagesArray set? ", this.state.feedImagesArray);
+		// if(!this.state.imageIdToDelete && this.state.userImages && this.state.followedImages && this.state.feedImagesArray.length === 0){
+		// 	console.log("[feeds js] componentDidUpdate - state update!");
+		// 	this.setState({
+		// 		feedImagesArray: [...this.state.userImages, ...this.state.followedImages ],
+		// 		areImagesLoaded: true
+		// 	});
+		// }
 	}
 
 	onImageDelete = (imageId) => {
@@ -179,7 +188,7 @@ class FeedsScreen extends Component {
 			}
 		}
 		console.log("[feeds js] getUserImages - userImagesArray: ", userImagesArray);
-		return [...userImagesArray];
+		this.setState({userImages: [...userImagesArray]});
 	}
 
 	getFollowedImages(){
@@ -189,7 +198,7 @@ class FeedsScreen extends Component {
 			// 0 FOLLOWED
 			console.log("[feeds js] getFollowedImages - 0 FOLLOWED");
 			console.log('[feeds js] getFollowedImages - followedImagesArray:', followedImagesArray);
-			return [...followedImagesArray];
+			this.setState({followedImages: [...followedImagesArray]});
 		} else if (this.state.followed.length === 1) {
 			// ONE FOLLOWED
 			console.log('[feeds js] getFollowedImages - 1 FOLLOWED: ', this.state.followed);
@@ -208,7 +217,7 @@ class FeedsScreen extends Component {
 					} else {
 						console.log('[feeds js] getFollowedImages - No images from follow')
 					}
-					return [...followedImagesArray];
+					this.setState({followedImages: [...followedImagesArray]});
 				})
 				.catch(error => console.log('[feeds js] getFollowedImages - ONE followed fetch error: ', error));
 		} else if (this.state.followed.length > 1) {
@@ -241,8 +250,7 @@ class FeedsScreen extends Component {
 							followedImagesArray = [...followedImagesArray, ...followedUser.images];
 						}
 					});
-					
-					return [...followedImagesArray];
+					this.setState({followedImages: [...followedImagesArray]});
 					
 				})
 				.catch(error => console.log('[feeds js] getFollowedImages - MULTIPLE followed fetch error: ', error));
