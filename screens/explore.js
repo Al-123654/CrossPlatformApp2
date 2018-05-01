@@ -276,76 +276,6 @@ class ExploreScreen extends Component {
 				</List>
 			);
 		}
-		// if(this.state.listOfUsers){
-
-		// 	if(this.state.listOfUsers.length >= 1){
-		// 		// copy list of users from state
-		// 		let listOfUsersCopy = [...this.state.listOfUsers];
-		// 		let currentlyFollowingList = [];
-
-		// 		// remove currently logged in user from list if full list
-		// 		let indexToRemove = "";
-		// 		listOfUsersCopy.forEach((user,index)=>{
-		// 			if(user._id === this.state.passedUserId){
-		// 				console.log("[explore js] Found a match at index: ", index);
-		// 				indexToRemove = index;
-		// 				// save currently following list
-		// 				console.log("[explore js] Following list: ", user.following);
-		// 				currentlyFollowingList = [...user.following];
-		// 			}	
-		// 		});
-
-		// 		console.log("[explore js] indexToRemove type: ", typeof indexToRemove);
-		// 		if(typeof indexToRemove == 'number'){
-		// 			listOfUsersCopy.splice(indexToRemove, 1);
-		// 		}else {
-		// 			// TODO: save currently following list
-		// 			console.log("[explore js] Following list: ", this.state.currentUserDetails.following);
-		// 			currentlyFollowingList = [...this.state.currentUserDetails.following];
-		// 		}
-
-		// 		console.log("[explore js] Currently following: ", currentlyFollowingList);
-
-		// 		// loop through list of users
-		// 		for (var i = 0; i < listOfUsersCopy.length; i++) {
-		// 			console.log('[explore js] ID lisOfUsersCopy: ', listOfUsersCopy[i]._id );
-		// 			for (var j = 0; j < currentlyFollowingList.length; j++) {
-		// 				console.log('[explore js] ID currentlyFollowingList: ', currentlyFollowingList[j] );
-		// 				if (listOfUsersCopy[i]._id == currentlyFollowingList[j]) {
-		// 					console.log('[explore js] Found a match!');
-		// 					listOfUsersCopy[i].isFollowed = true;
-		// 				}
-		// 			}
-		// 		}
-
-		// 		console.log("[explore js] List of Users after looping: ", listOfUsersCopy);
-		// 		listOfUsers = (
-		// 			<List dataArray = {listOfUsersCopy}
-		// 				renderRow={(item) =>
-		// 					<ListItem icon>
-		// 						<Left>
-		// 							<Icon name="ios-person-outline" onPress={() => console.log("Clicked person icon!")} />
-		// 						</Left>
-		// 						<Body>
-		// 							<Text>{item.username}</Text>
-		// 						</Body>
-		// 						<Right>
-		// 							<Button bordered primary small
-		// 								onPress={() => this.onListItemPressed(item._id, this.state.passedUserId)}
-		// 								>
-		// 								<Text>{item.isFollowed ? 'Unfollow' : 'Follow'}</Text>
-		// 							</Button>
-		// 						</Right>
-		// 					</ListItem>
-		// 				}>
-		// 			</List>
-		// 		);
-		// 	}else{
-		// 		listOfUsers = (
-		// 			<Text>No users found!</Text>
-		// 		);
-		// 	}		
-		// }
 
 		return(    
             <Container>
@@ -381,7 +311,6 @@ class ExploreScreen extends Component {
 					</Grid>
                 </Content>
             </Container>
-				
 		);
     }
 }
