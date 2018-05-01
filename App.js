@@ -16,6 +16,7 @@ var FeedsScreen = require('./screens/feeds.js');
 var ImageScreen = require('./screens/images.js');
 var ExploreScreen = require('./screens/explore.js');
 var ProfileScreen = require('./screens/profile.js')
+var UserScreen = require('./screens/user.js')
 
 class HomeScreen extends Component {
 
@@ -220,6 +221,13 @@ const RootStack = StackNavigator(
 		},
 		Profile:{
 			screen:ProfileScreen,
+			navigationOptions:{
+				header:null,
+				gesturesEnabled: false
+			}
+		},
+		User:{
+			screen:UserScreen,
 			navigationOptions:{
 				header:null,
 				gesturesEnabled: false
