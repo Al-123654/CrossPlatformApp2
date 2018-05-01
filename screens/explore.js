@@ -222,6 +222,30 @@ class ExploreScreen extends Component {
 		.catch(err=>console.log('[explore js] onListItemPressed - error: ', err));
 	}
 
+	onUserPagePress = (itemId, itemFname, itemLname, itemImages, itemUsername, itemFollowing) => {
+
+		console.log('[explore js] Testing onUserPagePress');
+		console.log('[explore js] item._id: ', itemId);
+		console.log('[explore js] item.fname: ', itemFname);
+		console.log('[explore js] item.lname: ', itemLname);
+		console.log('[explore js] item.images: ', itemImages);
+		console.log('[explore js] item.username: ', itemUsername);
+		console.log('[explore js] item.following: ', itemFollowing);
+
+
+		this.props.navigation.navigate({
+			key: 'UserPage1', routeName: 'User', params: {
+				userId: itemId,
+				fname: itemFname,
+				lname: itemLname,
+				images: itemImages,
+				username: itemUsername,
+				following: itemFollowing
+			}
+		});
+
+	}
+
     render() {
 
 		let jsxList = null;
@@ -259,7 +283,7 @@ class ExploreScreen extends Component {
 					renderRow={(item) =>
 						<ListItem icon>
 							<Left>
-								<Icon name="ios-person-outline" onPress={() => console.log("Clicked person icon!")} />
+								<Icon name="ios-person-outline" onPress={() => this.onUserPagePress(item._id, item.fname, item.lname, item.images, item.username, item.following)} />
 							</Left>
 							<Body>
 								<Text>{item.username}</Text>
