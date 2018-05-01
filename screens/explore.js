@@ -9,7 +9,7 @@ import {
 	Container, Header, Left, Body, Right, Icon, 
 	Title, Content, Text, Button, Item, Input, 
 	Form, Label, Thumbnail, Card, CardItem, ListItem, 
-	List, Toast 
+	List, Toast, Spinner 
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
@@ -23,7 +23,7 @@ class ExploreScreen extends Component {
 	constructor(props) {
 		super(props);
 		//TODO: check if props.navigation.state.params exists
-		console.log('[images js] constructor - passedParams: ', props.navigation.state.params);
+		console.log('[explore js] constructor - passedParams: ', props.navigation.state.params);
 
 		// initialize state
 		this.state = {
@@ -31,19 +31,112 @@ class ExploreScreen extends Component {
 			listOfUsers: null,
 			passedUserId: props.navigation.state.params.currentUserId,
 			currentUserDetails: null,
-			log: "",
-			listLoadedCount: 0
+			isListLoading: false
 		};
 
-		// logs
-		console.log('[images js] constructor - After init.');
-		console.log('[images js] constructor - listOfUsers: ', this.state.listOfUsers);
-		console.log('[images js] constructor - passedUserId: ', this.state.passedUserId);
-		console.log('[images js] constructor - log: ', this.state.log);
+		console.log('[explore js] constructor - State after init: ', this.state);
 	}
 	
 	componentDidMount(){
 		this.fetchCurrentUser();
+	}
+
+	componentDidUpdate(prevProps, prevState){
+		console.log("[explore js] componentDidUpdate!");
+		console.log("[explore js] componentDidUpdate - prevState: ", prevState);
+		console.log("[explore js] componentDidUpdate - curState: ", this.state);
+		if(this.state.listOfUsers === null && this.state.currentUserDetails === null){
+			this.fetchCurrentUser();
+			this.fetchUsers();
+		}
+	}
+
+	fetchCurrentUser = () => {
+		console.log("[explore js] fetchCurrentUser");
+		fetch(GET_USERS_URI + '/' + this.state.passedUserId)
+			.then(response => {
+				console.log("[explore js] fetchCurrentUser - Response from api: ", response);
+				if (response.status !== 200) {
+					Toast.show({
+						text: 'Lookup failed!',
+						buttonText: 'Ok',
+						position: 'top',
+						duration: 2000
+					});
+					return;
+				}
+
+				// if fetch ok
+				response.json().then(respObj => {
+					console.log('[explore js] fetchCurrentUser - Response object: ', respObj);
+					console.log('[explore js] fetchCurrentUser - Lookup ok!!!');
+
+					if(respObj){
+						this.setState({currentUserDetails: respObj});
+					}
+				});
+			})
+			.catch(error => console.log("[explore js] fetchCurrentUser - Error fetching search results: ", error));
+	}
+
+	fetchUsers = () => {
+		console.log("[explore js] fetchUsers!");
+		if(this.state.searchTerm){
+			fetch(GET_USERS_URI + '/?username=' + this.state.searchTerm)
+			.then(response => {
+				console.log("[explore js] fetchUsers - Response from api: ", response);
+				if (response.status !== 200) {
+					Toast.show({
+						text: 'Search failed!',
+						buttonText: 'Ok',
+						position: 'top',
+						duration: 2000
+					});
+					return;
+				}
+
+				// if fetch ok
+				response.json().then(respObj => {
+					console.log('[explore js] fetchUsers - Response object: ', respObj);
+					console.log('[explore js] fetchUsers - Search ok!!!');
+					console.log('[explore js] fetchUsers - Response object data: ', respObj.data);
+
+					// check data contents
+					if(respObj.data){
+						if(respObj.data.length === 0){
+							// if no results
+							this.setState({
+								listOfUsers: [],
+								isListLoading: false
+							});
+						}else{
+							// if more than one results
+							this.setState({
+								listOfUsers: respObj.data,
+								isListLoading: false
+							});
+						}
+					}
+				});
+			})
+			.catch(error => console.log("[explore js] fetchUsers - Error fetching search results: ", error));
+		}
+	}
+
+	onChangedSearchHandler = (text) => {
+		if(text && text.length >= 1){
+			console.log('[explore js] onChangedSearchHandler - text in searchbox: ', text);
+			this.setState({searchTerm: text});
+		}
+	}
+
+	onSubmitSearchHandler = () => {
+		console.log("[explore js] onSubmitSearchHandler - Clicked search btn.");
+		this.setState({
+			listOfUsers : null,
+			isListLoading: true
+		});
+		this.fetchUsers();
 	}
 
 	onBackBtnPressed = () => {
@@ -97,9 +190,9 @@ class ExploreScreen extends Component {
 	}
 
 	onListItemPressed = (itemId, userId) => {
-		console.log('[explore js] onListItemPressed itemID: ', itemId);
-		console.log('[explore js] onListItemPressed itemID type: ', typeof itemId);
-		console.log('[explore js] onListItemPressed userID: ', userId);
+		console.log('[explore js] onListItemPressed - itemID: ', itemId);
+		console.log('[explore js] onListItemPressed - itemID type: ', typeof itemId);
+		console.log('[explore js] onListItemPressed - userID: ', userId);
 
 		return fetch(GET_USERS_URI,
 		{
@@ -112,178 +205,147 @@ class ExploreScreen extends Component {
 			})
 		})
 		.then(response=>{
-			console.log('[explore js] onListItemPressed response: ', response);
+			console.log('[explore js] onListItemPressed - response: ', response);
 			if(response.status !== 200){
-				console.log('[explore js] onListItemPressed bad response: ', response);
+				console.log('[explore js] onListItemPressed - bad response: ', response);
 				return;
 			}
 			response.json().then(data=>{
-				console.log('[explore js] onListItemPressed json response: ', data);
-				this.fetchUsers();
+				console.log('[explore js] onListItemPressed - json response: ', data);
+				this.setState({
+					listOfUsers : null,
+					currentUserDetails: null,
+					isListLoading: true
+				});
 			});
 		})
-		.catch(err=>console.log('[explore js] onListItemPressed error: ', err));
-	}
-
-	onChangedSearchHandler = (text) => {
-		if(text && text.length >= 1){
-			console.log('[explore js] text in searchbox: ', text);
-			console.log('[explore js] Save text into state! ');
-			this.setState({searchTerm: text});
-		}
-	}
-
-	onSubmitSearchHandler = () => {
-		console.log("[explore js] Clicked search btn onSubmitSearchHandler!");
-		this.fetchUsers();
-	}
-
-	fetchUsers = () => {
-		console.log("[explore js] In fetchUsers!");
-		if(this.state.searchTerm){
-			fetch(GET_USERS_URI + '/?username=' + this.state.searchTerm)
-			.then(response => {
-				console.log("[explore js] Response from api: ", response);
-				if (response.status !== 200) {
-					Toast.show({
-						text: 'Search failed!',
-						buttonText: 'Ok',
-						position: 'top',
-						duration: 2000
-					});
-					return;
-				}
-
-				// if fetch ok
-				response.json().then(respObj => {
-					console.log('[explore js] Response object: ', respObj);
-					console.log('[explore js] Search ok!!!');
-					console.log('[explore js] Response object data: ', respObj.data);
-
-					// check data contents
-					if(respObj.data){
-						if(respObj.data.length === 0){
-							// if no results
-							this.setState({listOfUsers: []});
-						}else{
-							// if more than one results
-							this.setState({listOfUsers: respObj.data});
-						}
-					}
-				});
-			})
-			.catch(error => console.log("[explore js] Error fetching search results: ", error));
-		}
-	}
-
-	fetchCurrentUser = () => {
-		console.log("[explore js] fetchCurrentUser");
-		fetch(GET_USERS_URI + '/' + this.state.passedUserId)
-			.then(response => {
-				console.log("[explore js] fetchCurrentUser - Response from api: ", response);
-				if (response.status !== 200) {
-					Toast.show({
-						text: 'Lookup failed!',
-						buttonText: 'Ok',
-						position: 'top',
-						duration: 2000
-					});
-					return;
-				}
-
-				// if fetch ok
-				response.json().then(respObj => {
-					console.log('[explore js] fetchCurrentUser - Response object: ', respObj);
-					console.log('[explore js] fetchCurrentUser - Lookup ok!!!');
-
-					if(respObj){
-						this.setState({currentUserDetails: respObj});
-					}
-				});
-			})
-			.catch(error => console.log("[explore js] fetchCurrentUser - Error fetching search results: ", error));
+		.catch(err=>console.log('[explore js] onListItemPressed - error: ', err));
 	}
 
     render() {
 
-		let listOfUsers = (<Text>Search for users</Text>);
-		if(this.state.listOfUsers){
+		let jsxList = null;
+		if(this.state.isListLoading) {
+			jsxList = (<Spinner />);
+		}
 
-			if(this.state.listOfUsers.length >= 1){
-				// copy list of users from state
-				let listOfUsersCopy = [...this.state.listOfUsers];
-				let currentlyFollowingList = [];
+		if(this.state.listOfUsers !== null && this.state.currentUserDetails !== null){
+			console.log("[explore js] render - listOfUsers: ", this.state.listOfUsers);
+			console.log("[explore js] render - currentUserDetails: ", this.state.currentUserDetails);
+			console.log("[explore js] render - followingList: ", this.state.currentUserDetails.following);
 
-				// remove currently logged in user from list if full list
-				let indexToRemove = "";
-				listOfUsersCopy.forEach((user,index)=>{
-					if(user._id === this.state.passedUserId){
-						console.log("[explore js] Found a match at index: ", index);
-						indexToRemove = index;
-						// save currently following list
-						console.log("[explore js] Following list: ", user.following);
-						currentlyFollowingList = [...user.following];
-					}	
-				});
+			let listOfUsersCopy = [...this.state.listOfUsers];
+			let followingList = [...this.state.currentUserDetails.following];
+			let isFollowedCount = 0;
 
-				console.log("[explore js] indexToRemove type: ", typeof indexToRemove);
-				if(typeof indexToRemove == 'number'){
-					listOfUsersCopy.splice(indexToRemove, 1);
-				}else {
-					// TODO: save currently following list
-					console.log("[explore js] Following list: ", this.state.currentUserDetails.following);
-					currentlyFollowingList = [...this.state.currentUserDetails.following];
-				}
-
-				console.log("[explore js] Currently following: ", currentlyFollowingList);
-
-				// loop through list of users
-				for (var i = 0; i < listOfUsersCopy.length; i++) {
-					console.log('[explore js] ID lisOfUsersCopy: ', listOfUsersCopy[i]._id );
-					for (var j = 0; j < currentlyFollowingList.length; j++) {
-						console.log('[explore js] ID currentlyFollowingList: ', currentlyFollowingList[j] );
-						if (listOfUsersCopy[i]._id == currentlyFollowingList[j]) {
-							console.log('[explore js] Found a match!');
-							listOfUsersCopy[i].isFollowed = true;
-						}
+			// loop through list of users, comparing ids with following list
+			for (var i = 0; i < listOfUsersCopy.length; i++) {
+				console.log('[explore js] render - ID lisOfUsersCopy: ', listOfUsersCopy[i]._id );
+				for (var j = 0; j < followingList.length; j++) {
+					console.log('[explore js] render - ID followingList: ', followingList[j] );
+					if (listOfUsersCopy[i]._id == followingList[j]) {
+						console.log('[explore js] render - Found a match!');
+						listOfUsersCopy[i].isFollowed = true;
+						isFollowedCount++;
 					}
 				}
+			}
 
-				console.log("[explore js] List of Users after looping: ", listOfUsersCopy);
-				listOfUsers = (
-					<List dataArray = {listOfUsersCopy}
-						renderRow={(item) =>
-							// <ListItem 
-							// 	style={styles.listItem}
-							// 	button 
-							// 	onPress={() => this.onListItemPressed(item._id, this.state.passedUserId)}>
-							// 	<Text style={{color:'#007594'}}>{item.username}</Text>
-							// 	<Text style={{color:'#000000',fontSize:12}}>{item.isFollowed ? 'Unfollow' : 'Follow'}</Text>
-							// </ListItem>
-							<ListItem icon>
-								<Left>
-									<Icon name="ios-person-outline" onPress={() => console.log("Clicked person icon!")} />
-								</Left>
-								<Body>
-									<Text>{item.username}</Text>
-								</Body>
-								<Right>
-									<Button bordered primary small
-										onPress={() => this.onListItemPressed(item._id, this.state.passedUserId)}
-										>
-										<Text>{item.isFollowed ? 'Unfollow' : 'Follow'}</Text>
-									</Button>
-								</Right>
-							</ListItem>
-						}>
-					</List>
-				);
-			}else{
-				listOfUsers = (
-					<Text>No users found!</Text>
-				);
-			}		
+			console.log("[explore js] render - listOfUsersCopy after for loop: ", listOfUsersCopy);
+			console.log("[explore js] render - isFollowedCount: ", isFollowedCount);
+
+			jsxList = (
+				<List dataArray = {listOfUsersCopy}
+					renderRow={(item) =>
+						<ListItem icon>
+							<Left>
+								<Icon name="ios-person-outline" onPress={() => console.log("Clicked person icon!")} />
+							</Left>
+							<Body>
+								<Text>{item.username}</Text>
+							</Body>
+							<Right>
+								<Button bordered primary small
+									onPress={() => this.onListItemPressed(item._id, this.state.passedUserId)}
+									>
+									<Text>{item.isFollowed ? 'Unfollow' : 'Follow'}</Text>
+								</Button>
+							</Right>
+						</ListItem>
+					}>
+				</List>
+			);
 		}
+		// if(this.state.listOfUsers){
+
+		// 	if(this.state.listOfUsers.length >= 1){
+		// 		// copy list of users from state
+		// 		let listOfUsersCopy = [...this.state.listOfUsers];
+		// 		let currentlyFollowingList = [];
+
+		// 		// remove currently logged in user from list if full list
+		// 		let indexToRemove = "";
+		// 		listOfUsersCopy.forEach((user,index)=>{
+		// 			if(user._id === this.state.passedUserId){
+		// 				console.log("[explore js] Found a match at index: ", index);
+		// 				indexToRemove = index;
+		// 				// save currently following list
+		// 				console.log("[explore js] Following list: ", user.following);
+		// 				currentlyFollowingList = [...user.following];
+		// 			}	
+		// 		});
+
+		// 		console.log("[explore js] indexToRemove type: ", typeof indexToRemove);
+		// 		if(typeof indexToRemove == 'number'){
+		// 			listOfUsersCopy.splice(indexToRemove, 1);
+		// 		}else {
+		// 			// TODO: save currently following list
+		// 			console.log("[explore js] Following list: ", this.state.currentUserDetails.following);
+		// 			currentlyFollowingList = [...this.state.currentUserDetails.following];
+		// 		}
+
+		// 		console.log("[explore js] Currently following: ", currentlyFollowingList);
+
+		// 		// loop through list of users
+		// 		for (var i = 0; i < listOfUsersCopy.length; i++) {
+		// 			console.log('[explore js] ID lisOfUsersCopy: ', listOfUsersCopy[i]._id );
+		// 			for (var j = 0; j < currentlyFollowingList.length; j++) {
+		// 				console.log('[explore js] ID currentlyFollowingList: ', currentlyFollowingList[j] );
+		// 				if (listOfUsersCopy[i]._id == currentlyFollowingList[j]) {
+		// 					console.log('[explore js] Found a match!');
+		// 					listOfUsersCopy[i].isFollowed = true;
+		// 				}
+		// 			}
+		// 		}
+
+		// 		console.log("[explore js] List of Users after looping: ", listOfUsersCopy);
+		// 		listOfUsers = (
+		// 			<List dataArray = {listOfUsersCopy}
+		// 				renderRow={(item) =>
+		// 					<ListItem icon>
+		// 						<Left>
+		// 							<Icon name="ios-person-outline" onPress={() => console.log("Clicked person icon!")} />
+		// 						</Left>
+		// 						<Body>
+		// 							<Text>{item.username}</Text>
+		// 						</Body>
+		// 						<Right>
+		// 							<Button bordered primary small
+		// 								onPress={() => this.onListItemPressed(item._id, this.state.passedUserId)}
+		// 								>
+		// 								<Text>{item.isFollowed ? 'Unfollow' : 'Follow'}</Text>
+		// 							</Button>
+		// 						</Right>
+		// 					</ListItem>
+		// 				}>
+		// 			</List>
+		// 		);
+		// 	}else{
+		// 		listOfUsers = (
+		// 			<Text>No users found!</Text>
+		// 		);
+		// 	}		
+		// }
 
 		return(    
             <Container>
@@ -314,7 +376,7 @@ class ExploreScreen extends Component {
 							</Button>
 						</Row>
 						<Row>
-							{listOfUsers}
+							{jsxList}
 						</Row>
 					</Grid>
                 </Content>
