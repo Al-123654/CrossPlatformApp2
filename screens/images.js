@@ -19,7 +19,7 @@ class ImageScreen extends Component{
 		super(props);
 		console.log('[images js] constructor - passedParams: ', props.navigation.state.params);
 		console.log('[images js] constructor - passedParams: userData ', props.navigation.state.params.userData);
-		console.log('[images js] constructor - passedParams: message ', props.navigation.state.params.userData.message);
+		// console.log('[images js] constructor - passedParams: message ', props.navigation.state.params.userData.message);
 		console.log('[images js] constructor - passedParams: imagesDisplayed ', props.navigation.state.params.imagesDisplayed);
 
 		// check if image favorited from serverside
