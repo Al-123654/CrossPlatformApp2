@@ -4,13 +4,21 @@ import { StackNavigator, NavigationActions } from 'react-navigation';
 import RNFetchBlob from 'react-native-fetch-blob';
 import {
     Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input,
-    Form, Label, Thumbnail, Footer, FooterTab, Tab, Tabs, TabHeading, Toast, ListItem
+    Form, Label, Thumbnail, Footer, FooterTab, Tab, Tabs, TabHeading, Toast, ListItem,
+    Spinner
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
+import Gallery from '../components/Gallery/Gallery';
+
 const ALL_USER_URI = 'https://app-api-testing.herokuapp.com/api/users?followedList=1&userid='
 const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout'
-;
+const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
+const GET_FOLLOWED_BY = 'https://app-api-testing.herokuapp.com/api/users?usersFollowing=1&userid='
+// const ALL_USER_URI = 'http://localhost:5000/api/users?followedList=1&userid='
+// const LOGOUT_URI = 'http://localhost:5000/logout'
+// const GET_USERS_URI = 'http://localhost:5000/api/users/';
+// const GET_FOLLOWED_BY = 'http://localhost:5000/api/users?usersFollowing=1&userid='
 
 
 class UserScreen extends Component{
@@ -25,21 +33,22 @@ class UserScreen extends Component{
             userId: props.navigation.state.params.userId,
             fname: props.navigation.state.params.fname,
             lname: props.navigation.state.params.lname,
-            images: props.navigation.state.params.images,
+            userImages: props.navigation.state.params.images,
             username:props.navigation.state.params.username,
-            following:props.navigation.state.params.following,
-            followedUsers:""
+            followedUsers: "",
+            followingUsers:"",
+            areImagesLoaded: false
         }
         console.log('States - UserId: ', this.state.userId);
         console.log('States - Fname: ', this.state.fname);
         console.log('States - Lname: ', this.state.lname);
-        console.log('States - Images: ', this.state.images);
+        console.log('States - User Images: ', this.state.userImages);
         console.log('States - Username: ', this.state.username);
-        console.log('States - Following: ', this.state.following);
     }
 
     componentDidMount =() => {
         this.displayFollowedUsername();
+        this.displayFollowingUsername();
     }
 
     onLogoutHandler = () => {
@@ -91,7 +100,7 @@ class UserScreen extends Component{
         this.props.navigation.goBack();
     }
 
-    displayFollowedUsername = () => {
+    displayFollowingUsername = () => {
         fetch(ALL_USER_URI + this.state.userId, {
             method:'GET',
             headers:{
@@ -111,49 +120,82 @@ class UserScreen extends Component{
             }
             // if fetch ok
             response.json().then(respObj => {
-                console.log('[user js] displayFollowedUsername - respObj:', respObj)
-                console.log('[user js] displayFollowedUsername - respObj.data:', respObj.data)
-                // this.setState({
-                //     following: respObj.data
-                // });
-                // console.log('[user js] displayFollowedUsername - respObj.data[0].username:', respObj.data[0].username)
-                // for(a = 0; a < respObj.data.length; a++){
-                //     console.log('[user js] displayFollowedUsername - respObj(array): ', respObj.data[a].username)
-                //     this.setState({
-                //         following:respObj.data[a].username
-                //     })
-                // }
+                console.log('[user js] displayFollowingUsername - respObj:', respObj)
+                console.log('[user js] displayFollowingUsername - respObj.data:', respObj.data)
                 this.setState({
-                    followedUsers: respObj.data
+                    followingUsers: respObj.data
                 })
                 
-            })
+            }).catch(error => console.error('Error: ', error));
+
+        })
+    }
+    displayFollowedUsername = () => {
+        fetch(GET_FOLLOWED_BY + this.state.userId, {
+            method:'GET',
+            headers:{
+                Accept:'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then(response => {
+           
+            if (response.status !== 200) {
+                Toast.show({
+                    text: 'Search failed!',
+                    buttonText: 'Ok',
+                    position: 'top',
+                    duration: 2000
+                });
+                return;
+            }
+            // if fetch ok
+            response.json().then(respObj => {
+                console.log('[user js] displayFollowedUsername - respObj:', respObj)
+                console.log('[user js] displayFollowedUsername - respObj.username:', respObj[0].username)
+                this.setState({
+                    followedUsers: respObj
+                })
+                
+            }).catch(error => console.error('Error: ', error));
 
         })
     }
 
-    render(){
-        let followedIDList = [];
-        // console.log("[user js] render - this.state.following: ", this.state.following);
-        console.log('[user js] render - followedUsers: ', this.state.followedUsers);
-        
-        if(this.state.followedUsers.length > 1){
-            followedIDList = this.state.followedUsers.map(followed => {
-                // console.log(followedId);
-                return (<ListItem key={followed._id}>
-                    <Body>
-                        <Text style={{ fontWeight: 'bold', fontSize: 13 }}> {followed.username}</Text>
-                    </Body>
-                </ListItem>
-                )
-                console.log('[user js] followedIDList: ', followedIDList);
+
+    onImageClicked = (imageId, passedId) => {
+        console.log("[feeds js] onImageClicked - imageId: ", imageId);
+        return fetch(GET_IMAGES_URI + imageId, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(response => {
+                console.log('[feeds js] onImageClicked - response from server: ', response);
+                this.props.navigation.navigate({
+                    key: 'Images1', routeName: 'Image', params: {
+                        data: response,
+                        userId: passedId,
+                        userData: this.props.navigation.state.params,
+                        imagesDisplayed: this.state.userImages
+                    }
+                })
             })
-        }else{
-            followedIDList = <Text>{this.state.following}</Text>
-        }
+            .catch(error => console.error('Error: ', error));
+    };
+
+    onImageLongClick = () => {
+        console.log('[user js] onImageLongClick!!')
+    }
+    render(){
+        console.log('[user js] render - this.state.userImages.length: ', this.state.userImages.length);
+        let gallery = (<Spinner />);
+        let followedIDList = []; 
+      
+
         
-        
-        // console.log('[user js] render - followedIDlist:', followedIDList);
         return(
             <Container>
                 <Header hasTabs>
@@ -185,11 +227,17 @@ class UserScreen extends Component{
                             <Text>{this.state.lname}</Text>
                         </Row>
                         <Row>
-                            <Label>Following</Label>
+                            <Label>No. of Following</Label>
                         </Row>
                         <Row>
-                            {/* <Text>{this.state.following}</Text> */}
-                         {followedIDList}
+                            <Text>{this.state.followingUsers.length}</Text>
+                         {/* {followedIDList} */}
+                        </Row>
+                        <Row>
+                            <Label>No. of followed</Label>
+                        </Row>
+                        <Row>
+                            <Text>{this.state.followedUsers.length}</Text>
                         </Row>
                         
 
