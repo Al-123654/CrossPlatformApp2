@@ -181,12 +181,21 @@ class FeedsScreen extends Component {
 				console.log(error);
 			});
 		} else {
+			// if role is not 2
+			
 			Toast.show({
 				text: 'Cannot delete, invalid role',
 				buttonText: 'OK',
 				position: 'top',
 				duration: 4000
-			})
+			});
+
+			if(this.state.imageIdToDelete){
+				this.setState({
+					imageIdToDelete: null,
+					areImagesLoaded: true
+				});
+			}
 		}
 	}
 
@@ -443,6 +452,7 @@ class FeedsScreen extends Component {
 	render() {
 		console.log('[feeds js] render - Role of user at onImageDelete:', this.state.role);
 		console.log('[feeds js] render - feedImagesArray:', this.state.feedImagesArray);
+		console.log('[feeds js] render - areImagesLoaded:', this.state.areImagesLoaded);
 		let gallery = (<Spinner/>);
 		let imagePickerButton;
 		let logoutLoader = (
@@ -471,9 +481,9 @@ class FeedsScreen extends Component {
 			)
 		}
 
-		if(!this.state.areImagesLoaded){
-			gallery = (<Spinner/>);
-		}
+		// if(!this.state.areImagesLoaded){
+		// 	gallery = (<Spinner/>);
+		// }
 
 		if(this.state.role == 2){
 			footers = (
