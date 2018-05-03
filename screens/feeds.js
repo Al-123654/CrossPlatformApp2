@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet, View, Image, Alert , TouchableOpacity, TouchableHighlight} from 'react-native';
+import { Platform, Dimensions, StyleSheet, View, Image, Alert , TouchableOpacity, TouchableHighlight} from 'react-native';
 import { StackNavigator, NavigationActions  } from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
 import { 
 	Container, Header, Left, Body, Right, Icon, 
 	Title, Content, Text, Button, Item, Input, 
-	Form, Label, Thumbnail, Footer, FooterTab, Spinner, Toast, Drawer
+	Form, Label, Thumbnail, Footer, FooterTab, Spinner, Toast, Drawer,
+	Card, CardItem
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import Gallery from '../components/Gallery/Gallery';
+import Carousel from 'react-native-snap-carousel';
 // import Sidebar from '../components/Sidebar/SidebarMenu';
 // import SidebarHeader from '../components/Sidebar/SidebarHeader'
 
@@ -49,10 +51,33 @@ class FeedsScreen extends Component {
 			role: props.navigation.state.params.data.role,
 			imageIdToDelete : props.navigation.state.params.imageIdToDelete ?  props.navigation.state.params.imageIdToDelete : null,
 			userImages: null,
-			followedImages: null
+			followedImages: null,
+			entries: [
+				{title:'Test 1'},
+				{title:'Test 2'},
+				{title:'Test 3'}
+			]
 		}
 		console.log('[feeds js] constructor - Current states:', this.state);
 	}
+
+	_renderItem ({item, index}) {
+        return (
+			<Card>
+				<CardItem header bordered>
+					<Text>NativeBase</Text>
+				</CardItem>
+				<CardItem bordered>
+					<Body>
+						<Text>{item.title}</Text>
+					</Body>
+				</CardItem>
+				<CardItem footer bordered>
+					<Text>GeekyAnts</Text>
+				</CardItem>
+			</Card>
+        );
+    }
 
 	closeDrawer = () => {
 		this.drawer._root.close()
@@ -531,7 +556,21 @@ class FeedsScreen extends Component {
 					</Right>
 				</Header>
 				<Content>
-					{gallery}
+					<Row><Text>Feeds</Text></Row>
+					<Row>
+						{gallery}
+					</Row>
+
+					<Row><Text>Restaurants</Text></Row>
+					<Row>
+						<Carousel
+							ref={(c) => { this._carousel = c; }}
+							data={this.state.entries}
+							renderItem={this._renderItem}
+							sliderWidth={Dimensions.get('window').width}
+							itemWidth={Dimensions.get('window').width * 0.85}
+						/>
+					</Row>
 				</Content>
 				{footers}
 			</Container>
@@ -543,7 +582,7 @@ const styles = StyleSheet.create({
     thumbnail: {
         width: 80,
         height: 80,
-    }
+	}
 });
 
 module.exports = FeedsScreen;
