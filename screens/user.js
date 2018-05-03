@@ -15,6 +15,7 @@ const ALL_USER_URI = 'https://app-api-testing.herokuapp.com/api/users?followedLi
 const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout'
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
 const GET_FOLLOWED_BY = 'https://app-api-testing.herokuapp.com/api/users?usersFollowing=1&userid='
+const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
 // const ALL_USER_URI = 'http://localhost:5000/api/users?followedList=1&userid='
 // const LOGOUT_URI = 'http://localhost:5000/logout'
 // const GET_USERS_URI = 'http://localhost:5000/api/users/';
@@ -37,7 +38,11 @@ class UserScreen extends Component{
             username:props.navigation.state.params.username,
             followedUsers: "",
             followingUsers:"",
-            areImagesLoaded: false
+            areImagesLoaded: false,
+            favImagesArray:[],
+            wishListArray:[],
+            craveListArray:[],
+            triedListArray:[],
         }
         console.log('States - UserId: ', this.state.userId);
         console.log('States - Fname: ', this.state.fname);
@@ -47,8 +52,12 @@ class UserScreen extends Component{
     }
 
     componentDidMount =() => {
-        this.displayFollowedUsername();
-        this.displayFollowingUsername();
+        this.displayFollowed();
+        this.displayFollowing();
+        this.getFavImages();
+        this.getCraveImages();
+        this.getTriedImages();
+        this.getWishImages();
     }
 
     onLogoutHandler = () => {
@@ -100,7 +109,7 @@ class UserScreen extends Component{
         this.props.navigation.goBack();
     }
 
-    displayFollowingUsername = () => {
+    displayFollowing = () => {
         fetch(ALL_USER_URI + this.state.userId, {
             method:'GET',
             headers:{
@@ -120,8 +129,8 @@ class UserScreen extends Component{
             }
             // if fetch ok
             response.json().then(respObj => {
-                console.log('[user js] displayFollowingUsername - respObj:', respObj)
-                console.log('[user js] displayFollowingUsername - respObj.data:', respObj.data)
+                console.log('[user js] displayFollowing - respObj:', respObj)
+                console.log('[user js] displayFollowing - respObj.data:', respObj.data)
                 this.setState({
                     followingUsers: respObj.data
                 })
@@ -130,7 +139,7 @@ class UserScreen extends Component{
 
         })
     }
-    displayFollowedUsername = () => {
+    displayFollowed = () => {
         fetch(GET_FOLLOWED_BY + this.state.userId, {
             method:'GET',
             headers:{
@@ -150,8 +159,8 @@ class UserScreen extends Component{
             }
             // if fetch ok
             response.json().then(respObj => {
-                console.log('[user js] displayFollowedUsername - respObj:', respObj)
-                console.log('[user js] displayFollowedUsername - respObj.username:', respObj[0].username)
+                console.log('[user js] displayFollowed - respObj:', respObj)
+                console.log('[user js] displayFollowed - respObj.username:', respObj[0].username)
                 this.setState({
                     followedUsers: respObj
                 })
@@ -189,6 +198,87 @@ class UserScreen extends Component{
     onImageLongClick = () => {
         console.log('[user js] onImageLongClick!!')
     }
+
+   getFavImages = () => {
+       return fetch(GET_USERS_URI + this.state.userId + '?fav=1', {
+           method: 'GET',
+           headers: {
+               Accept: 'application/json',
+               'Content-Type': 'application/json'
+           }
+       }).then(response => response.json())
+        .then(response => {
+            console.log('[user js] response from server:', response);
+
+            let tempFav = [];
+            response.favImages.forEach((image, index) => {
+                console.log('[user js] To push images into array:', image._id)
+                tempFav.push(image._id);
+            })
+            this.setState({ favImagesArray: [...tempFav] });
+            console.log('[user js] favImageArray check:', this.state.favImagesArray);
+           }).catch(error => console.error('Error:', error));
+   }
+   getWishImages = () => {
+       return fetch(GET_USERS_URI + this.state.userId + '?wish=1', {
+           method: 'GET',
+           headers: {
+               Accept: 'application/json',
+               'Content-Type': 'application/json'
+           }
+       }).then(response => response.json())
+        .then(response => {
+            console.log('[user js] response from server:', response);
+
+            let tempWish = [];
+            response.wishImages.forEach((image, index) => {
+                console.log('[user js] To push images into array:', image._id)
+                tempWish.push(image._id);
+            })
+            this.setState({ wishListArray: [...tempWish] });
+            console.log('[user js] WishImageArray check:', this.state.wishListArray);
+           }).catch(error => console.error('Error:', error));
+   }
+   getCraveImages = () => {
+       return fetch(GET_USERS_URI + this.state.userId + '?crave=1', {
+           method: 'GET',
+           headers: {
+               Accept: 'application/json',
+               'Content-Type': 'application/json'
+           }
+       }).then(response => response.json())
+        .then(response => {
+            console.log('[user js] response from server:', response);
+
+            let tempCrave = [];
+            response.craveImages.forEach((image, index) => {
+                console.log('[user js] To push images into array:', image._id)
+                tempCrave.push(image._id);
+            })
+            this.setState({ craveListArray: [...tempCrave] });
+            console.log('[user js] craveImageArray check:', this.state.craveListArray);
+           }).catch(error => console.error('Error:', error));
+   }
+   getTriedImages = () => {
+       return fetch(GET_USERS_URI + this.state.userId + '?tried=1', {
+           method: 'GET',
+           headers: {
+               Accept: 'application/json',
+               'Content-Type': 'application/json'
+           }
+       }).then(response => response.json())
+        .then(response => {
+            console.log('[user js] response from server:', response);
+
+            let tempTried = [];
+            response.triedImages.forEach((image, index) => {
+                console.log('[user js] To push images into array:', image._id)
+                tempTried.push(image._id);
+            })
+            this.setState({ triedListArray: [...tempTried] });
+            console.log('[user js] TriedImageArray check:', this.state.triedListArray);
+           }).catch(error => console.error('Error:', error));
+   }
     render(){
         console.log('[user js] render - this.state.userImages.length: ', this.state.userImages.length);
         let gallery = (<Spinner />);
@@ -238,6 +328,50 @@ class UserScreen extends Component{
                         </Row>
                         <Row>
                             <Text>{this.state.followedUsers.length}</Text>
+                        </Row>
+                        <Row>
+                            <Label>Favorite Images</Label>
+                        </Row>
+                        <Row>
+                            <Gallery
+                                images={this.state.favImagesArray}
+                                clicked={this.onImageClicked}
+                                longclick={this.onImageLongClick}
+                                passedUserId={this.state.userId}
+                            />
+                        </Row>
+                        <Row>
+                            <Label>Wishlist Images</Label>
+                        </Row>
+                        <Row>
+                            <Gallery
+                                images={this.state.wishListArray}
+                                clicked={this.onImageClicked}
+                                longclick={this.onImageLongClick}
+                                passedUserId={this.state.userId}
+                            />
+                        </Row>
+                        <Row>
+                            <Label>Crave Images</Label>
+                        </Row>
+                        <Row>
+                            <Gallery
+                                images={this.state.craveListArray}
+                                clicked={this.onImageClicked}
+                                longclick={this.onImageLongClick}
+                                passedUserId={this.state.userId}
+                            />
+                        </Row>
+                        <Row>
+                            <Label>Tried Images</Label>
+                        </Row>
+                        <Row>
+                            <Gallery
+                                images={this.state.triedListArray}
+                                clicked={this.onImageClicked}
+                                longclick={this.onImageLongClick}
+                                passedUserId={this.state.userId}
+                            />
                         </Row>
                         
 
