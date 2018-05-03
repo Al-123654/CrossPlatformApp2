@@ -160,7 +160,7 @@ class UserScreen extends Component{
             // if fetch ok
             response.json().then(respObj => {
                 console.log('[user js] displayFollowed - respObj:', respObj)
-                console.log('[user js] displayFollowed - respObj.username:', respObj[0].username)
+                
                 this.setState({
                     followedUsers: respObj
                 })
@@ -172,7 +172,7 @@ class UserScreen extends Component{
 
 
     onImageClicked = (imageId, passedId) => {
-        console.log("[feeds js] onImageClicked - imageId: ", imageId);
+        console.log("[user js] onImageClicked - imageId: ", imageId);
         return fetch(GET_IMAGES_URI + imageId, {
             method: 'GET',
             headers: {
@@ -182,7 +182,7 @@ class UserScreen extends Component{
         })
             .then(response => response.json())
             .then(response => {
-                console.log('[feeds js] onImageClicked - response from server: ', response);
+                console.log('[user js] onImageClicked - response from server: ', response);
                 this.props.navigation.navigate({
                     key: 'Images1', routeName: 'Image', params: {
                         data: response,
@@ -195,7 +195,7 @@ class UserScreen extends Component{
             .catch(error => console.error('Error: ', error));
     };
 
-    onImageLongClick = () => {
+    onImageLongClick = (imageId, passedId) => {
         console.log('[user js] onImageLongClick!!')
     }
 
@@ -208,15 +208,15 @@ class UserScreen extends Component{
            }
        }).then(response => response.json())
         .then(response => {
-            console.log('[user js] response from server:', response);
+            console.log('[user js] getFavImages - response from server:', response);
 
             let tempFav = [];
             response.favImages.forEach((image, index) => {
-                console.log('[user js] To push images into array:', image._id)
+                console.log('[user js] getFavImages - To push images into array:', image._id)
                 tempFav.push(image._id);
             })
             this.setState({ favImagesArray: [...tempFav] });
-            console.log('[user js] favImageArray check:', this.state.favImagesArray);
+            console.log('[user js] getFavImages - favImageArray check:', this.state.favImagesArray);
            }).catch(error => console.error('Error:', error));
    }
    getWishImages = () => {
@@ -281,11 +281,54 @@ class UserScreen extends Component{
    }
     render(){
         console.log('[user js] render - this.state.userImages.length: ', this.state.userImages.length);
-        let gallery = (<Spinner />);
-        let followedIDList = []; 
-      
+        let favGallery = (<Spinner />);
+        let wishGallery = (<Spinner />);
+        let craveGallery = (<Spinner />);
+        let triedGallery = (<Spinner />);
+        // let followedIDList = []; 
+        console.log('[user js] render - this.favImagesArray: ', this.state.favImagesArray)
+        if (this.state.favImagesArray.length >= 1){
+            favGallery =(<Gallery
+                images={this.state.favImagesArray}
+                clicked={this.onImageClicked}
+                longclick={this.onImageLongClick}
+                passedUserId={this.state.userId}
+            />)
+        }else{
+            favGallery = (<Text>No favorite images</Text>)
+        }
 
-        
+        if (this.state.wishListArray.length >= 1){
+            wishGallery = (<Gallery
+                images={this.state.wishListArray}
+                clicked={this.onImageClicked}
+                longclick={this.onImageLongClick}
+                passedUserId={this.state.userId}
+            />)
+        }else{
+            wishGallery =(<Text>No wishlist images</Text>)
+        }
+        if (this.state.craveListArray.length >= 1){
+            craveGallery = (<Gallery
+                images={this.state.craveListArray}
+                clicked={this.onImageClicked}
+                longclick={this.onImageLongClick}
+                passedUserId={this.state.userId}
+            />)
+        }else{
+            craveGallery =(<Text>No crave images</Text>)
+        }
+        if (this.state.triedListArray.length >= 1){
+            triedGallery = (<Gallery
+                images={this.state.triedListArray}
+                clicked={this.onImageClicked}
+                longclick={this.onImageLongClick}
+                passedUserId={this.state.userId}
+            />)
+        }else{
+            triedGallery =(<Text>No tried images</Text>)
+        }
+
         return(
             <Container>
                 <Header hasTabs>
@@ -333,45 +376,25 @@ class UserScreen extends Component{
                             <Label>Favorite Images</Label>
                         </Row>
                         <Row>
-                            <Gallery
-                                images={this.state.favImagesArray}
-                                clicked={this.onImageClicked}
-                                longclick={this.onImageLongClick}
-                                passedUserId={this.state.userId}
-                            />
+                           {favGallery}
                         </Row>
                         <Row>
                             <Label>Wishlist Images</Label>
                         </Row>
                         <Row>
-                            <Gallery
-                                images={this.state.wishListArray}
-                                clicked={this.onImageClicked}
-                                longclick={this.onImageLongClick}
-                                passedUserId={this.state.userId}
-                            />
+                            {wishGallery}
                         </Row>
                         <Row>
                             <Label>Crave Images</Label>
                         </Row>
                         <Row>
-                            <Gallery
-                                images={this.state.craveListArray}
-                                clicked={this.onImageClicked}
-                                longclick={this.onImageLongClick}
-                                passedUserId={this.state.userId}
-                            />
+                           {craveGallery}
                         </Row>
                         <Row>
                             <Label>Tried Images</Label>
                         </Row>
                         <Row>
-                            <Gallery
-                                images={this.state.triedListArray}
-                                clicked={this.onImageClicked}
-                                longclick={this.onImageLongClick}
-                                passedUserId={this.state.userId}
-                            />
+                            {triedGallery}
                         </Row>
                         
 
@@ -393,6 +416,7 @@ class UserScreen extends Component{
                     </FooterTab> */}
                 </Footer>
             </Container>
+            // <Text>User</Text>
         );
     };
 
