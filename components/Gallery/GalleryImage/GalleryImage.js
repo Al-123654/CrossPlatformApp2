@@ -29,14 +29,14 @@ export default class GalleryImage extends Component {
 				style={{
 					backgroundColor: 'transparent',
 					borderRadius: 0,
-					height: 80,
+					height: WIDTH / 3,
 					width: WIDTH / 3,
 				}}
 			>
 				<Image
 					source={ {uri: uri} }
 					style={{
-						height: 80,
+						height: WIDTH / 3,
 						left: 0,
 						position: 'absolute',
 						resizeMode: 'cover',
