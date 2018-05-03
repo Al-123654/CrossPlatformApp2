@@ -11,7 +11,7 @@ import {
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import Gallery from '../components/Gallery/Gallery';
-import Carousel from 'react-native-snap-carousel';
+import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
 // import Sidebar from '../components/Sidebar/SidebarMenu';
 // import SidebarHeader from '../components/Sidebar/SidebarHeader'
 
@@ -20,6 +20,7 @@ import Carousel from 'react-native-snap-carousel';
 // const GET_IMAGES_URI = 'http://localhost:5000/api/images/';
 // const LOGOUT_URI = 'http://localhost:5000/logout';
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
+const GET_RESTAURANT_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users?user=2';
 const GET_USERS_FOLLOWED_URI = 'https://app-api-testing.herokuapp.com/api/users?followed=1';
 const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
 const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
@@ -52,30 +53,61 @@ class FeedsScreen extends Component {
 			imageIdToDelete : props.navigation.state.params.imageIdToDelete ?  props.navigation.state.params.imageIdToDelete : null,
 			userImages: null,
 			followedImages: null,
-			entries: [
-				{title:'Test 1'},
-				{title:'Test 2'},
-				{title:'Test 3'}
-			]
+			restaurantUsers: null
 		}
 		console.log('[feeds js] constructor - Current states:', this.state);
+		this.fetchRestaurantUsers();
 	}
 
-	_renderItem ({item, index}) {
+	fetchRestaurantUsers = () => {
+		return fetch(GET_RESTAURANT_USERS_URI, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			}
+		}).then((response) => {
+			console.log('[feeds js] fetchRestaurantUsers - response: ', response);
+			if (response.status !== 200) {
+				console.log('[feeds js] fetchRestaurantUsers - bad response: ', response);
+				Toast.show({
+					text: 'Cannot fetch restaurants',
+					buttonText: 'Ok',
+					position: 'top',
+					duration: 2000
+				});
+				return;
+			}
+			response.json().then(data => {
+				console.log('[feeds js] fetchRestaurantUsers - json response: ', data);
+				Toast.show({
+					text: 'Fetched restaurants',
+					buttonText: 'Ok',
+					position: 'top',
+					duration: 2000
+				});
+				this.setState({ restaurantUsers: [...data] });
+			});
+		}).catch((error) => {
+			console.log('[feeds js] fetchRestaurantUsers - error: ', error);
+		});
+	}
+
+	_renderItem ({item, index}, parallaxProps) {
         return (
-			<Card>
-				<CardItem header bordered>
-					<Text>NativeBase</Text>
-				</CardItem>
-				<CardItem bordered>
-					<Body>
-						<Text>{item.title}</Text>
-					</Body>
-				</CardItem>
-				<CardItem footer bordered>
-					<Text>GeekyAnts</Text>
-				</CardItem>
-			</Card>
+			<View style={styles.item}>
+				<TouchableOpacity onPress={() => console.log("[feeds js] _renderItem - Clicked carousel item!")}>
+					<ParallaxImage
+						source={{ uri: GET_IMAGES_URI + item.images[0] + '/display' }}
+						containerStyle={styles.imageContainer}
+						style={styles.image}
+						parallaxFactor={0.2}
+						{...parallaxProps} />
+				</TouchableOpacity>
+				<Text style={styles.title} numberOfLines={2}>
+					{ item.username }
+				</Text>
+			</View>
         );
     }
 
@@ -506,10 +538,6 @@ class FeedsScreen extends Component {
 			)
 		}
 
-		// if(!this.state.areImagesLoaded){
-		// 	gallery = (<Spinner/>);
-		// }
-
 		if(this.state.role == 2){
 			footers = (
 				<Footer>
@@ -546,6 +574,21 @@ class FeedsScreen extends Component {
 				</Footer>
 			)
 		}
+
+		// carousel display
+		let carousel = (<Spinner/>);
+		if(this.state.restaurantUsers){
+			carousel = (
+				<Carousel
+					ref={(c) => { this._carousel = c; }}
+					data={this.state.restaurantUsers}
+					renderItem={this._renderItem}
+					sliderWidth={Dimensions.get('window').width}
+					itemWidth={Dimensions.get('window').width * 0.85}
+					hasParallaxImages={true}
+				/>
+			);
+		}
        
         return (
 			<Container>
@@ -563,13 +606,7 @@ class FeedsScreen extends Component {
 
 					<Row><Text>Restaurants</Text></Row>
 					<Row>
-						<Carousel
-							ref={(c) => { this._carousel = c; }}
-							data={this.state.entries}
-							renderItem={this._renderItem}
-							sliderWidth={Dimensions.get('window').width}
-							itemWidth={Dimensions.get('window').width * 0.85}
-						/>
+						{carousel}
 					</Row>
 				</Content>
 				{footers}
@@ -582,6 +619,26 @@ const styles = StyleSheet.create({
     thumbnail: {
         width: 80,
         height: 80,
+	},
+	title: {
+		position: 'absolute',
+		bottom: 0,
+		left: 0,
+		backgroundColor: 'rgba(0, 0, 0, 0.4)',
+		zIndex: 999,
+		color: '#fff',
+		width: '100%',
+		padding: 10
+	},
+	imageContainer: {
+		width: '100%',
+		height: 250,
+		flex: 1,
+		position: 'relative'
+	},
+	image: {
+		width: '100%',
+		height: 100
 	}
 });
 
