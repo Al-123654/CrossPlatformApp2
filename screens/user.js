@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet, View, Image, Alert, TouchableOpacity, TouchableHighlight } from 'react-native';
+import { Platform, StyleSheet, View, Image, Alert, TouchableOpacity, TouchableHighlight, Dimensions } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import RNFetchBlob from 'react-native-fetch-blob';
 import {
@@ -8,6 +8,7 @@ import {
     Spinner
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
+import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
 
 import Gallery from '../components/Gallery/Gallery';
 
@@ -171,7 +172,7 @@ class UserScreen extends Component{
     }
 
 
-    onImageClicked = (imageId, passedId) => {
+    onImageClicked = (imageId) => {
         console.log("[user js] onImageClicked - imageId: ", imageId);
         return fetch(GET_IMAGES_URI + imageId, {
             method: 'GET',
@@ -186,7 +187,7 @@ class UserScreen extends Component{
                 this.props.navigation.navigate({
                     key: 'Images1', routeName: 'Image', params: {
                         data: response,
-                        userId: passedId,
+                        userId: this.props.navigation.state.params._id,
                         userData: this.props.navigation.state.params,
                         imagesDisplayed: this.state.userImages
                     }
@@ -194,6 +195,29 @@ class UserScreen extends Component{
             })
             .catch(error => console.error('Error: ', error));
     };
+    // onImageClicked = (imageId, passedId) => {
+    //     console.log("[user js] onImageClicked - imageId: ", imageId);
+    //     return fetch(GET_IMAGES_URI + imageId, {
+    //         method: 'GET',
+    //         headers: {
+    //             Accept: 'application/json',
+    //             'Content-Type': 'application/json'
+    //         }
+    //     })
+    //         .then(response => response.json())
+    //         .then(response => {
+    //             console.log('[user js] onImageClicked - response from server: ', response);
+    //             this.props.navigation.navigate({
+    //                 key: 'Images1', routeName: 'Image', params: {
+    //                     data: response,
+    //                     userId: passedId,
+    //                     userData: this.props.navigation.state.params,
+    //                     imagesDisplayed: this.state.userImages
+    //                 }
+    //             })
+    //         })
+    //         .catch(error => console.error('Error: ', error));
+    // };
 
     onImageLongClick = (imageId, passedId) => {
         console.log('[user js] onImageLongClick!!')
@@ -279,54 +303,98 @@ class UserScreen extends Component{
             console.log('[user js] TriedImageArray check:', this.state.triedListArray);
            }).catch(error => console.error('Error:', error));
    }
-    render(){
-        console.log('[user js] render - this.state.userImages.length: ', this.state.userImages.length);
-        let favGallery = (<Spinner />);
-        let wishGallery = (<Spinner />);
-        let craveGallery = (<Spinner />);
-        let triedGallery = (<Spinner />);
-        // let followedIDList = []; 
-        console.log('[user js] render - this.favImagesArray: ', this.state.favImagesArray)
-        if (this.state.favImagesArray.length >= 1){
-            favGallery =(<Gallery
-                images={this.state.favImagesArray}
-                clicked={this.onImageClicked}
-                longclick={this.onImageLongClick}
-                passedUserId={this.state.userId}
-            />)
-        }else{
-            favGallery = (<Text>No favorite images</Text>)
-        }
 
-        if (this.state.wishListArray.length >= 1){
-            wishGallery = (<Gallery
-                images={this.state.wishListArray}
-                clicked={this.onImageClicked}
-                longclick={this.onImageLongClick}
-                passedUserId={this.state.userId}
-            />)
+    _renderItem({ item, index }, parallaxProps) {
+        console.log('[user js] _renderItem - item', item)
+        // console.log('[user js] _renderItem - this.state.userId', this.state.userId)
+        return (
+            <View style={styles.item}>  
+                <TouchableOpacity onPress={() => this.onImageClicked(item)}>
+                {/* <TouchableOpacity onPress={() => console.log("[user js] _renderItem - Clicked carousel item!")}> */}
+                    <ParallaxImage
+                        source={{ uri: GET_IMAGES_URI + item + '/display' }}
+                        containerStyle={styles.imageContainer}
+                        style={styles.image}
+                        parallaxFactor={0.2}
+                        {...parallaxProps} />
+                </TouchableOpacity>
+                <Text style={styles.title} numberOfLines={2}>
+                    {item.username}
+                </Text>
+            </View>
+        );
+        console.log('[user js] _renderItem -  item :', item)
+    }
+
+    render(){
+        // carousel display
+        let favCarousel = (<Spinner />);
+        let wishCarousel = (<Spinner />);
+        let craveCarousel = (<Spinner />);
+        let triedCarousel = (<Spinner />);
+        if (this.state.favImagesArray.length >= 1) {
+            favCarousel = (
+                <Carousel
+                    ref={(c) => { this._carousel = c; }}
+                    data={this.state.favImagesArray}
+                    renderItem={this._renderItem.bind(this)}
+                    sliderWidth={Dimensions.get('window').width}
+                    itemWidth={Dimensions.get('window').width * 0.85}
+                    hasParallaxImages={true}
+                />
+            );
         }else{
-            wishGallery =(<Text>No wishlist images</Text>)
+            favCarousel = (
+                <Text>No favorite images</Text>
+            )
         }
-        if (this.state.craveListArray.length >= 1){
-            craveGallery = (<Gallery
-                images={this.state.craveListArray}
-                clicked={this.onImageClicked}
-                longclick={this.onImageLongClick}
-                passedUserId={this.state.userId}
-            />)
+        if (this.state.wishListArray.length >= 1) {
+            wishCarousel = (
+                <Carousel
+                    ref={(c) => { this._carousel = c; }}
+                    data={this.state.wishListArray}
+                    renderItem={this._renderItem.bind(this)}
+                    sliderWidth={Dimensions.get('window').width}
+                    itemWidth={Dimensions.get('window').width * 0.85}
+                    hasParallaxImages={true}
+                />
+            );
         }else{
-            craveGallery =(<Text>No crave images</Text>)
+            wishCarousel = (
+                <Text>No images in wishlist</Text>
+            )
         }
-        if (this.state.triedListArray.length >= 1){
-            triedGallery = (<Gallery
-                images={this.state.triedListArray}
-                clicked={this.onImageClicked}
-                longclick={this.onImageLongClick}
-                passedUserId={this.state.userId}
-            />)
+        if (this.state.craveListArray.length >= 1) {
+            craveCarousel = (
+                <Carousel
+                    ref={(c) => { this._carousel = c; }}
+                    data={this.state.craveListArray}
+                    renderItem={this._renderItem.bind(this)}
+                    sliderWidth={Dimensions.get('window').width}
+                    itemWidth={Dimensions.get('window').width * 0.85}
+                    hasParallaxImages={true}
+                />
+            );
         }else{
-            triedGallery =(<Text>No tried images</Text>)
+            craveCarousel = (
+                <Text>No images in cravelist</Text>
+            )
+        }
+        if (this.state.triedListArray.length >= 1) {
+            triedCarousel = (
+                <Carousel
+                    ref={(c) => { this._carousel = c; }}
+                    data={this.state.triedListArray}
+                    renderItem={this._renderItem.bind(this)}
+                    sliderWidth={Dimensions.get('window').width}
+                    itemWidth={Dimensions.get('window').width * 0.85}
+                    hasParallaxImages={true}
+                />
+            );
+        }else{
+            triedCarousel = (
+                <Text>No images in tried list</Text>
+            )
         }
 
         return(
@@ -376,25 +444,26 @@ class UserScreen extends Component{
                             <Label>Favorite Images</Label>
                         </Row>
                         <Row>
-                           {favGallery}
+                           {/* {favGallery} */}
+                           {favCarousel}
                         </Row>
                         <Row>
                             <Label>Wishlist Images</Label>
                         </Row>
                         <Row>
-                            {wishGallery}
+                            {wishCarousel}
                         </Row>
                         <Row>
                             <Label>Crave Images</Label>
                         </Row>
                         <Row>
-                           {craveGallery}
+                            {craveCarousel}
                         </Row>
                         <Row>
                             <Label>Tried Images</Label>
                         </Row>
                         <Row>
-                            {triedGallery}
+                            {triedCarousel}
                         </Row>
                         
 
@@ -421,5 +490,13 @@ class UserScreen extends Component{
     };
 
 }
+const styles = StyleSheet.create({
+    imageContainer: {
+        width: '100%',
+        height: 250,
+        flex: 1,
+        position: 'relative'
+    }
+})
 
 module.exports = UserScreen;
