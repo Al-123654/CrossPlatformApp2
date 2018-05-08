@@ -10,7 +10,7 @@ import {
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
 import Gallery from '../components/Gallery/Gallery';
-import MapView from 'react-native-maps';
+import MapView, {Marker} from 'react-native-maps';
 
 // const ALL_USER_URI = 'http://localhost:5000/api/users?followedList=1&userid='
 // const LOGOUT_URI = 'http://localhost:5000/logout'
@@ -31,15 +31,37 @@ class RestaurantScreen extends Component{
 
         // INITIALISE STATES
         this.state = {
+            restaurantID: this.props.navigation.state.params.userId,
             restaurantName: this.props.navigation.state.params.username,
-            food: this.props.navigation.state.params.images
+            food: this.props.navigation.state.params.images,
+            region:{
+                latitude: 37.78825,
+                longitude: -122.4324,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+            },
+            mapRegion: null,
+            lastLat: null,
+            lastLong: null
         }
+        console.log('[restaurant js] constructor - Restaurant ID: ', this.state.restaurantID)
         console.log('[restaurant js] constructor - Name of restaurant: ', this.state.restaurantName)
         console.log('[restaurant js] constructor - Restaurant Image: ', this.state.food[0])
         console.log('[restaurant js] constructor - Food: ', this.state.food)
     }
     componentDidMount = () => {
-
+        this.watchID = navigator.geolocation.watchPosition((position) => {
+            let region = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                latitudeDelta: 0.00922*1.5,
+                longitudeDelta:0.00421*1.5
+            }
+            this.onRegionChange(region, region.latitude, region.longitude);
+        });
+    }
+    componentWillUnmount(){
+        navigator.geolocation.clearWatch(this.watchID);
     }
     onLogoutHandler = () => {
 
@@ -116,6 +138,45 @@ class RestaurantScreen extends Component{
     onImageLongClick = (imageId, passedId) => {
         console.log('[user js] onImageLongClick!!')
     }
+
+    onRegionChange(region, lastLat, lastLong){
+        this.setState({
+            mapRegion: region,
+            lastLat: lastLat || this.state.lastLat,
+            lastLong: lastLong || this.state.lastLong
+        });
+    }
+
+    onLocationSave = () =>{
+        return fetch(GET_USERS_URI, {
+            method: 'PUT',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                location: {
+                    id: this.state.restaurantID,
+                    lat: "-104.9903",
+                    lng: "39.7392"
+                }
+            })
+        }).then(response => {
+            console.log('[restaurant js] onLocationSavePressed - response: ', response);
+            if (response.status !== 200) {
+                console.log('[restaurant js] onLocationSavePressed - bad response: ', response);
+                return;
+            }
+            response.json().then(data => {
+                console.log('[restaurant js] onLocationSavePressed - json response: ', data);
+                // this.setState({
+                //     listOfUsers: null,
+                //     currentUserDetails: null,
+                //     isListLoading: true
+                // });
+            });
+        })
+            .catch(err => console.log('[restaurant js] onLocationSavePressed - error: ', err));
+    }
     render(){
         let displayFood = (<Spinner/>);
         if(this.state.food.length >= 1){
@@ -175,12 +236,46 @@ class RestaurantScreen extends Component{
                             <MapView
                                 style={styles.mapContainer}
                                 initialRegion={{
-                                    latitude: 37.78825,
-                                    longitude: -122.4324,
-                                    latitudeDelta: 0.0922,
-                                    longitudeDelta: 0.0421,
+                                    latitude:  39.7392,
+                                    longitude: -104.9903,
+                                    // latitude: -114.7277,
+                                    // longitude: 4.5353,
+                                    latitudeDelta: 0.0222,
+                                    longitudeDelta: 0.0201,
                                 }}
-                            />
+                            >
+                                <MapView.Marker
+                                    coordinate={{ 
+                                        latitude: 39.7392,
+                                        longitude: -104.9903,
+                                        // longitude: 4.5353, 
+                                        // latitude: -114.7277
+                                    }}
+                                    title={"title"}
+                                    description={"description"}
+                                />
+                                <Button onPress={this.onLocationSave}>
+                                {/* <Button onPress={this.onLocationSave(this.state.restaurantID)}> */}
+                                    <Text>Save location</Text>
+                                </Button>
+                            </MapView>
+                            {/* <MapView
+                                style={styles.mapContainer}
+                                region={this.state.mapRegion}
+                                showsUserLocation={true}
+                                followUserLocation={true}
+                                onRegionChange={this.onRegionChange.bind(this)}
+                                
+                            >
+                                <MapView.Marker
+                                    coordinate={{
+                                        latitude: (this.state.lastLat + 0.00050) || -36.82339,
+                                        longitude: (this.state.lastLong + 0.00050) || -73.03569,
+                                    }}
+                                > 
+                                </MapView.Marker>
+                            </MapView> */}
+                            
                         </Row>
                        
                         
