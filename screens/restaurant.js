@@ -254,10 +254,7 @@ class RestaurantScreen extends Component{
                                     title={"title"}
                                     description={"description"}
                                 />
-                                <Button onPress={this.onLocationSave}>
-                                {/* <Button onPress={this.onLocationSave(this.state.restaurantID)}> */}
-                                    <Text>Save location</Text>
-                                </Button>
+                                
                             </MapView>
                             {/* <MapView
                                 style={styles.mapContainer}
@@ -277,6 +274,7 @@ class RestaurantScreen extends Component{
                             </MapView> */}
                             
                         </Row>
+                      
                        
                         
                     </Content>
@@ -285,16 +283,12 @@ class RestaurantScreen extends Component{
 
 
                 <Footer>
-                    {/* <FooterTab >
-                        <Button full onPress={this.onFeedsPressedHandler()}>
-                            <Icon name="camera" />
-                            <Text>Feeds</Text>
+                    <FooterTab >
+                        <Button onPress={this.onLocationSave}>
+                            {/* <Button onPress={this.onLocationSave(this.state.restaurantID)}> */}
+                            <Text>Save location</Text>
                         </Button>
-                        <Button full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
-                            <Icon name="navigate" />
-                            <Text>Explore</Text>
-                        </Button>
-                    </FooterTab> */}
+                    </FooterTab>
                 </Footer>
                
             </Container>
