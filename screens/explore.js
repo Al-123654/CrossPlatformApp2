@@ -222,7 +222,7 @@ class ExploreScreen extends Component {
 		.catch(err=>console.log('[explore js] onListItemPressed - error: ', err));
 	}
 
-	onUserPagePress = (itemId, itemFname, itemLname, itemImages, itemUsername, itemFollowing) => {
+	onUserPagePress = (itemId, itemFname, itemLname, itemImages, itemUsername, itemFollowing, itemRole) => {
 
 		console.log('[explore js] Testing onUserPagePress');
 		console.log('[explore js] item._id: ', itemId);
@@ -231,18 +231,32 @@ class ExploreScreen extends Component {
 		console.log('[explore js] item.images: ', itemImages);
 		console.log('[explore js] item.username: ', itemUsername);
 		console.log('[explore js] item.following: ', itemFollowing);
+		console.log('[explore js] item.role: ', itemRole);
 
-
-		this.props.navigation.navigate({
-			key: 'UserPage1', routeName: 'User', params: {
-				userId: itemId,
-				fname: itemFname,
-				lname: itemLname,
-				images: itemImages,
-				username: itemUsername,
-				following: itemFollowing
-			}
-		});
+		if(itemRole === 1){
+			this.props.navigation.navigate({
+				key: 'UserPage1', routeName: 'User', params: {
+					userId: itemId,
+					fname: itemFname,
+					lname: itemLname,
+					images: itemImages,
+					username: itemUsername,
+					following: itemFollowing,
+					role: itemRole
+				}
+			});
+		}else{
+			this.props.navigation.navigate({
+				key:'RestaurantPage1', routeName: 'Restaurant', params:{
+					userId: itemId,
+					username:itemUsername,
+					images:itemImages,
+					following:itemFollowing,
+					role: itemRole
+				}
+			})
+		}
+		
 
 	}
 
@@ -283,7 +297,7 @@ class ExploreScreen extends Component {
 					renderRow={(item) =>
 						<ListItem icon>
 							<Left>
-								<Icon name="ios-person-outline" onPress={() => this.onUserPagePress(item._id, item.fname, item.lname, item.images, item.username, item.following)} />
+								<Icon name="ios-person-outline" onPress={() => this.onUserPagePress(item._id, item.fname, item.lname, item.images, item.username, item.following, item.role)} />
 							</Left>
 							<Body>
 								<Text>{item.username}</Text>
@@ -300,6 +314,9 @@ class ExploreScreen extends Component {
 				</List>
 			);
 		}
+		// else{
+		// 	jsxList = (<Text>No users found</Text>)
+		// }
 
 		return(    
             <Container>

@@ -17,6 +17,7 @@ const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout'
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
 const GET_FOLLOWED_BY = 'https://app-api-testing.herokuapp.com/api/users?usersFollowing=1&userid='
 const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
+// const GET_IMAGES_URI = 'http://localhost:5000/api/images/';
 // const ALL_USER_URI = 'http://localhost:5000/api/users?followedList=1&userid='
 // const LOGOUT_URI = 'http://localhost:5000/logout'
 // const GET_USERS_URI = 'http://localhost:5000/api/users/';

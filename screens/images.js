@@ -12,6 +12,8 @@ import validator from 'validator';
 const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
 const IMAGE_ROOT_URI = 'https://app-api-testing.herokuapp.com/api/images/';
 const COMMENT_URI = 'https://app-api-testing.herokuapp.com/api/comments/';
+// const IMAGE_ROOT_URI = 'http://localhost:5000/api/images/';
+// const COMMENT_URI = 'http://localhost:5000/api/comments/';
 // const LOGOUT_URI = 'http://localhost:5000/logout';
 
 class ImageScreen extends Component{
@@ -537,10 +539,22 @@ class ImageScreen extends Component{
 		let imageLoader = (<Spinner/>)
 		let displayMoreCommentsButton;
 		let deleteImageButton = (
-			<Button  full onPress={this.onDeleteImageBtnPressed}>
-				<Text>Delete Image</Text>
-			</Button>
+			(<Spinner/>)
 		)
+		if(this.state.userId){
+			deleteImageButton = (
+				<Button full onPress={this.onDeleteImageBtnPressed}>
+					<Text>Delete Image</Text>
+				</Button>
+			)
+		}else{
+			deleteImageButton = (
+				<Button disabled full>
+
+				</Button>
+			)
+		}
+		
 
 		// logic after user clicks postComment
 		if (this.state.disableComment){

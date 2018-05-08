@@ -19,6 +19,7 @@ import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
 // const GET_USERS_FOLLOWED_URI = 'http://localhost:5000/api/users?followed=followed';
 // const GET_IMAGES_URI = 'http://localhost:5000/api/images/';
 // const LOGOUT_URI = 'http://localhost:5000/logout';
+// const GET_RESTAURANT_USERS_URI = 'http://localhost:5000/api/users?user=2';
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
 const GET_RESTAURANT_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users?user=2';
 const GET_USERS_FOLLOWED_URI = 'https://app-api-testing.herokuapp.com/api/users?followed=1';
