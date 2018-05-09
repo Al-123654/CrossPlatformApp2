@@ -222,7 +222,7 @@ class ExploreScreen extends Component {
 		.catch(err=>console.log('[explore js] onListItemPressed - error: ', err));
 	}
 
-	onUserPagePress = (itemId, itemFname, itemLname, itemImages, itemUsername, itemFollowing, itemRole) => {
+	onUserPagePress = (itemId, itemFname, itemLname, itemImages, itemUsername, itemFollowing, itemRole, previousId) => {
 
 		console.log('[explore js] Testing onUserPagePress');
 		console.log('[explore js] item._id: ', itemId);
@@ -232,6 +232,7 @@ class ExploreScreen extends Component {
 		console.log('[explore js] item.username: ', itemUsername);
 		console.log('[explore js] item.following: ', itemFollowing);
 		console.log('[explore js] item.role: ', itemRole);
+		console.log('[explore js] passedId: ', previousId);
 
 		if(itemRole === 1){
 			this.props.navigation.navigate({
@@ -252,7 +253,8 @@ class ExploreScreen extends Component {
 					username:itemUsername,
 					images:itemImages,
 					following:itemFollowing,
-					role: itemRole
+					role: itemRole,
+					previousId: previousId
 				}
 			})
 		}
@@ -297,7 +299,8 @@ class ExploreScreen extends Component {
 					renderRow={(item) =>
 						<ListItem icon>
 							<Left>
-								<Icon name="ios-person-outline" onPress={() => this.onUserPagePress(item._id, item.fname, item.lname, item.images, item.username, item.following, item.role)} />
+								<Icon name="ios-person-outline" onPress={() => this.onUserPagePress(item._id, 
+									item.fname, item.lname, item.images, item.username, item.following, item.role, this.state.passedUserId)} />
 							</Left>
 							<Body>
 								<Text>{item.username}</Text>
