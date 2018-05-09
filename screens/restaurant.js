@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet, View, Image, Alert, TouchableOpacity, TouchableHighlight } from 'react-native';
+import { Platform, StyleSheet, View, Image, Alert, TouchableOpacity, TouchableHighlight, Animated, Dimensions } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import RNFetchBlob from 'react-native-fetch-blob';
 import {
@@ -36,7 +36,39 @@ class RestaurantScreen extends Component{
             restaurantName: this.props.navigation.state.params.username,
             food: this.props.navigation.state.params.images,
             previousId: this.props.navigation.state.params.previousId,
-            locationSaved: null
+            locationSaved: null,
+            markers: [
+                {
+                    coordinate:{
+                        latitude: 4.872518,
+                        longitude: 114.901595
+                    },
+                    title: '1st Marker',
+                    description: 'Test 1'
+                },
+                {
+                    coordinate:{
+                        latitude: 4.901655,
+                        longitude: 114.900434
+                    },
+                    title: '2nd Marker',
+                    description: 'Test 2'
+                },
+                {
+                    coordinate:{
+                        latitude: 4.879594,
+                        longitude: 114.893613
+                    },
+                    title: '3rd Marker',
+                    description: 'Test 3'
+                }
+            ],
+            region:{
+                latitude: 4.868272,
+                longitude: 114.900799,
+                latitudeDelta: 0.0222,
+                longitudeDelta: 0.0201,
+            }
         }
         console.log('[restaurant js] constructor - Restaurant ID: ', this.state.restaurantID)
         console.log('[restaurant js] constructor - Name of restaurant: ', this.state.restaurantName)
@@ -169,8 +201,8 @@ class RestaurantScreen extends Component{
             body: JSON.stringify({
                 location: {
                     id: this.state.restaurantID,
-                    lat: "-104.9903",
-                    lng: "39.7392"
+                    lat: "4.868272",
+                    lng: "114.900799,"
                 }
             })
         }).then(response => {
@@ -242,6 +274,8 @@ class RestaurantScreen extends Component{
                 </Button>
             )
         }
+
+        
         
       
     
@@ -278,28 +312,25 @@ class RestaurantScreen extends Component{
                             {displayFood}
                         </Row>
                         <Row>
+                            <Label>Map of restaurant</Label>
+                        </Row>
+                        <Row>
                             <MapView
+                                ref={map => this.map = map}
                                 style={styles.mapContainer}
-                                initialRegion={{
-                                    latitude:  39.7392,
-                                    longitude: -104.9903,
-                                    // latitude: -114.7277,
-                                    // longitude: 4.5353,
-                                    latitudeDelta: 0.0222,
-                                    longitudeDelta: 0.0201,
-                                }}
+                                initialRegion={this.state.region}
                             >
-                                <MapView.Marker
-                                    coordinate={{ 
-                                        latitude: 39.7392,
-                                        longitude: -104.9903,
-                                        // longitude: 4.5353, 
-                                        // latitude: -114.7277
-                                    }}
-                                    title={"title"}
-                                    description={"description"}
-                                />
-                                
+                            {this.state.markers.map((marker, index) => {
+                                return (
+                                    <MapView.Marker 
+                                        key={index} 
+                                        coordinate={marker.coordinate} 
+                                        title = {marker.title} 
+                                        description = {marker.description}   
+                                    >
+                                    </MapView.Marker>
+                                );
+                            })}
                             </MapView>
                         </Row>      
                     </Content>
@@ -328,6 +359,26 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5FCFF',
         width: '100%',
         height: 200
+    },
+    markerWrap:{
+        alignItems: "center",
+        justifyContent: "center"
+    },
+
+    ring: {
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        backgroundColor: "rgba(130,4,150, 0.3)",
+        position: "absolute",
+        borderWidth: 1,
+        borderColor: "rgba(130,4,150, 0.5)",
+    },
+    marker: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor: "rgba(130,4,150, 0.9)",
     }
 })
 module.exports = RestaurantScreen;

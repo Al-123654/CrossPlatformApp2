@@ -12,6 +12,7 @@ import {
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import Gallery from '../components/Gallery/Gallery';
 import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
+import MapView, { Marker } from 'react-native-maps';
 // import Sidebar from '../components/Sidebar/SidebarMenu';
 // import SidebarHeader from '../components/Sidebar/SidebarHeader'
 
@@ -33,8 +34,8 @@ class FeedsScreen extends Component {
         // call props.navigation.state.params here
 		const { params } = this.props.navigation.state;
 		console.log('[feeds js] constructor - Data carried over: ', this.props.navigation.state);
-		console.log('[feeds js] constructor - Data carried over: params ', this.props.navigation.state.params);
-		console.log('[feeds js] constructor - Data carried over: params.data ', this.props.navigation.state.params.data);
+		// console.log('[feeds js] constructor - Data carried over: params ', this.props.navigation.state.params);
+		// console.log('[feeds js] constructor - Data carried over: params.data ', this.props.navigation.state.params.data);
 		// console.log('[feeds js] constructor - Data carried over: params.processedImages ', this.props.navigation.state.params.processedImages);
 
         //initialize states
@@ -54,9 +55,14 @@ class FeedsScreen extends Component {
 			imageIdToDelete : props.navigation.state.params.imageIdToDelete ?  props.navigation.state.params.imageIdToDelete : null,
 			userImages: null,
 			followedImages: null,
-			restaurantUsers: null
+			restaurantUsers: null,
+			locations: props.navigation.state.params.data.locations,
+			showLat: 0,
+			showLng: 0
+
 		}
 		console.log('[feeds js] constructor - Current states:', this.state);
+		
 		this.fetchRestaurantUsers();
 	}
 
@@ -128,6 +134,7 @@ class FeedsScreen extends Component {
 		}else{
 			this.getUserImages();
 			this.getFollowedImages();
+			this.getMarkers();
 		}
 	}
 
@@ -340,6 +347,43 @@ class FeedsScreen extends Component {
 		}
 	}
 	
+	//GET SAVED LOCATION MARKERS 
+	getMarkers = () =>{
+		// let tempLocation;
+		// let popLocation;
+		// let tempLat;
+		// let tempLng
+		if(this.state.locations.length > 0){
+			console.log('[feeds js] getMarkers - saved locations: ', this.state.locations);
+			console.log('[feeds js] getMarkers - saved locations.lat: ', this.state.locations[0].lat);
+			console.log('[feeds js] getMarkers - saved locations.lng: ', this.state.locations[0].lng);
+			tempLat = JSON.parse(this.state.locations[0].lat);
+			tempLng = JSON.parse(this.state.locations[0].lng);
+			// tempLocation = this.state.locations;
+			// popLocation = tempLocation.pop();
+			// console.log('[feeds js] getMarkers - saved locations after pop: ', tempLocation);
+			// console.log('[feeds js] getMarkers - getting lat and lng: ', popLocation);
+			// console.log('[feeds js] getMarkers - lat after pop: ', popLocation.lat);
+			// console.log('[feeds js] getMarkers - lng after pop: ', popLocation.lng);
+			// console.log('[feeds js] getMarkers - JSON.parse lat: ', JSON.parse(popLocation.lat));
+			// console.log('[feeds js] getMarkers - JSON.parse lng: ', JSON.parse(popLocation.lng));
+			// tempLat = JSON.parse(popLocation.lat);
+			// tempLng = JSON.parse(popLocation.lng);
+
+			console.log('[feeds js] getMarkers - tempLat ', tempLat)
+			console.log('[feeds js] getMarkers - tempLng: ', tempLng)
+			this.setState({
+				showLat: tempLat,
+				showLng: tempLng
+			})
+			// console.log('[feeds js] getMarkers - showLat: ', this.state.showLat);
+			// console.log('[feeds js] getMarkers - showLng: ', this.state.showLng);
+		}else{
+			console.log('[feeds js] getMarkers - ELSE route')
+		}
+		
+	}
+	
 	onLogoutHandler = () => {
 
 		Alert.alert(
@@ -511,12 +555,40 @@ class FeedsScreen extends Component {
 		console.log('[feeds js] render - Role of user at onImageDelete:', this.state.role);
 		console.log('[feeds js] render - feedImagesArray:', this.state.feedImagesArray);
 		console.log('[feeds js] render - areImagesLoaded:', this.state.areImagesLoaded);
+		console.log('[feeds js] render - showLat:', this.state.showLat);
+		console.log('[feeds js] render - typeof showLat:', typeof this.state.showLat);
+		console.log('[feeds js] render - showLng:', this.state.showLng);
+		console.log('[feeds js] render - typeof showLng:', typeof this.state.showLng);
+		console.log('[feeds js] render - locations.length:', this.state.locations.length);
+	
 		let gallery = (<Spinner/>);
 		let imagePickerButton;
 		let logoutLoader = (
 			<Button transparent onPress={this.onLogoutHandler}>
 				<Icon name='home' />
-			</Button>);
+			</Button>
+		);
+		let displayMarker = (<Spinner/>);
+		if (this.state.locations.length == 1 ){
+			displayMarker = (
+				<MapView.Marker
+					coordinate={{
+						latitude: this.state.showLat,
+						longitude: this.state.showLng
+						// latitude: 39.7392,
+						// longitude: -104.9903,
+					}}
+					title={"title"}
+					description={"description"}
+				/>
+			)
+			
+		}else{
+			displayMarker = (
+				<Text>No marker</Text>
+			)
+		}
+		
 		
 		if(this.state.feedImagesArray && this.state.areImagesLoaded){
 			if (this.state.feedImagesArray.length > 0) {
@@ -609,6 +681,24 @@ class FeedsScreen extends Component {
 					<Row>
 						{carousel}
 					</Row>
+					<Row>
+						<Label>Map of saved restaurants</Label>
+					</Row>
+					<Row>
+						<MapView
+							style={styles.mapContainer}
+							initialRegion={{
+								// latitude: 39.7392,
+								// longitude: -104.9903,
+								latitude: 4.868272,
+								longitude: 114.900799,
+								latitudeDelta: 0.0222,
+								longitudeDelta: 0.0201,
+							}}
+						>
+							{displayMarker}
+						</MapView>
+					</Row>
 				</Content>
 				{footers}
 			</Container>
@@ -640,6 +730,14 @@ const styles = StyleSheet.create({
 	image: {
 		width: '100%',
 		height: 100
+	},
+	mapContainer: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: '#F5FCFF',
+		width: '100%',
+		height: 250
 	}
 });
 
