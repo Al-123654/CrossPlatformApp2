@@ -28,21 +28,15 @@ class RestaurantScreen extends Component{
         super(props);
         const { params } = this.props.navigation.state;
         console.log('[restaurant js]constructor - params:', this.props.navigation.state);
+        
 
         // INITIALISE STATES
         this.state = {
             restaurantID: this.props.navigation.state.params.userId,
             restaurantName: this.props.navigation.state.params.username,
             food: this.props.navigation.state.params.images,
-            region:{
-                latitude: 37.78825,
-                longitude: -122.4324,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-            },
-            mapRegion: null,
-            lastLat: null,
-            lastLong: null
+            previousId: this.props.navigation.state.params.previousId,
+            locationSaved: null
         }
         console.log('[restaurant js] constructor - Restaurant ID: ', this.state.restaurantID)
         console.log('[restaurant js] constructor - Name of restaurant: ', this.state.restaurantName)
@@ -50,19 +44,9 @@ class RestaurantScreen extends Component{
         console.log('[restaurant js] constructor - Food: ', this.state.food)
     }
     componentDidMount = () => {
-        this.watchID = navigator.geolocation.watchPosition((position) => {
-            let region = {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-                latitudeDelta: 0.00922*1.5,
-                longitudeDelta:0.00421*1.5
-            }
-            this.onRegionChange(region, region.latitude, region.longitude);
-        });
+        this.getLocationSaved();
     }
-    componentWillUnmount(){
-        navigator.geolocation.clearWatch(this.watchID);
-    }
+   
     onLogoutHandler = () => {
 
         Alert.alert(
@@ -139,15 +123,44 @@ class RestaurantScreen extends Component{
         console.log('[user js] onImageLongClick!!')
     }
 
-    onRegionChange(region, lastLat, lastLong){
-        this.setState({
-            mapRegion: region,
-            lastLat: lastLat || this.state.lastLat,
-            lastLong: lastLong || this.state.lastLong
-        });
-    }
+   getLocationSaved = () => {
+
+       return fetch(GET_USERS_URI + this.state.previousId, {
+           method: 'GET',
+           headers: {
+               'content-type': 'application/json'
+           },
+       }).then(response => {
+           console.log('[restaurant js] getLocationSaved - response: ', response);
+           if (response.status !== 200) {
+               console.log('[restaurant js] getLocationSaved - bad response: ', response);
+               return;
+           }
+           response.json().then(data => {
+               console.log('[restaurant js] getLocationSaved - json response: ', data);
+               console.log('[restaurant js] getLocationSaved = data.location: ', data.locations)
+               console.log('[restaurant js] getLocationSaved = data.location.length: ', data.locations.length)
+               if(data.locations.length != 0){
+                this.setState({
+                    locationSaved : true
+                })    
+                
+               }else{
+                this.setState({
+                    locationSaved : false
+                })    
+               }
+               console.log('[restaurant js] getLocationSaved - locationSaved: ', this.state.locationSaved);
+
+           });
+           }).catch(err => console.log('[restaurant js] getLocationSaved - error: ', err));
+           
+   }
 
     onLocationSave = () =>{
+
+        let tempLocationLength;
+
         return fetch(GET_USERS_URI, {
             method: 'PUT',
             headers: {
@@ -168,15 +181,38 @@ class RestaurantScreen extends Component{
             }
             response.json().then(data => {
                 console.log('[restaurant js] onLocationSavePressed - json response: ', data);
-                // this.setState({
-                //     listOfUsers: null,
-                //     currentUserDetails: null,
-                //     isListLoading: true
-                // });
-            });
-        })
-            .catch(err => console.log('[restaurant js] onLocationSavePressed - error: ', err));
+                console.log('[restaurant js] onLocationSavePressed-  data.locations: ', data.updatedUser.locations)
+                tempLocationLength = data.updatedUser.locations.length;
+                console.log('[restaurant js] onLocationSavePressed - tempLocationLength: ', tempLocationLength)
+
+                if (tempLocationLength != 0) {
+                    this.setState({
+                        locationSaved : true
+                    }) 
+                    Toast.show({
+                        text: 'Location saved',
+                        buttonText: 'Ok',
+                        position: 'top',
+                        duration: 4000
+                    })
+                } else {
+                    this.setState({
+                        locationSaved : false
+                    }) 
+                    Toast.show({
+                        text: 'Location removed',
+                        buttonText: 'Ok',
+                        position: 'top',
+                        duration: 4000
+                    })
+                
+                }   
+            }); 
+            console.log('[restaurant js] onLocationSavePressed - locationSaved: ', this.state.locationSaved);
+        }).catch(err => console.log('[restaurant js] onLocationSavePressed - error: ', err));
     }
+
+   
     render(){
         let displayFood = (<Spinner/>);
         if(this.state.food.length >= 1){
@@ -189,17 +225,26 @@ class RestaurantScreen extends Component{
         }else{
             displayFood = (<Text>No food available</Text>)
         }
-        // let displayRestaurant = (<Spinner />);
-        // if(this.state.restaurantImage){
-        //     displayRestaurant = (<Image source = {{uri: GET_IMAGES_URI + this.state.restaurantImage + '/display'}}/>
-        //     )
-        //     // console.log('[user js] render - displayRestaurant: ', displayRestaurant)
-        // }else{
-        //     displayRestaurant = (<Text>No image available</Text>)
-        // }
-        console.log('[restaurant js] render - uri to get restaurant image:', GET_IMAGES_URI + this.state.food[0] + '/display')
-        
 
+        let markerButton = (<Spinner/>);
+        console.log('[restaurant js] render - locationSaved: ', this.state.locationSaved);
+        if(!this.state.locationSaved){
+            markerButton=(
+                <Button onPress={this.onLocationSave}>
+                    <Text>Save location</Text>
+                </Button>
+            )
+            
+        }else{
+            markerButton = (
+                <Button onPress={this.onLocationSave}>
+                    <Text>Remove location</Text>
+                </Button>
+            )
+        }
+        
+      
+    
         return(
             <Container>
                 <Header hasTabs>
@@ -256,45 +301,15 @@ class RestaurantScreen extends Component{
                                 />
                                 
                             </MapView>
-                            {/* <MapView
-                                style={styles.mapContainer}
-                                region={this.state.mapRegion}
-                                showsUserLocation={true}
-                                followUserLocation={true}
-                                onRegionChange={this.onRegionChange.bind(this)}
-                                
-                            >
-                                <MapView.Marker
-                                    coordinate={{
-                                        latitude: (this.state.lastLat + 0.00050) || -36.82339,
-                                        longitude: (this.state.lastLong + 0.00050) || -73.03569,
-                                    }}
-                                > 
-                                </MapView.Marker>
-                            </MapView> */}
-                            
-                        </Row>
-                      
-                       
-                        
+                        </Row>      
                     </Content>
-
                 </Container>
-
-
                 <Footer>
                     <FooterTab >
-                        <Button onPress={this.onLocationSave}>
-                            {/* <Button onPress={this.onLocationSave(this.state.restaurantID)}> */}
-                            <Text>Save location</Text>
-                        </Button>
+                       {markerButton}
                     </FooterTab>
                 </Footer>
-               
             </Container>
-            
-            
-        
         )
     }
 }
