@@ -12,7 +12,7 @@ import {
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import Gallery from '../components/Gallery/Gallery';
 import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker , PROVIDER_GOOGLE} from 'react-native-maps';
 // import Sidebar from '../components/Sidebar/SidebarMenu';
 // import SidebarHeader from '../components/Sidebar/SidebarHeader'
 
@@ -23,10 +23,11 @@ import MapView, { Marker } from 'react-native-maps';
 // const GET_RESTAURANT_USERS_URI = 'http://localhost:5000/api/users?user=2';
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
 const GET_RESTAURANT_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users?user=2';
-const GET_USERS_FOLLOWED_URI = 'https://app-api-testing.herokuapp.com/api/users?followed=1';
-const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
+const GET_USERS_FOLLOWED_URI = 'https://app-api-testing.herokuapp.com/images/';
 const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
 const UPLOAD_URI = 'https://app-api-testing.herokuapp.com/upload';
+const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
+
 class FeedsScreen extends Component {
 	constructor(props) {
 		super(props);
@@ -57,11 +58,18 @@ class FeedsScreen extends Component {
 			followedImages: null,
 			restaurantUsers: null,
 			locations: props.navigation.state.params.data.locations,
-			showLat: 0,
-			showLng: 0
-
-		}
-		console.log('[feeds js] constructor - Current states:', this.state);
+			region:{
+				latitude: 37.78825,
+				longitude: -122.4324,
+				latitudeDelta: 0.0922,
+				longitudeDelta: 0.0421,
+			}
+			
+		
+		};
+		console.log('[feeds js] constructor - Current states:', this.state); 
+		// console.log('[feeds js] constructor - region:', this.state(region));
+		
 		
 		this.fetchRestaurantUsers();
 	}
@@ -134,7 +142,6 @@ class FeedsScreen extends Component {
 		}else{
 			this.getUserImages();
 			this.getFollowedImages();
-			this.getMarkers();
 		}
 	}
 
@@ -347,42 +354,8 @@ class FeedsScreen extends Component {
 		}
 	}
 	
-	//GET SAVED LOCATION MARKERS 
-	getMarkers = () =>{
-		// let tempLocation;
-		// let popLocation;
-		// let tempLat;
-		// let tempLng
-		if(this.state.locations.length > 0){
-			console.log('[feeds js] getMarkers - saved locations: ', this.state.locations);
-			console.log('[feeds js] getMarkers - saved locations.lat: ', this.state.locations[0].lat);
-			console.log('[feeds js] getMarkers - saved locations.lng: ', this.state.locations[0].lng);
-			tempLat = JSON.parse(this.state.locations[0].lat);
-			tempLng = JSON.parse(this.state.locations[0].lng);
-			// tempLocation = this.state.locations;
-			// popLocation = tempLocation.pop();
-			// console.log('[feeds js] getMarkers - saved locations after pop: ', tempLocation);
-			// console.log('[feeds js] getMarkers - getting lat and lng: ', popLocation);
-			// console.log('[feeds js] getMarkers - lat after pop: ', popLocation.lat);
-			// console.log('[feeds js] getMarkers - lng after pop: ', popLocation.lng);
-			// console.log('[feeds js] getMarkers - JSON.parse lat: ', JSON.parse(popLocation.lat));
-			// console.log('[feeds js] getMarkers - JSON.parse lng: ', JSON.parse(popLocation.lng));
-			// tempLat = JSON.parse(popLocation.lat);
-			// tempLng = JSON.parse(popLocation.lng);
-
-			console.log('[feeds js] getMarkers - tempLat ', tempLat)
-			console.log('[feeds js] getMarkers - tempLng: ', tempLng)
-			this.setState({
-				showLat: tempLat,
-				showLng: tempLng
-			})
-			// console.log('[feeds js] getMarkers - showLat: ', this.state.showLat);
-			// console.log('[feeds js] getMarkers - showLng: ', this.state.showLng);
-		}else{
-			console.log('[feeds js] getMarkers - ELSE route')
-		}
-		
-	}
+	
+	
 	
 	onLogoutHandler = () => {
 
@@ -551,15 +524,135 @@ class FeedsScreen extends Component {
 		});
 	}
 
+
+	
+	// Handle initial zoom level
+	getRegionForCoordinates = (points) => {
+		console.log('[feeds js] getRegionForCoordinates - points: ', points)
+		if(points.length > 0){
+			let minX, maxX, minY, maxY;
+		
+
+			// init first point
+			((point) => {
+				console.log('[feeds js] getRegionForCoordinates - point: ', point)
+				minX = point.latitude;
+				maxX = point.latitude;
+				minY = point.longitude;
+				maxY = point.longitude;
+				console.log('[feeds js] getRegionForCoordinates - minX at 1st point: ', minX);
+				console.log('[feeds js] getRegionForCoordinates - maxX at 1st point: ', maxX);
+				console.log('[feeds js] getRegionForCoordinates - minY at 1st point: ', minY);
+				console.log('[feeds js] getRegionForCoordinates - maxY at 1st point: ', maxY);
+			})(points[0]);
+
+			// calculate rect
+			points.map((point) => {
+				minX = Math.min(minX, point.latitude);
+				maxX = Math.max(maxX, point.latitude);
+				minY = Math.min(minY, point.longitude);
+				maxY = Math.max(maxY, point.longitude);
+				console.log('[feeds js] getRegionForCoordinates - minX after .map: ', minX);
+				console.log('[feeds js] getRegionForCoordinates - maxX after .map: ', maxX);
+				console.log('[feeds js] getRegionForCoordinates - minY after .map: ', minY);
+				console.log('[feeds js] getRegionForCoordinates - maxY after .map: ', maxY);
+			});
+
+			const midX = (minX + maxX) / 2;
+			const midY = (minY + maxY) / 2;
+			// const deltaX = 0.7;
+			// const deltaY = 0.7;
+			const deltaX = (maxX - minX);
+			const deltaY = (maxY - minY);
+
+			console.log('[feeds js] getRegionForCoordinates - midX: ', midX);
+			console.log('[feeds js] getRegionForCoordinates - midY: ', midY);
+			console.log('[feeds js] getRegionForCoordinates - deltaX: ', deltaX);
+			console.log('[feeds js] getRegionForCoordinates - deltaY: ', deltaY);
+			
+			return {
+				latitude: midX,
+				longitude: midY,
+				latitudeDelta: deltaX,
+				longitudeDelta: deltaY
+				// latitudeDelta: 50,
+				// longitudeDelta: 50
+			}
+		}
+		else{
+			mapType = 'none'
+			
+		}
+		
+	}
+	onRegionChange = (region, targetRegion) => {
+		console.log('[feeds js] onRegionChange - inside onRegionChange');
+		this.setState({region: this.getRegionForCoordinates(targetRegion)})
+	}
+
+
+
 	render() {
+		console.log('[feeds js[ render - onRegionChange: ', this.onRegionChange);
 		console.log('[feeds js] render - Role of user at onImageDelete:', this.state.role);
 		console.log('[feeds js] render - feedImagesArray:', this.state.feedImagesArray);
 		console.log('[feeds js] render - areImagesLoaded:', this.state.areImagesLoaded);
-		console.log('[feeds js] render - showLat:', this.state.showLat);
-		console.log('[feeds js] render - typeof showLat:', typeof this.state.showLat);
-		console.log('[feeds js] render - showLng:', this.state.showLng);
-		console.log('[feeds js] render - typeof showLng:', typeof this.state.showLng);
-		console.log('[feeds js] render - locations.length:', this.state.locations.length);
+		console.log('[feeds js] render - locations:', this.state.locations);
+		console.log('[feeds js] render - typeof locations:', typeof this.state.locations);
+		let targetRegion = (<Spinner/>)
+		let displayMarkers = (<Spinner/>)
+		if(this.state.locations.length > 0){
+			displayMarkers = (
+				this.state.locations.map(marker => {
+					let coordinate = {
+						latitude: Number(marker.lat),
+						longitude: Number(marker.lng)
+					}
+
+					return (
+						<Marker
+							key={marker.id}
+							coordinate={coordinate}
+						/>
+					)
+
+				})
+			)
+		}
+
+		// get Region
+		if(this.state.locations.length > 0){
+			targetRegion = (
+				this.state.locations.map(initRegion => {
+					let regionCoord =
+					{
+						latitude: Number(initRegion.lat),
+						longitude: Number(initRegion.lng)
+					}
+					console.log('[feeds js] render - regionCoord: ', regionCoord);
+					console.log('[feeds js] render - regionCoord.latitude: ', regionCoord.latitude);
+					console.log('[feeds js] render - regionCoord.longitude: ', regionCoord.longitude);
+					return{
+						latitude: regionCoord.latitude,
+						longitude: regionCoord.longitude,
+						// latitudeDelta: 0,
+						// longitudeDelta: 0
+					};		
+				})	
+			)
+		}else{
+			targetRegion = (
+				{
+					latitude: 0,
+					longitude: 0,
+					// latitudeDelta: 0,
+					// longitudeDelta: 0
+				}
+			)
+			
+		}
+		
+		
 	
 		let gallery = (<Spinner/>);
 		let imagePickerButton;
@@ -568,26 +661,9 @@ class FeedsScreen extends Component {
 				<Icon name='home' />
 			</Button>
 		);
-		let displayMarker = (<Spinner/>);
-		if (this.state.locations.length == 1 ){
-			displayMarker = (
-				<MapView.Marker
-					coordinate={{
-						latitude: this.state.showLat,
-						longitude: this.state.showLng
-						// latitude: 39.7392,
-						// longitude: -104.9903,
-					}}
-					title={"title"}
-					description={"description"}
-				/>
-			)
-			
-		}else{
-			displayMarker = (
-				<Text>No marker</Text>
-			)
-		}
+
+		
+		
 		
 		
 		if(this.state.feedImagesArray && this.state.areImagesLoaded){
@@ -662,7 +738,8 @@ class FeedsScreen extends Component {
 				/>
 			);
 		}
-       
+       	console.log('[feeds js] render - targetRegion', targetRegion);
+		console.log('[feeds js] render - this.getRegionForCoordiantes: ', this.getRegionForCoordinates(targetRegion));
         return (
 			<Container>
 				<Header>
@@ -686,17 +763,14 @@ class FeedsScreen extends Component {
 					</Row>
 					<Row>
 						<MapView
+							ref={map => this.map = map}
 							style={styles.mapContainer}
-							initialRegion={{
-								// latitude: 39.7392,
-								// longitude: -104.9903,
-								latitude: 4.868272,
-								longitude: 114.900799,
-								latitudeDelta: 0.0222,
-								longitudeDelta: 0.0201,
-							}}
+							// initialRegion={this.getRegionForCoordinates(targetRegion)}
+							region={this.state.region}
+							fitToSuplliedMarker={true}
+							onRegionChange={() => {targetRegion}}
 						>
-							{displayMarker}
+							{displayMarkers}
 						</MapView>
 					</Row>
 				</Content>
@@ -737,7 +811,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		backgroundColor: '#F5FCFF',
 		width: '100%',
-		height: 250
+		height: 300
 	}
 });
 

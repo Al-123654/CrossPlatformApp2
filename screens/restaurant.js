@@ -35,7 +35,7 @@ class RestaurantScreen extends Component{
             restaurantID: this.props.navigation.state.params.userId,
             restaurantName: this.props.navigation.state.params.username,
             food: this.props.navigation.state.params.images,
-            previousId: this.props.navigation.state.params.previousId,
+            loggedID: this.props.navigation.state.params.previousId,
             locationSaved: null,
             markers: [
                 {
@@ -68,12 +68,15 @@ class RestaurantScreen extends Component{
                 longitude: 114.900799,
                 latitudeDelta: 0.0222,
                 longitudeDelta: 0.0201,
-            }
+            },
+            coordinates: this.props.navigation.state.params.coordinates
         }
         console.log('[restaurant js] constructor - Restaurant ID: ', this.state.restaurantID)
         console.log('[restaurant js] constructor - Name of restaurant: ', this.state.restaurantName)
         console.log('[restaurant js] constructor - Restaurant Image: ', this.state.food[0])
         console.log('[restaurant js] constructor - Food: ', this.state.food)
+        console.log('[restaurant js] constructor - coordinates.lat: ', this.state.coordinates.lat)
+        console.log('[restaurant js] constructor - coordinates.lng: ', this.state.coordinates.lng)
     }
     componentDidMount = () => {
         this.getLocationSaved();
@@ -156,8 +159,10 @@ class RestaurantScreen extends Component{
     }
 
    getLocationSaved = () => {
-
-       return fetch(GET_USERS_URI + this.state.previousId, {
+       let serverCoord;
+       let locationGet;
+       
+       return fetch(GET_USERS_URI + this.state.loggedID, {
            method: 'GET',
            headers: {
                'content-type': 'application/json'
@@ -169,20 +174,46 @@ class RestaurantScreen extends Component{
                return;
            }
            response.json().then(data => {
-               console.log('[restaurant js] getLocationSaved - json response: ', data);
-               console.log('[restaurant js] getLocationSaved = data.location: ', data.locations)
-               console.log('[restaurant js] getLocationSaved = data.location.length: ', data.locations.length)
-               if(data.locations.length != 0){
-                this.setState({
-                    locationSaved : true
-                })    
-                
-               }else{
-                this.setState({
-                    locationSaved : false
-                })    
-               }
-               console.log('[restaurant js] getLocationSaved - locationSaved: ', this.state.locationSaved);
+                console.log('[restaurant js] getLocationSaved - json response: ', data);
+                console.log('[restaurant js] getLocationSaved - data.locations: ', data.locations)
+                console.log('[restaurant js] getLocationSaved - data.locations.length: ', data.locations.length)
+                if(data.locations.length > 0){
+                    serverCoord = data.locations.map(latLng => {
+                        serverLat = latLng.lat
+                        serverLng = latLng.lng
+                        console.log('[restaurant js] getLocationSaved - serverLat: ', serverLat);
+                        console.log('[restaurant js] getLocationSaved - serverLng: ', serverLng);
+                        console.log('[restaurant js] getLocationSaved - this.state.coordinates: ', this.state.coordinates)
+                        // if (serverLat == this.state.coordinates.lat && serverLng == this.state.coordinates.lng) {
+                        //     locationGet = true
+                        // } else {
+                        //     locationGet = false
+                        // }
+                        if (serverLat == this.state.coordinates.lat && serverLng == this.state.coordinates.lng) {
+                            this.setState({
+                                locationSaved: true
+                            })                           
+                        } else {
+                            this.setState({
+                                locationSaved: false
+                            })
+                        }
+                    })
+                    
+                    console.log('[restaurant js] getLocationSaved - serverLat: ', serverLat);
+                    console.log('[restaurant js] getLocationSaved - serverLng: ', serverLng);
+                    console.log('[restaurant js] getLocationSaved - this.state.coordinates: ', this.state.coordinates)
+                    // if (serverLat == this.state.coordinates.lat && serverLng == this.state.coordinates.lng) {
+                    //     this.setState({
+                    //         locationSaved: true
+                    //     })
+                    // } else {
+                    //     this.setState({
+                    //         locationSaved: false
+                    //     })
+                    // }
+                }
+                console.log('[restaurant js] getLocationSaved - locationGet: ', locationGet);
 
            });
            }).catch(err => console.log('[restaurant js] getLocationSaved - error: ', err));
@@ -190,8 +221,14 @@ class RestaurantScreen extends Component{
    }
 
     onLocationSave = () =>{
-
+        let newMarker;
         let tempLocationLength;
+        // const latMin = 4, latMax =  4.6;
+        // const lngMin = 114, lngMax = 115;
+        // let randomLat = (Math.random() * (latMax - latMin) + latMin).toFixed(4);
+        // let randomLng = (Math.random() * (lngMax - lngMin) + lngMin).toFixed(4);
+        // console.log('restaurant js onLocationSave -  randomLat: ', randomLat);
+        // console.log('restaurant js onLocationSave -  randomLng: ', randomLng);
 
         return fetch(GET_USERS_URI, {
             method: 'PUT',
@@ -201,8 +238,8 @@ class RestaurantScreen extends Component{
             body: JSON.stringify({
                 location: {
                     id: this.state.restaurantID,
-                    lat: "4.868272",
-                    lng: "114.900799,"
+                    lat: this.state.coordinates.lat,
+                    lng: this.state.coordinates.lng
                 }
             })
         }).then(response => {
@@ -212,12 +249,18 @@ class RestaurantScreen extends Component{
                 return;
             }
             response.json().then(data => {
-                console.log('[restaurant js] onLocationSavePressed - json response: ', data);
                 console.log('[restaurant js] onLocationSavePressed-  data.locations: ', data.updatedUser.locations)
+                console.log('[restaurant js] onLocationSavePressed-  this.state.coordinates: ', this.state.coordinates)
                 tempLocationLength = data.updatedUser.locations.length;
                 console.log('[restaurant js] onLocationSavePressed - tempLocationLength: ', tempLocationLength)
+                newMarker =  data.updatedUser.locations.map(markers => {
+                    markerLat = markers.lat
+                    markerLng = markers.lng
+                })
+                console.log('[restaurant js] onLocationSavePressed - markerLat: ', markerLat);
+                console.log('[restaurant js] onLocationSavePressed - markerLng: ', markerLng);
 
-                if (tempLocationLength != 0) {
+                if (markerLat == this.state.coordinates.lat && markerLng == this.state.coordinates.lng) {
                     this.setState({
                         locationSaved : true
                     }) 
@@ -235,12 +278,12 @@ class RestaurantScreen extends Component{
                         text: 'Location removed',
                         buttonText: 'Ok',
                         position: 'top',
-                        duration: 4000
                     })
-                
+                    
                 }   
             }); 
             console.log('[restaurant js] onLocationSavePressed - locationSaved: ', this.state.locationSaved);
+            duration: 4000
         }).catch(err => console.log('[restaurant js] onLocationSavePressed - error: ', err));
     }
 
@@ -260,7 +303,8 @@ class RestaurantScreen extends Component{
 
         let markerButton = (<Spinner/>);
         console.log('[restaurant js] render - locationSaved: ', this.state.locationSaved);
-        if(!this.state.locationSaved){
+        // console.log('[restaurant js] render - locationGet: ', this.locationGet);
+        if(!this.state.locationSaved ){
             markerButton=(
                 <Button onPress={this.onLocationSave}>
                     <Text>Save location</Text>
