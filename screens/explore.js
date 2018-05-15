@@ -235,6 +235,7 @@ class ExploreScreen extends Component {
 		console.log('[explore js] passedId: ', previousId);
 		console.log('[explore js] item.coordinates: ', coordinates)
 
+		console.log('TESTING 123')
 		if(itemRole === 1){
 			this.props.navigation.navigate({
 				key: 'UserPage1', routeName: 'User', params: {
