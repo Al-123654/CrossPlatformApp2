@@ -13,8 +13,6 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 import Gallery from '../components/Gallery/Gallery';
 import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
 import MapView, { Marker , PROVIDER_GOOGLE} from 'react-native-maps';
-// import Sidebar from '../components/Sidebar/SidebarMenu';
-// import SidebarHeader from '../components/Sidebar/SidebarHeader'
 
 // const GET_USERS_URI = 'http://localhost:5000/api/users/';
 // const GET_USERS_FOLLOWED_URI = 'http://localhost:5000/api/users?followed=followed';
@@ -59,16 +57,9 @@ class FeedsScreen extends Component {
 			restaurantUsers: null,
 			locations: props.navigation.state.params.data.locations,
 			mapRegion: null,
-			displayMarkers: (<Spinner/>)
-			
-			
-		
+			mapMarkers: (<Spinner/>)
 		};
-		
-		console.log('[feeds js] constructor - Current states:', this.state); 
-		// console.log('[feeds js] constructor - region:', this.state(region));
-		
-		
+		console.log('[feeds js] constructor - Current states:', this.state);
 		this.fetchRestaurantUsers();
 	}
 
@@ -124,13 +115,6 @@ class FeedsScreen extends Component {
         );
     }
 
-	closeDrawer = () => {
-		this.drawer._root.close()
-	};
-	openDrawer = () => {
-		this.drawer._root.open()
-	};
-
 	componentDidMount = () => {
 		if(this.state.imageIdToDelete){
 			// runs only if deleting using btn from images js
@@ -141,55 +125,9 @@ class FeedsScreen extends Component {
 			this.getUserImages();
 			this.getFollowedImages();
 		}
-
-		//get Region
-		let targetRegion;
-		targetRegion = (
-			this.state.locations.map(initRegion => {
-				let regionCoord =
-					{
-						latitude: Number(initRegion.lat),
-						longitude: Number(initRegion.lng)
-					}
-				console.log('[feeds js] constructor - regionCoord: ', regionCoord);
-				console.log('[feeds js] constructor - regionCoord.latitude: ', regionCoord.latitude);
-				console.log('[feeds js] constructor - regionCoord.longitude: ', regionCoord.longitude);
-				return {
-					latitude: regionCoord.latitude,
-					longitude: regionCoord.longitude,
-				};
-			})
-		)
-		this.setState({mapRegion: this.getRegion(targetRegion)});
-		
-		let displayMarkers;
-		if (this.state.locations.length > 0) {
-			//get markers
-			
-			displayMarkers = (
-				this.state.locations.map(marker => {
-					let coordinate = {
-						latitude: Number(marker.lat),
-						longitude: Number(marker.lng)
-					}
-
-					return (
-						<Marker
-							key={marker.id}
-							coordinate={coordinate}
-						/>
-					)
-
-				})
-			)
-		} else {
-			displayMarkers = (
-				<Text>No markers available</Text>
-			)
-		}
-		this.setState({
-			displayMarkers: displayMarkers
-		})
+		// map-view related setup
+		this.setRegionBasedOnMarkers();
+		this.setMapMarkers();
 	}
 
 	componentDidUpdate(prevProps, prevState){
@@ -206,6 +144,99 @@ class FeedsScreen extends Component {
 				areImagesLoaded: true
 			});
 		}
+	}
+
+	setRegionBasedOnMarkers = () => {
+		// adjust location array to meet requirements of calculateRegionBasedOnMarkers()
+		let adjustedLocationsArray = this.state.locations.map(location => {
+			return {
+				latitude: Number(location.lat),
+				longitude: Number(location.lng)
+			}
+		});
+		console.log("[feeds js] calculateRegionBasedOnMarkers - adjustedLocationsArray: ", adjustedLocationsArray);
+
+		// calculate new region
+		const adjustedRegion = this.calculateRegionBasedOnMarkers(adjustedLocationsArray);
+		console.log("[feeds js] calculateRegionBasedOnMarkers - adjustedRegion: ", adjustedRegion);
+		this.setState({mapRegion: adjustedRegion});
+	}
+
+	calculateRegionBasedOnMarkers = (points) => {
+		console.log('[feeds js] getRegion- points: ', points)
+		if(points.length > 0){
+			let minX, maxX, minY, maxY;
+
+			// init first point
+			((point) => {
+				console.log('[feeds js] getRegion- point: ', point)
+				minX = point.latitude;
+				maxX = point.latitude;
+				minY = point.longitude;
+				maxY = point.longitude;
+				console.log('[feeds js] getRegion- minX at 1st point: ', minX);
+				console.log('[feeds js] getRegion- maxX at 1st point: ', maxX);
+				console.log('[feeds js] getRegion- minY at 1st point: ', minY);
+				console.log('[feeds js] getRegion- maxY at 1st point: ', maxY);
+			})(points[0]);
+
+			// calculate rect
+			points.map((point) => {
+				minX = Math.min(minX, point.latitude);
+				maxX = Math.max(maxX, point.latitude);
+				minY = Math.min(minY, point.longitude);
+				maxY = Math.max(maxY, point.longitude);
+				console.log('[feeds js] getRegion- minX after .map: ', minX);
+				console.log('[feeds js] getRegion- maxX after .map: ', maxX);
+				console.log('[feeds js] getRegion- minY after .map: ', minY);
+				console.log('[feeds js] getRegion- maxY after .map: ', maxY);
+			});
+
+			const midX = (minX + maxX) / 2;
+			const midY = (minY + maxY) / 2;
+			const deltaX = (maxX - minX);
+			const deltaY = (maxY - minY);
+
+			console.log('[feeds js] getRegion- midX: ', midX);
+			console.log('[feeds js] getRegion- midY: ', midY);
+			console.log('[feeds js] getRegion- deltaX: ', deltaX);
+			console.log('[feeds js] getRegion- deltaY: ', deltaY);
+			console.log('[feeds js] getRegion- deltaX + 0.5: ', deltaX + 0.5);
+			console.log('[feeds js] getRegion- deltaY + 0.5: ', deltaY + 0.5);
+			
+			return {
+				latitude: midX,
+				longitude: midY,
+				latitudeDelta: deltaX + 0.5,
+				longitudeDelta: deltaY + 0.5
+			}
+		}
+		else{
+			return{
+				latitude: 4.5353,
+				longitude: 114.7277,
+				latitudeDelta: 0,
+				longitudeDelta: 0
+			}	
+		}
+	}
+
+	setMapMarkers = () => {
+		let mapMarkers = (<Text>No markers available</Text>);
+		if(this.state.locations.length > 0){
+			mapMarkers = this.state.locations.map(location => {
+				return (
+					<Marker 
+						key={location.id} 
+						coordinate={{
+							latitude: Number(location.lat),
+							longitude: Number(location.lng)
+						}}
+					/>
+				);
+			});
+		}
+		this.setState({ mapMarkers: mapMarkers });
 	}
 
 	onImageDelete = (imageId) => {
@@ -401,9 +432,6 @@ class FeedsScreen extends Component {
 		}
 	}
 	
-	
-	
-	
 	onLogoutHandler = () => {
 
 		Alert.alert(
@@ -571,69 +599,6 @@ class FeedsScreen extends Component {
 		});
 	}
 
-	// Handle initial zoom level
-	getRegion= (points) => {
-		console.log('[feeds js] getRegion- points: ', points)
-		if(points.length > 0){
-			let minX, maxX, minY, maxY;
-
-			// init first point
-			((point) => {
-				console.log('[feeds js] getRegion- point: ', point)
-				minX = point.latitude;
-				maxX = point.latitude;
-				minY = point.longitude;
-				maxY = point.longitude;
-				console.log('[feeds js] getRegion- minX at 1st point: ', minX);
-				console.log('[feeds js] getRegion- maxX at 1st point: ', maxX);
-				console.log('[feeds js] getRegion- minY at 1st point: ', minY);
-				console.log('[feeds js] getRegion- maxY at 1st point: ', maxY);
-			})(points[0]);
-
-			// calculate rect
-			points.map((point) => {
-				minX = Math.min(minX, point.latitude);
-				maxX = Math.max(maxX, point.latitude);
-				minY = Math.min(minY, point.longitude);
-				maxY = Math.max(maxY, point.longitude);
-				console.log('[feeds js] getRegion- minX after .map: ', minX);
-				console.log('[feeds js] getRegion- maxX after .map: ', maxX);
-				console.log('[feeds js] getRegion- minY after .map: ', minY);
-				console.log('[feeds js] getRegion- maxY after .map: ', maxY);
-			});
-
-			const midX = (minX + maxX) / 2;
-			const midY = (minY + maxY) / 2;
-			const deltaX = (maxX - minX);
-			const deltaY = (maxY - minY);
-
-			console.log('[feeds js] getRegion- midX: ', midX);
-			console.log('[feeds js] getRegion- midY: ', midY);
-			console.log('[feeds js] getRegion- deltaX: ', deltaX);
-			console.log('[feeds js] getRegion- deltaY: ', deltaY);
-			console.log('[feeds js] getRegion- deltaX + 0.5: ', deltaX + 0.5);
-			console.log('[feeds js] getRegion- deltaY + 0.5: ', deltaY + 0.5);
-			
-			return {
-				latitude: midX,
-				longitude: midY,
-				latitudeDelta: deltaX + 0.5,
-				longitudeDelta: deltaY + 0.5
-				
-			}
-			
-		}
-		else{
-			return{
-				latitude: 4.5353,
-				longitude: 114.7277,
-				latitudeDelta: 0,
-				longitudeDelta: 0
-			}	
-		}
-	}
-
-	
 	render() {
 		console.log('[feeds js] render - Role of user at onImageDelete:', this.state.role);
 		console.log('[feeds js] render - feedImagesArray:', this.state.feedImagesArray);
@@ -641,12 +606,8 @@ class FeedsScreen extends Component {
 		console.log('[feeds js] render - locations:', this.state.locations);
 		console.log('[feeds js] render - typeof locations:', typeof this.state.locations);
 		console.log('[feeds js] render - mapRegion: ', this.state.mapRegion);
-		console.log('[feeds js] render - displayMarkers:', this.state.displayMarkers);
+		console.log('[feeds js] render - mapMarkers:', this.state.mapMarkers);
 		
-		
-
-		
-
 		let gallery = (<Spinner/>);
 		let imagePickerButton;
 		let logoutLoader = (
@@ -727,8 +688,7 @@ class FeedsScreen extends Component {
 				/>
 			);
 		}
-//        	console.log('[feeds js] render - targetRegion', targetRegion);
-// 		console.log('[feeds js] render - this.getRegionForCoordiantes: ', this.getRegionZoom(targetRegion));
+
         return (
 			<Container>
 				<Header>
@@ -755,9 +715,8 @@ class FeedsScreen extends Component {
 							ref={map => this.map = map}
 							style={styles.mapContainer}
 							initialRegion={this.state.mapRegion}
-							// fitToSuppliedMarkers={true}
 						>
-							{this.state.displayMarkers}
+							{this.state.mapMarkers}
 						</MapView>
 					</Row>
 				</Content>
