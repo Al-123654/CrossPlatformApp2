@@ -12,6 +12,11 @@ import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
 
 import Gallery from '../components/Gallery/Gallery';
 
+import Favorite from './../components/Tabs/FavoriteTab';
+import Wishlist from './../components/Tabs/WishlistTab';
+import Cravelist from './../components/Tabs/CravelistTab.js';
+import Triedlist from './../components/Tabs/TriedListTab';
+
 const ALL_USER_URI = 'https://app-api-testing.herokuapp.com/api/users?followedList=1&userid='
 const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout'
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
@@ -41,10 +46,10 @@ class UserScreen extends Component{
             followedUsers: "",
             followingUsers:"",
             areImagesLoaded: false,
-            favImagesArray:[],
-            wishListArray:[],
-            craveListArray:[],
-            triedListArray:[],
+            // favImagesArray:[],
+            // wishListArray:[],
+            // craveListArray:[],
+            // triedListArray:[],
         }
         console.log('States - UserId: ', this.state.userId);
         console.log('States - Fname: ', this.state.fname);
@@ -56,10 +61,10 @@ class UserScreen extends Component{
     componentDidMount =() => {
         this.displayFollowed();
         this.displayFollowing();
-        this.getFavImages();
-        this.getCraveImages();
-        this.getTriedImages();
-        this.getWishImages();
+        // this.getFavImages();
+        // this.getCraveImages();
+        // this.getTriedImages();
+        // this.getWishImages();
     }
 
     onLogoutHandler = () => {
@@ -196,114 +201,91 @@ class UserScreen extends Component{
             })
             .catch(error => console.error('Error: ', error));
     };
-    // onImageClicked = (imageId, passedId) => {
-    //     console.log("[user js] onImageClicked - imageId: ", imageId);
-    //     return fetch(GET_IMAGES_URI + imageId, {
-    //         method: 'GET',
-    //         headers: {
-    //             Accept: 'application/json',
-    //             'Content-Type': 'application/json'
-    //         }
-    //     })
-    //         .then(response => response.json())
-    //         .then(response => {
-    //             console.log('[user js] onImageClicked - response from server: ', response);
-    //             this.props.navigation.navigate({
-    //                 key: 'Images1', routeName: 'Image', params: {
-    //                     data: response,
-    //                     userId: passedId,
-    //                     userData: this.props.navigation.state.params,
-    //                     imagesDisplayed: this.state.userImages
-    //                 }
-    //             })
-    //         })
-    //         .catch(error => console.error('Error: ', error));
-    // };
 
     onImageLongClick = (imageId, passedId) => {
         console.log('[user js] onImageLongClick!!')
     }
 
-   getFavImages = () => {
-       return fetch(GET_USERS_URI + this.state.userId + '?fav=1', {
-           method: 'GET',
-           headers: {
-               Accept: 'application/json',
-               'Content-Type': 'application/json'
-           }
-       }).then(response => response.json())
-        .then(response => {
-            console.log('[user js] getFavImages - response from server:', response);
+//    getFavImages = () => {
+//        return fetch(GET_USERS_URI + this.state.userId + '?fav=1', {
+//            method: 'GET',
+//            headers: {
+//                Accept: 'application/json',
+//                'Content-Type': 'application/json'
+//            }
+//        }).then(response => response.json())
+//         .then(response => {
+//             console.log('[user js] getFavImages - response from server:', response);
 
-            let tempFav = [];
-            response.favImages.forEach((image, index) => {
-                console.log('[user js] getFavImages - To push images into array:', image._id)
-                tempFav.push(image._id);
-            })
-            this.setState({ favImagesArray: [...tempFav] });
-            console.log('[user js] getFavImages - favImageArray check:', this.state.favImagesArray);
-           }).catch(error => console.error('Error:', error));
-   }
-   getWishImages = () => {
-       return fetch(GET_USERS_URI + this.state.userId + '?wish=1', {
-           method: 'GET',
-           headers: {
-               Accept: 'application/json',
-               'Content-Type': 'application/json'
-           }
-       }).then(response => response.json())
-        .then(response => {
-            console.log('[user js] response from server:', response);
+//             let tempFav = [];
+//             response.favImages.forEach((image, index) => {
+//                 console.log('[user js] getFavImages - To push images into array:', image._id)
+//                 tempFav.push(image._id);
+//             })
+//             this.setState({ favImagesArray: [...tempFav] });
+//             console.log('[user js] getFavImages - favImageArray check:', this.state.favImagesArray);
+//            }).catch(error => console.error('Error:', error));
+//    }
+//    getWishImages = () => {
+//        return fetch(GET_USERS_URI + this.state.userId + '?wish=1', {
+//            method: 'GET',
+//            headers: {
+//                Accept: 'application/json',
+//                'Content-Type': 'application/json'
+//            }
+//        }).then(response => response.json())
+//         .then(response => {
+//             console.log('[user js] response from server:', response);
 
-            let tempWish = [];
-            response.wishImages.forEach((image, index) => {
-                console.log('[user js] To push images into array:', image._id)
-                tempWish.push(image._id);
-            })
-            this.setState({ wishListArray: [...tempWish] });
-            console.log('[user js] WishImageArray check:', this.state.wishListArray);
-           }).catch(error => console.error('Error:', error));
-   }
-   getCraveImages = () => {
-       return fetch(GET_USERS_URI + this.state.userId + '?crave=1', {
-           method: 'GET',
-           headers: {
-               Accept: 'application/json',
-               'Content-Type': 'application/json'
-           }
-       }).then(response => response.json())
-        .then(response => {
-            console.log('[user js] response from server:', response);
+//             let tempWish = [];
+//             response.wishImages.forEach((image, index) => {
+//                 console.log('[user js] To push images into array:', image._id)
+//                 tempWish.push(image._id);
+//             })
+//             this.setState({ wishListArray: [...tempWish] });
+//             console.log('[user js] WishImageArray check:', this.state.wishListArray);
+//            }).catch(error => console.error('Error:', error));
+//    }
+//    getCraveImages = () => {
+//        return fetch(GET_USERS_URI + this.state.userId + '?crave=1', {
+//            method: 'GET',
+//            headers: {
+//                Accept: 'application/json',
+//                'Content-Type': 'application/json'
+//            }
+//        }).then(response => response.json())
+//         .then(response => {
+//             console.log('[user js] response from server:', response);
 
-            let tempCrave = [];
-            response.craveImages.forEach((image, index) => {
-                console.log('[user js] To push images into array:', image._id)
-                tempCrave.push(image._id);
-            })
-            this.setState({ craveListArray: [...tempCrave] });
-            console.log('[user js] craveImageArray check:', this.state.craveListArray);
-           }).catch(error => console.error('Error:', error));
-   }
-   getTriedImages = () => {
-       return fetch(GET_USERS_URI + this.state.userId + '?tried=1', {
-           method: 'GET',
-           headers: {
-               Accept: 'application/json',
-               'Content-Type': 'application/json'
-           }
-       }).then(response => response.json())
-        .then(response => {
-            console.log('[user js] response from server:', response);
+//             let tempCrave = [];
+//             response.craveImages.forEach((image, index) => {
+//                 console.log('[user js] To push images into array:', image._id)
+//                 tempCrave.push(image._id);
+//             })
+//             this.setState({ craveListArray: [...tempCrave] });
+//             console.log('[user js] craveImageArray check:', this.state.craveListArray);
+//            }).catch(error => console.error('Error:', error));
+//    }
+//    getTriedImages = () => {
+//        return fetch(GET_USERS_URI + this.state.userId + '?tried=1', {
+//            method: 'GET',
+//            headers: {
+//                Accept: 'application/json',
+//                'Content-Type': 'application/json'
+//            }
+//        }).then(response => response.json())
+//         .then(response => {
+//             console.log('[user js] response from server:', response);
 
-            let tempTried = [];
-            response.triedImages.forEach((image, index) => {
-                console.log('[user js] To push images into array:', image._id)
-                tempTried.push(image._id);
-            })
-            this.setState({ triedListArray: [...tempTried] });
-            console.log('[user js] TriedImageArray check:', this.state.triedListArray);
-           }).catch(error => console.error('Error:', error));
-   }
+//             let tempTried = [];
+//             response.triedImages.forEach((image, index) => {
+//                 console.log('[user js] To push images into array:', image._id)
+//                 tempTried.push(image._id);
+//             })
+//             this.setState({ triedListArray: [...tempTried] });
+//             console.log('[user js] TriedImageArray check:', this.state.triedListArray);
+//            }).catch(error => console.error('Error:', error));
+//    }
 
     _renderItem({ item, index }, parallaxProps) {
         console.log('[user js] _renderItem - item', item)
@@ -329,74 +311,74 @@ class UserScreen extends Component{
 
     render(){
         // carousel display
-        let favCarousel = (<Spinner />);
-        let wishCarousel = (<Spinner />);
-        let craveCarousel = (<Spinner />);
-        let triedCarousel = (<Spinner />);
-        if (this.state.favImagesArray.length >= 1) {
-            favCarousel = (
-                <Carousel
-                    ref={(c) => { this._carousel = c; }}
-                    data={this.state.favImagesArray}
-                    renderItem={this._renderItem.bind(this)}
-                    sliderWidth={Dimensions.get('window').width}
-                    itemWidth={Dimensions.get('window').width * 0.85}
-                    hasParallaxImages={true}
-                />
-            );
-        }else{
-            favCarousel = (
-                <Text>No favorite images</Text>
-            )
-        }
-        if (this.state.wishListArray.length >= 1) {
-            wishCarousel = (
-                <Carousel
-                    ref={(c) => { this._carousel = c; }}
-                    data={this.state.wishListArray}
-                    renderItem={this._renderItem.bind(this)}
-                    sliderWidth={Dimensions.get('window').width}
-                    itemWidth={Dimensions.get('window').width * 0.85}
-                    hasParallaxImages={true}
-                />
-            );
-        }else{
-            wishCarousel = (
-                <Text>No images in wishlist</Text>
-            )
-        }
-        if (this.state.craveListArray.length >= 1) {
-            craveCarousel = (
-                <Carousel
-                    ref={(c) => { this._carousel = c; }}
-                    data={this.state.craveListArray}
-                    renderItem={this._renderItem.bind(this)}
-                    sliderWidth={Dimensions.get('window').width}
-                    itemWidth={Dimensions.get('window').width * 0.85}
-                    hasParallaxImages={true}
-                />
-            );
-        }else{
-            craveCarousel = (
-                <Text>No images in cravelist</Text>
-            )
-        }
-        if (this.state.triedListArray.length >= 1) {
-            triedCarousel = (
-                <Carousel
-                    ref={(c) => { this._carousel = c; }}
-                    data={this.state.triedListArray}
-                    renderItem={this._renderItem.bind(this)}
-                    sliderWidth={Dimensions.get('window').width}
-                    itemWidth={Dimensions.get('window').width * 0.85}
-                    hasParallaxImages={true}
-                />
-            );
-        }else{
-            triedCarousel = (
-                <Text>No images in tried list</Text>
-            )
-        }
+        // let favCarousel = (<Spinner />);
+        // let wishCarousel = (<Spinner />);
+        // let craveCarousel = (<Spinner />);
+        // let triedCarousel = (<Spinner />);
+        // if (this.state.favImagesArray.length >= 1) {
+        //     favCarousel = (
+        //         <Carousel
+        //             ref={(c) => { this._carousel = c; }}
+        //             data={this.state.favImagesArray}
+        //             renderItem={this._renderItem.bind(this)}
+        //             sliderWidth={Dimensions.get('window').width}
+        //             itemWidth={Dimensions.get('window').width * 0.85}
+        //             hasParallaxImages={true}
+        //         />
+        //     );
+        // }else{
+        //     favCarousel = (
+        //         <Text>No favorite images</Text>
+        //     )
+        // }
+        // if (this.state.wishListArray.length >= 1) {
+        //     wishCarousel = (
+        //         <Carousel
+        //             ref={(c) => { this._carousel = c; }}
+        //             data={this.state.wishListArray}
+        //             renderItem={this._renderItem.bind(this)}
+        //             sliderWidth={Dimensions.get('window').width}
+        //             itemWidth={Dimensions.get('window').width * 0.85}
+        //             hasParallaxImages={true}
+        //         />
+        //     );
+        // }else{
+        //     wishCarousel = (
+        //         <Text>No images in wishlist</Text>
+        //     )
+        // }
+        // if (this.state.craveListArray.length >= 1) {
+        //     craveCarousel = (
+        //         <Carousel
+        //             ref={(c) => { this._carousel = c; }}
+        //             data={this.state.craveListArray}
+        //             renderItem={this._renderItem.bind(this)}
+        //             sliderWidth={Dimensions.get('window').width}
+        //             itemWidth={Dimensions.get('window').width * 0.85}
+        //             hasParallaxImages={true}
+        //         />
+        //     );
+        // }else{
+        //     craveCarousel = (
+        //         <Text>No images in cravelist</Text>
+        //     )
+        // }
+        // if (this.state.triedListArray.length >= 1) {
+        //     triedCarousel = (
+        //         <Carousel
+        //             ref={(c) => { this._carousel = c; }}
+        //             data={this.state.triedListArray}
+        //             renderItem={this._renderItem.bind(this)}
+        //             sliderWidth={Dimensions.get('window').width}
+        //             itemWidth={Dimensions.get('window').width * 0.85}
+        //             hasParallaxImages={true}
+        //         />
+        //     );
+        // }else{
+        //     triedCarousel = (
+        //         <Text>No images in tried list</Text>
+        //     )
+        // }
 
         return(
             <Container>
@@ -413,6 +395,7 @@ class UserScreen extends Component{
                         </Button>
                     </Right>
                 </Header>
+                
                 <Container>
                     <Content>
                         <Row>
@@ -420,57 +403,93 @@ class UserScreen extends Component{
                             <Label>First name</Label>
                        </Row>
                         <Row>
-                            <Text>{this.state.fname}</Text>
+                            <Text style={styles.textContainer}>{this.state.fname}</Text>
                         </Row>
                         <Row>
                             <Label>Last name</Label>
                         </Row>
                         <Row>
-                            <Text>{this.state.lname}</Text>
+                            <Text style={styles.textContainer}>{this.state.lname}</Text>
                         </Row>
                         <Row>
                             <Label>No. of Following</Label>
                         </Row>
                         <Row>
-                            <Text>{this.state.followingUsers.length}</Text>
+                            <Text style={styles.textContainer}>{this.state.followingUsers.length}</Text>
                          {/* {followedIDList} */}
                         </Row>
                         <Row>
                             <Label>No. of followed</Label>
                         </Row>
                         <Row>
-                            <Text>{this.state.followedUsers.length}</Text>
+                            <Text style={styles.textContainer}>{this.state.followedUsers.length}</Text>
                         </Row>
                         <Row>
-                            <Label>Favorite Images</Label>
+                            {/* <Label>Favorite Images</Label> */}
                         </Row>
                         <Row>
                            {/* {favGallery} */}
-                           {favCarousel}
+                           {/* {favCarousel} */}
                         </Row>
                         <Row>
-                            <Label>Wishlist Images</Label>
+                            {/* <Label>Wishlist Images</Label> */}
                         </Row>
                         <Row>
-                            {wishCarousel}
+                            {/* {wishCarousel} */}
                         </Row>
                         <Row>
-                            <Label>Crave Images</Label>
+                            {/* <Label>Crave Images</Label> */}
                         </Row>
                         <Row>
-                            {craveCarousel}
+                            {/* {craveCarousel} */}
                         </Row>
                         <Row>
-                            <Label>Tried Images</Label>
+                            {/* <Label>Tried Images</Label> */}
                         </Row>
                         <Row>
-                            {triedCarousel}
+                            {/* {triedCarousel} */}
                         </Row>
-                        
-
                     </Content>
 
                 </Container>
+                <Tabs initialPage={0}>
+                    {/* <Tab heading="Favorite"> */}
+
+                    <Tab heading={
+                        <TabHeading>
+                            <Icon name="heart" />
+                            {/* <Text>Favorite</Text> */}
+                        </TabHeading>
+                    }
+                    >
+                        <Favorite
+                            clicked={this.onImageClicked}
+                            longclick={this.onFavLongClick}
+                            currentUserID={this.state.userId}
+                        />
+                    </Tab>
+                    <Tab heading="Wishlist">
+                        <Wishlist
+                            clicked={this.onImageClicked}
+                            longclick={this.onWishLongClick}
+                            currentUserID={this.state.userId}
+                        />
+                    </Tab>
+                    <Tab heading="Cravelist">
+                        <Cravelist
+                            clicked={this.onImageClicked}
+                            longclick={this.onCraveLongClick}
+                            currentUserID={this.state.userId}
+                        />
+                    </Tab>
+                    <Tab heading="Triedlist">
+                        <Triedlist
+                            clicked={this.onImageClicked}
+                            longclick={this.onTriedLongClick}
+                            currentUserID={this.state.userId}
+                        />
+                    </Tab>
+                </Tabs>
                
                 
                 <Footer>
@@ -496,6 +515,10 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 250,
         flex: 1,
+        position: 'relative'
+    },
+    textContainer:{
+        height: 30,
         position: 'relative'
     }
 })
