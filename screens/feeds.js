@@ -58,15 +58,13 @@ class FeedsScreen extends Component {
 			followedImages: null,
 			restaurantUsers: null,
 			locations: props.navigation.state.params.data.locations,
-			region:{
-				latitude: 37.78825,
-				longitude: -122.4324,
-				latitudeDelta: 0.0922,
-				longitudeDelta: 0.0421,
-			}
+			mapRegion: null,
+			displayMarkers: (<Spinner/>)
+			
 			
 		
 		};
+		
 		console.log('[feeds js] constructor - Current states:', this.state); 
 		// console.log('[feeds js] constructor - region:', this.state(region));
 		
@@ -143,6 +141,55 @@ class FeedsScreen extends Component {
 			this.getUserImages();
 			this.getFollowedImages();
 		}
+
+		//get Region
+		let targetRegion;
+		targetRegion = (
+			this.state.locations.map(initRegion => {
+				let regionCoord =
+					{
+						latitude: Number(initRegion.lat),
+						longitude: Number(initRegion.lng)
+					}
+				console.log('[feeds js] constructor - regionCoord: ', regionCoord);
+				console.log('[feeds js] constructor - regionCoord.latitude: ', regionCoord.latitude);
+				console.log('[feeds js] constructor - regionCoord.longitude: ', regionCoord.longitude);
+				return {
+					latitude: regionCoord.latitude,
+					longitude: regionCoord.longitude,
+				};
+			})
+		)
+		this.setState({mapRegion: this.getRegion(targetRegion)});
+		
+		let displayMarkers;
+		if (this.state.locations.length > 0) {
+			//get markers
+			
+			displayMarkers = (
+				this.state.locations.map(marker => {
+					let coordinate = {
+						latitude: Number(marker.lat),
+						longitude: Number(marker.lng)
+					}
+
+					return (
+						<Marker
+							key={marker.id}
+							coordinate={coordinate}
+						/>
+					)
+
+				})
+			)
+		} else {
+			displayMarkers = (
+				<Text>No markers available</Text>
+			)
+		}
+		this.setState({
+			displayMarkers: displayMarkers
+		})
 	}
 
 	componentDidUpdate(prevProps, prevState){
@@ -524,26 +571,23 @@ class FeedsScreen extends Component {
 		});
 	}
 
-
-	
 	// Handle initial zoom level
-	getRegionForCoordinates = (points) => {
-		console.log('[feeds js] getRegionForCoordinates - points: ', points)
+	getRegion= (points) => {
+		console.log('[feeds js] getRegion- points: ', points)
 		if(points.length > 0){
 			let minX, maxX, minY, maxY;
-		
 
 			// init first point
 			((point) => {
-				console.log('[feeds js] getRegionForCoordinates - point: ', point)
+				console.log('[feeds js] getRegion- point: ', point)
 				minX = point.latitude;
 				maxX = point.latitude;
 				minY = point.longitude;
 				maxY = point.longitude;
-				console.log('[feeds js] getRegionForCoordinates - minX at 1st point: ', minX);
-				console.log('[feeds js] getRegionForCoordinates - maxX at 1st point: ', maxX);
-				console.log('[feeds js] getRegionForCoordinates - minY at 1st point: ', minY);
-				console.log('[feeds js] getRegionForCoordinates - maxY at 1st point: ', maxY);
+				console.log('[feeds js] getRegion- minX at 1st point: ', minX);
+				console.log('[feeds js] getRegion- maxX at 1st point: ', maxX);
+				console.log('[feeds js] getRegion- minY at 1st point: ', minY);
+				console.log('[feeds js] getRegion- maxY at 1st point: ', maxY);
 			})(points[0]);
 
 			// calculate rect
@@ -552,108 +596,57 @@ class FeedsScreen extends Component {
 				maxX = Math.max(maxX, point.latitude);
 				minY = Math.min(minY, point.longitude);
 				maxY = Math.max(maxY, point.longitude);
-				console.log('[feeds js] getRegionForCoordinates - minX after .map: ', minX);
-				console.log('[feeds js] getRegionForCoordinates - maxX after .map: ', maxX);
-				console.log('[feeds js] getRegionForCoordinates - minY after .map: ', minY);
-				console.log('[feeds js] getRegionForCoordinates - maxY after .map: ', maxY);
+				console.log('[feeds js] getRegion- minX after .map: ', minX);
+				console.log('[feeds js] getRegion- maxX after .map: ', maxX);
+				console.log('[feeds js] getRegion- minY after .map: ', minY);
+				console.log('[feeds js] getRegion- maxY after .map: ', maxY);
 			});
 
 			const midX = (minX + maxX) / 2;
 			const midY = (minY + maxY) / 2;
-			// const deltaX = 0.7;
-			// const deltaY = 0.7;
 			const deltaX = (maxX - minX);
 			const deltaY = (maxY - minY);
 
-			console.log('[feeds js] getRegionForCoordinates - midX: ', midX);
-			console.log('[feeds js] getRegionForCoordinates - midY: ', midY);
-			console.log('[feeds js] getRegionForCoordinates - deltaX: ', deltaX);
-			console.log('[feeds js] getRegionForCoordinates - deltaY: ', deltaY);
+			console.log('[feeds js] getRegion- midX: ', midX);
+			console.log('[feeds js] getRegion- midY: ', midY);
+			console.log('[feeds js] getRegion- deltaX: ', deltaX);
+			console.log('[feeds js] getRegion- deltaY: ', deltaY);
+			console.log('[feeds js] getRegion- deltaX + 0.5: ', deltaX + 0.5);
+			console.log('[feeds js] getRegion- deltaY + 0.5: ', deltaY + 0.5);
 			
 			return {
 				latitude: midX,
 				longitude: midY,
-				latitudeDelta: deltaX,
-				longitudeDelta: deltaY
-				// latitudeDelta: 50,
-				// longitudeDelta: 50
+				latitudeDelta: deltaX + 0.5,
+				longitudeDelta: deltaY + 0.5
+				
 			}
-		}
-		else{
-			mapType = 'none'
 			
 		}
-		
+		else{
+			return{
+				latitude: 4.5353,
+				longitude: 114.7277,
+				latitudeDelta: 0,
+				longitudeDelta: 0
+			}	
+		}
 	}
-	onRegionChange = (region, targetRegion) => {
-		console.log('[feeds js] onRegionChange - inside onRegionChange');
-		this.setState({region: this.getRegionForCoordinates(targetRegion)})
-	}
 
-
-
+	
 	render() {
-		console.log('[feeds js[ render - onRegionChange: ', this.onRegionChange);
 		console.log('[feeds js] render - Role of user at onImageDelete:', this.state.role);
 		console.log('[feeds js] render - feedImagesArray:', this.state.feedImagesArray);
 		console.log('[feeds js] render - areImagesLoaded:', this.state.areImagesLoaded);
 		console.log('[feeds js] render - locations:', this.state.locations);
 		console.log('[feeds js] render - typeof locations:', typeof this.state.locations);
-		let targetRegion = (<Spinner/>)
-		let displayMarkers = (<Spinner/>)
-		if(this.state.locations.length > 0){
-			displayMarkers = (
-				this.state.locations.map(marker => {
-					let coordinate = {
-						latitude: Number(marker.lat),
-						longitude: Number(marker.lng)
-					}
-
-					return (
-						<Marker
-							key={marker.id}
-							coordinate={coordinate}
-						/>
-					)
-
-				})
-			)
-		}
-
-		// get Region
-		if(this.state.locations.length > 0){
-			targetRegion = (
-				this.state.locations.map(initRegion => {
-					let regionCoord =
-					{
-						latitude: Number(initRegion.lat),
-						longitude: Number(initRegion.lng)
-					}
-					console.log('[feeds js] render - regionCoord: ', regionCoord);
-					console.log('[feeds js] render - regionCoord.latitude: ', regionCoord.latitude);
-					console.log('[feeds js] render - regionCoord.longitude: ', regionCoord.longitude);
-					return{
-						latitude: regionCoord.latitude,
-						longitude: regionCoord.longitude,
-						// latitudeDelta: 0,
-						// longitudeDelta: 0
-					};		
-				})	
-			)
-		}else{
-			targetRegion = (
-				{
-					latitude: 0,
-					longitude: 0,
-					// latitudeDelta: 0,
-					// longitudeDelta: 0
-				}
-			)
-			
-		}
+		console.log('[feeds js] render - mapRegion: ', this.state.mapRegion);
+		console.log('[feeds js] render - displayMarkers:', this.state.displayMarkers);
 		
 		
-	
+
+		
+
 		let gallery = (<Spinner/>);
 		let imagePickerButton;
 		let logoutLoader = (
@@ -661,10 +654,6 @@ class FeedsScreen extends Component {
 				<Icon name='home' />
 			</Button>
 		);
-
-		
-		
-		
 		
 		if(this.state.feedImagesArray && this.state.areImagesLoaded){
 			if (this.state.feedImagesArray.length > 0) {
@@ -738,8 +727,8 @@ class FeedsScreen extends Component {
 				/>
 			);
 		}
-       	console.log('[feeds js] render - targetRegion', targetRegion);
-		console.log('[feeds js] render - this.getRegionForCoordiantes: ', this.getRegionForCoordinates(targetRegion));
+//        	console.log('[feeds js] render - targetRegion', targetRegion);
+// 		console.log('[feeds js] render - this.getRegionForCoordiantes: ', this.getRegionZoom(targetRegion));
         return (
 			<Container>
 				<Header>
@@ -765,12 +754,10 @@ class FeedsScreen extends Component {
 						<MapView
 							ref={map => this.map = map}
 							style={styles.mapContainer}
-							// initialRegion={this.getRegionForCoordinates(targetRegion)}
-							region={this.state.region}
-							fitToSuplliedMarker={true}
-							onRegionChange={() => {targetRegion}}
+							initialRegion={this.state.mapRegion}
+							// fitToSuppliedMarkers={true}
 						>
-							{displayMarkers}
+							{this.state.displayMarkers}
 						</MapView>
 					</Row>
 				</Content>
