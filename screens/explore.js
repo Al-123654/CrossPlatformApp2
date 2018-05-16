@@ -31,7 +31,8 @@ class ExploreScreen extends Component {
 			listOfUsers: null,
 			passedUserId: props.navigation.state.params.currentUserId,
 			currentUserDetails: null,
-			isListLoading: false
+			isListLoading: false,
+			searchBtnPressed: false,
 		};
 
 		console.log('[explore js] constructor - State after init: ', this.state);
@@ -107,13 +108,15 @@ class ExploreScreen extends Component {
 							// if no results
 							this.setState({
 								listOfUsers: [],
-								isListLoading: false
+								isListLoading: false,
+								
 							});
 						}else{
 							// if more than one results
 							this.setState({
 								listOfUsers: respObj.data,
-								isListLoading: false
+								isListLoading: false,
+								
 							});
 						}
 					}
@@ -121,20 +124,36 @@ class ExploreScreen extends Component {
 			})
 			.catch(error => console.log("[explore js] fetchUsers - Error fetching search results: ", error));
 		}
+		// if nothing entered in search field
+		else{
+			this.setState({
+				listOfUsers : null,
+				isListLoading: false,
+				
+			})
+		}
 	}
 
+	//user enters data into search field
 	onChangedSearchHandler = (text) => {
+		// if user enters data into search field
 		if(text && text.length >= 1){
 			console.log('[explore js] onChangedSearchHandler - text in searchbox: ', text);
 			this.setState({searchTerm: text});
 		}
+		// if user does not enter data into search field
+		else{
+			this.setState({searchTerm: null});
+		}
 	}
 
+	//user clicks search button
 	onSubmitSearchHandler = () => {
 		console.log("[explore js] onSubmitSearchHandler - Clicked search btn.");
 		this.setState({
 			listOfUsers : null,
-			isListLoading: true
+			isListLoading: true,
+			searchBtnPressed: true,
 		});
 		this.fetchUsers();
 	}
@@ -320,9 +339,9 @@ class ExploreScreen extends Component {
 				</List>
 			);
 		}
-		// else{
-		// 	jsxList = (<Text>No users found</Text>)
-		// }
+		else if (this.state.listOfUsers == null && this.state.searchBtnPressed && !this.state.isListLoading ){
+			jsxList = (<Text>Enter search query</Text>)
+		}
 
 		return(    
             <Container>
@@ -344,7 +363,9 @@ class ExploreScreen extends Component {
 						<Row>
 							<Item style={{width:'100%'}}>
 								<Icon name="ios-search" />
-								<Input placeholder="Search" onChangeText={(text) => this.onChangedSearchHandler(text)}/>
+								<Input placeholder="Search" onChangeText={(text) => this.onChangedSearchHandler(text)}
+								 onSubmitEditing={this.onSubmitSearchHandler}
+								/>
 							</Item>
 						</Row>
 						<Row>
