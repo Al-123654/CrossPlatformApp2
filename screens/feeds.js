@@ -21,6 +21,7 @@ import MapView, { Marker , PROVIDER_GOOGLE} from 'react-native-maps';
 // const GET_RESTAURANT_USERS_URI = 'http://localhost:5000/api/users?user=2';
 
 // TEST 123
+// TEST 1234
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
 const GET_RESTAURANT_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users?user=2';
 const GET_USERS_FOLLOWED_URI = 'https://app-api-testing.herokuapp.com/images/';
