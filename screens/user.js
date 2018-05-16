@@ -28,7 +28,7 @@ const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
 // const GET_USERS_URI = 'http://localhost:5000/api/users/';
 // const GET_FOLLOWED_BY = 'http://localhost:5000/api/users?usersFollowing=1&userid='
 
-
+// TESTING MASTER MERGE
 class UserScreen extends Component{
     constructor(props){
         super(props);
