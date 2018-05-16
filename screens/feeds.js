@@ -14,16 +14,14 @@ import Gallery from '../components/Gallery/Gallery';
 import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
 import MapView, { Marker , PROVIDER_GOOGLE} from 'react-native-maps';
 
+
+
 // const GET_USERS_URI = 'http://localhost:5000/api/users/';
 // const GET_USERS_FOLLOWED_URI = 'http://localhost:5000/api/users?followed=followed';
 // const GET_IMAGES_URI = 'http://localhost:5000/api/images/';
 // const LOGOUT_URI = 'http://localhost:5000/logout';
 // const GET_RESTAURANT_USERS_URI = 'http://localhost:5000/api/users?user=2';
 
-// TEST 123
-// TEST 1234
-// TEST 12345
-// TEST 123456
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
 const GET_RESTAURANT_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users?user=2';
 const GET_USERS_FOLLOWED_URI = 'https://app-api-testing.herokuapp.com/images/';
