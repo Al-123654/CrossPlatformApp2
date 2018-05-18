@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Platform, Dimensions, StyleSheet, View, Image, Alert , TouchableOpacity, TouchableHighlight} from 'react-native';
+import { 
+	Platform, Dimensions, StyleSheet, View, Image, 
+	Alert , TouchableOpacity, TouchableHighlight, YellowBox} from 'react-native';
 import { StackNavigator, NavigationActions  } from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
@@ -7,13 +9,12 @@ import {
 	Container, Header, Left, Body, Right, Icon, 
 	Title, Content, Text, Button, Item, Input, 
 	Form, Label, Thumbnail, Footer, FooterTab, Spinner, Toast, Drawer,
-	Card, CardItem
-} from 'native-base';
+	Card, CardItem } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import Gallery from '../components/Gallery/Gallery';
 import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
 import MapView, { Marker , PROVIDER_GOOGLE} from 'react-native-maps';
-
+YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated']);
 
 
 // const GET_USERS_URI = 'http://localhost:5000/api/users/';
