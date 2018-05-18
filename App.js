@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Platform, StyleSheet,  View, Image } from 'react-native';
+import { Platform, StyleSheet,  View, Image, YellowBox } from 'react-native';
 import { StackNavigator, navigationOptions} from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
@@ -10,6 +10,10 @@ import {
 } from 'native-base';
 import{ Row, Grid} from 'react-native-easy-grid';
 import validator from 'validator';
+YellowBox.ignoreWarnings([
+	'Module RCTImageLoader requires main queue setup',
+	'Module RNFetchBlob requires main queue setup'
+]);
 
 var RegisterScreen = require('./screens/register.js');
 var FeedsScreen = require('./screens/feeds.js');
