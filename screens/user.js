@@ -28,7 +28,7 @@ const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
 // const GET_USERS_URI = 'http://localhost:5000/api/users/';
 // const GET_FOLLOWED_BY = 'http://localhost:5000/api/users?usersFollowing=1&userid='
 
-// TESTING MASTER MERGE
+
 class UserScreen extends Component{
     constructor(props){
         super(props);
@@ -396,116 +396,103 @@ class UserScreen extends Component{
                     </Right>
                 </Header>
                 
-                <Container>
+                {/* <Container> */}
                     <Content>
                         <Row>
-                            
-                            <Label>First name</Label>
-                       </Row>
-                        <Row>
-                            <Text style={styles.textContainer}>{this.state.fname}</Text>
+                            <Thumbnail large source={{ uri: GET_IMAGES_URI + this.state.userImages[0] + '/display' }} />
+                            <View style={{flex: 1, alignItems: 'center'}}> 
+                                <Text style={styles.textContainer}>{this.state.userImages.length}</Text>
+                                <Label style={styles.labelContainer}> Posts</Label>
+                            </View>
+                            <View style={{flex: 1, alignItems: 'center'}}> 
+                                <Text style={styles.textContainer}>{this.state.followingUsers.length}</Text>
+                                <Label style={styles.labelContainer}> Following</Label>
+                            </View>
+                            <View style={{flex: 1, alignItems: 'center'}}> 
+                                <Text style={styles.textContainer}>{this.state.followedUsers.length}</Text>
+                                <Label style={styles.labelContainer}> Followers</Label> 
+                            </View>
+                           
                         </Row>
-                        <Row>
-                            <Label>Last name</Label>
-                        </Row>
-                        <Row>
-                            <Text style={styles.textContainer}>{this.state.lname}</Text>
-                        </Row>
-                        <Row>
-                            <Label>No. of Following</Label>
-                        </Row>
-                        <Row>
-                            <Text style={styles.textContainer}>{this.state.followingUsers.length}</Text>
-                         {/* {followedIDList} */}
-                        </Row>
-                        <Row>
-                            <Label>No. of followed</Label>
-                        </Row>
-                        <Row>
-                            <Text style={styles.textContainer}>{this.state.followedUsers.length}</Text>
-                        </Row>
-                        <Row>
-                            {/* <Label>Favorite Images</Label> */}
-                        </Row>
-                        <Row>
-                           {/* {favGallery} */}
-                           {/* {favCarousel} */}
-                        </Row>
-                        <Row>
-                            {/* <Label>Wishlist Images</Label> */}
-                        </Row>
-                        <Row>
-                            {/* {wishCarousel} */}
-                        </Row>
-                        <Row>
-                            {/* <Label>Crave Images</Label> */}
-                        </Row>
-                        <Row>
-                            {/* {craveCarousel} */}
-                        </Row>
-                        <Row>
-                            {/* <Label>Tried Images</Label> */}
-                        </Row>
-                        <Row>
-                            {/* {triedCarousel} */}
-                        </Row>
+                        <View>
+                            <Text>{this.state.fname} {this.state.lname}</Text>
+                        </View>
+                        <Tabs initialPage={0}>
+                            <Tab heading={
+                                <TabHeading>
+                                    <Icon name="heart" />
+
+                                </TabHeading>
+                            }
+                            >
+                                <Favorite
+                                    clicked={this.onImageClicked}
+                                    longclick={this.onFavLongClick}
+                                    currentUserID={this.state.userId}
+                                />
+                            </Tab>
+                            <Tab heading="Wishlist">
+                                <Wishlist
+                                    clicked={this.onImageClicked}
+                                    longclick={this.onWishLongClick}
+                                    currentUserID={this.state.userId}
+                                />
+                            </Tab>
+                            <Tab heading="Cravelist">
+                                <Cravelist
+                                    clicked={this.onImageClicked}
+                                    longclick={this.onCraveLongClick}
+                                    currentUserID={this.state.userId}
+                                />
+                            </Tab>
+                            <Tab heading="Triedlist">
+                                <Triedlist
+                                    clicked={this.onImageClicked}
+                                    longclick={this.onTriedLongClick}
+                                    currentUserID={this.state.userId}
+                                />
+                            </Tab>
+                        </Tabs> 
                     </Content>
+                   {/* <Tabs initialPage={0}>
+                            <Tab heading={
+                                <TabHeading>
+                                    <Icon name="heart" />
 
+                                </TabHeading>
+                            }
+                            >
+                                <Favorite
+                                    clicked={this.onImageClicked}
+                                    longclick={this.onFavLongClick}
+                                    currentUserID={this.state.userId}
+                                />
+                            </Tab>
+                            <Tab heading="Wishlist">
+                                <Wishlist
+                                    clicked={this.onImageClicked}
+                                    longclick={this.onWishLongClick}
+                                    currentUserID={this.state.userId}
+                                />
+                            </Tab>
+                            <Tab heading="Cravelist">
+                                <Cravelist
+                                    clicked={this.onImageClicked}
+                                    longclick={this.onCraveLongClick}
+                                    currentUserID={this.state.userId}
+                                />
+                            </Tab>
+                            <Tab heading="Triedlist">
+                                <Triedlist
+                                    clicked={this.onImageClicked}
+                                    longclick={this.onTriedLongClick}
+                                    currentUserID={this.state.userId}
+                                />
+                            </Tab>
+                        </Tabs>   */}             
                 </Container>
-                <Tabs initialPage={0}>
-                    {/* <Tab heading="Favorite"> */}
-
-                    <Tab heading={
-                        <TabHeading>
-                            <Icon name="heart" />
-                            {/* <Text>Favorite</Text> */}
-                        </TabHeading>
-                    }
-                    >
-                        <Favorite
-                            clicked={this.onImageClicked}
-                            longclick={this.onFavLongClick}
-                            currentUserID={this.state.userId}
-                        />
-                    </Tab>
-                    <Tab heading="Wishlist">
-                        <Wishlist
-                            clicked={this.onImageClicked}
-                            longclick={this.onWishLongClick}
-                            currentUserID={this.state.userId}
-                        />
-                    </Tab>
-                    <Tab heading="Cravelist">
-                        <Cravelist
-                            clicked={this.onImageClicked}
-                            longclick={this.onCraveLongClick}
-                            currentUserID={this.state.userId}
-                        />
-                    </Tab>
-                    <Tab heading="Triedlist">
-                        <Triedlist
-                            clicked={this.onImageClicked}
-                            longclick={this.onTriedLongClick}
-                            currentUserID={this.state.userId}
-                        />
-                    </Tab>
-                </Tabs>
-               
-                
-                <Footer>
-                    {/* <FooterTab >
-                        <Button full onPress={this.onFeedsPressedHandler()}>
-                            <Icon name="camera" />
-                            <Text>Feeds</Text>
-                        </Button>
-                        <Button full onPress={() => { this.onExplorePressedHandler(this.state.passedId) }}>
-                            <Icon name="navigate" />
-                            <Text>Explore</Text>
-                        </Button>
-                    </FooterTab> */}
-                </Footer>
-            </Container>
-            // <Text>User</Text>
+            // </Container>
+            
         );
     };
 
@@ -517,9 +504,19 @@ const styles = StyleSheet.create({
         flex: 1,
         position: 'relative'
     },
+    labelContainer:{
+        // textAlign: 'right',
+        // alignContent: 'flex-start',
+        // flex:1,
+        // flexDirection: 'row'
+        // width: 50
+    },
     textContainer:{
-        height: 30,
-        position: 'relative'
+        // width: 50,
+        // position: 'relative',
+        // textAlign: 'right',
+        // alignContent: 'flex-start'
+        // flexDirection: 'column'   
     }
 })
 
