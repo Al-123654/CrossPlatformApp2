@@ -46,16 +46,18 @@ class UserScreen extends Component{
             followedUsers: "",
             followingUsers:"",
             areImagesLoaded: false,
+            originalId: props.navigation.state.params.previousId
             // favImagesArray:[],
             // wishListArray:[],
             // craveListArray:[],
             // triedListArray:[],
         }
-        console.log('States - UserId: ', this.state.userId);
-        console.log('States - Fname: ', this.state.fname);
-        console.log('States - Lname: ', this.state.lname);
-        console.log('States - User Images: ', this.state.userImages);
-        console.log('States - Username: ', this.state.username);
+        console.log('[user js]States - UserId: ', this.state.userId);
+        console.log('[user js]States - Fname: ', this.state.fname);
+        console.log('[user js]States - Lname: ', this.state.lname);
+        console.log('[user js]States - User Images: ', this.state.userImages);
+        console.log('[user js]States - Username: ', this.state.username);
+        console.log('[user js]States - originalId: ', this.state.originalId);
     }
 
     componentDidMount =() => {
@@ -308,6 +310,17 @@ class UserScreen extends Component{
         );
         console.log('[user js] _renderItem -  item :', item)
     }
+    onEditPressedHandler = (currentUserId, fname, lname, username, userImages) => {
+        console.log('[profile js] onEditPressedHandler pressed')
+        console.log('[user js] onEditPressedHandler - items carried over: ', currentUserId, fname, lname, username, userImages)
+        this.props.navigation.navigate('EditProfile', { 
+            currentUserId: currentUserId,
+            fname: fname,
+            lname: lname,
+            username: username,
+            userImages: userImages
+        })
+    }
 
     render(){
         // carousel display
@@ -380,6 +393,23 @@ class UserScreen extends Component{
         //     )
         // }
 
+        let canEdit;
+
+        if(this.state.originalId == undefined){
+            canEdit = (
+                <Button bordered onPress={() => {
+                    this.onEditPressedHandler(this.state.userId, this.state.fname,
+                        this.state.lname, this.state.username, this.state.userImages)
+                }}>
+                    <Text>Edit Profile</Text>
+                </Button>
+            )
+        }else{
+            canEdit = (
+                <Text></Text>
+            )
+        }
+
         return(
             <Container>
                 <Header hasTabs>
@@ -417,6 +447,7 @@ class UserScreen extends Component{
                         <View>
                             <Text>{this.state.fname} {this.state.lname}</Text>
                         </View>
+                        {canEdit}
                         <Tabs initialPage={0}>
                             <Tab heading={
                                 <TabHeading>

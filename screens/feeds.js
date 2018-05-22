@@ -594,13 +594,26 @@ class FeedsScreen extends Component {
 		this.props.navigation.goBack();
 	}
 
-	onProfilePressedHandler = (passedId) => {
+	onProfilePressedHandler = (passedId, fname, lname, images, username) => {
 		console.log('[feeds js] onProfilePressedHandler - passedId: ', passedId);
+		if (this.state.role == 2){
+			this.props.navigation.navigate({
+				key: 'Profile1', routeName: 'Profile', params: {
+					userId: passedId
+				}
+			});
+		}else{
+			this.props.navigation.navigate({
+				key: 'User1', routeName: 'User', params: {
+					userId:passedId,
+					fname: fname,
+					lname: lname,
+					images: images,
+					username: username
+				}
+			})
+		}
 		
-		this.props.navigation.navigate({ key: 'Profile1', routeName: 'Profile', params: {
-				userId:passedId	
-			} 
-		});
 	}
 
 	render() {
@@ -669,7 +682,8 @@ class FeedsScreen extends Component {
 							<Icon name="navigate" />
 							<Text>Explore</Text>
 						</Button>
-						<Button full onPress={() => { this.onProfilePressedHandler(this.state.passedId) }}>
+						<Button full onPress={() => { this.onProfilePressedHandler(this.state.passedId, this.state.fname, 
+							this.state.lname, this.state.images, this.state.passedUsername ) }}>
 							<Icon name="ios-person" />
 							<Text>Profile</Text>
 						</Button>

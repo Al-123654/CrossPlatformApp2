@@ -22,14 +22,14 @@ var ExploreScreen = require('./screens/explore.js');
 var ProfileScreen = require('./screens/profile.js');
 var UserScreen = require('./screens/user.js');
 var RestaurantScreen = require('./screens/restaurant.js');
+var EditScreen = require('./screens/editProfile.js')
 
 class HomeScreen extends Component {
 
 	constructor(props) {
 		super(props);
 
-		this.focusNextField = this.focusNextField.bind(this);
-		this.inputs = {};
+		
 	}
 
 	state = {
@@ -135,9 +135,7 @@ class HomeScreen extends Component {
 		
 	}
 
-	focusNextField(id) {
-		this.inputs[id].focus();
-	}
+	
 
 	
 
@@ -260,6 +258,13 @@ const RootStack = StackNavigator(
 		},
 		Restaurant:{
 			screen: RestaurantScreen,
+			navigationOptions: {
+				header: null,
+				gesturesEnabled: false
+			}
+		},
+		EditProfile:{
+			screen: EditScreen,
 			navigationOptions: {
 				header: null,
 				gesturesEnabled: false

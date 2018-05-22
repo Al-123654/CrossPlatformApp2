@@ -264,7 +264,8 @@ class ExploreScreen extends Component {
 					images: itemImages,
 					username: itemUsername,
 					following: itemFollowing,
-					role: itemRole
+					role: itemRole,
+					previousId: previousId
 				}
 			});
 		}else{
