@@ -25,6 +25,13 @@ var RestaurantScreen = require('./screens/restaurant.js');
 
 class HomeScreen extends Component {
 
+	constructor(props) {
+		super(props);
+
+		this.focusNextField = this.focusNextField.bind(this);
+		this.inputs = {};
+	}
+
 	state = {
 		username: "",
 		logUsername: "",
@@ -128,6 +135,12 @@ class HomeScreen extends Component {
 		
 	}
 
+	focusNextField(id) {
+		this.inputs[id].focus();
+	}
+
+	
+
 	render() {
 		console.log('[app js] Loading login page')
 		console.log('[app js] isLoggedIn:', this.state.isLoggedIn);
@@ -158,13 +171,20 @@ class HomeScreen extends Component {
 							<Form style={{width:'100%'}}>
 								<Item floatingLabel error={this.state.logUsername.length > 0}>
 									<Label>Username</Label>
-									<Input onChangeText={(text) => this.onChangedUsernameHandler(text)} />
+									<Input 
+										onChangeText={(text) => this.onChangedUsernameHandler(text)} 
+										onSubmitEditing = {this.onLoginPressHandler}
+									/>
 								</Item>
 								{this.state.logUsername.length > 0 ? (<Text style={styles.formLogText}>{this.state.logUsername}</Text>) : null}
 
 								<Item floatingLabel error={this.state.logPassword.length > 0}>
 									<Label>Password</Label>
-									<Input secureTextEntry={true} onChangeText={(text) => this.onChangedPasswordHandler(text)} />
+									<Input
+										secureTextEntry={true} 
+										onChangeText={(text) => this.onChangedPasswordHandler(text)} 
+										onSubmitEditing = {this.onLoginPressHandler}
+									/>
 								</Item>
 								{this.state.logPassword.length > 0 ? (<Text style={styles.formLogText}>{this.state.logPassword}</Text>) : null}
 							
