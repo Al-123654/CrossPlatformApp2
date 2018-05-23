@@ -25,7 +25,8 @@ YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated']);
 
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
 const GET_RESTAURANT_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users?user=2';
-const GET_USERS_FOLLOWED_URI = 'https://app-api-testing.herokuapp.com/images/';
+// const GET_USERS_FOLLOWED_URI = 'https://app-api-testing.herokuapp.com/images/';
+const GET_USERS_FOLLOWED_URI = 'https://app-api-testing.herokuapp.com/api/users?followed=1';
 const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
 const UPLOAD_URI = 'https://app-api-testing.herokuapp.com/upload';
 const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
@@ -402,6 +403,7 @@ class FeedsScreen extends Component {
 		} else if (this.state.followed.length > 1) {
 			// MULTIPLE FOLLOWED
 			console.log('[feeds js] getFollowedImages - Multiple followed: ', this.state.followed);
+			console.log('[feeds js] getFollowedImages - Multiple followed uri: ', GET_USERS_URI + this.state.followed);
 			return fetch(GET_USERS_FOLLOWED_URI)
 				.then(response => response.json())
 				.then(response => {
