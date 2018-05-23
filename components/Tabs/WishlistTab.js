@@ -5,7 +5,7 @@ import {
     Container, Header, Left, Body, Right, Icon, Title,
     Content, Text, Button, Item, Input, Form, Label, Thumbnail,
     Card, CardItem, Badge, ListItem, List, Footer, FooterTab,
-    Toast, Root
+    Toast, Root, Spinner
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import moment from 'moment';
@@ -24,7 +24,8 @@ class Wishlist extends Component{
        
         this.state={
             wishlistArray: [],
-            userID: this.props.currentUserID
+            userID: this.props.currentUserID,
+            loaded : false
         }
     }
 
@@ -45,7 +46,10 @@ class Wishlist extends Component{
                     console.log('[Wishlist Tab js] To push images into array:', image._id)
                     tempWishlist.push(image._id);
                 })
-                this.setState({ wishlistArray: [...tempWishlist] });
+                this.setState({ 
+                    wishlistArray: [...tempWishlist],
+                    loaded: true
+                });
                 console.log('[Wishlist Tab js] wishlistArray check:', this.state.wishlistArray);
             })
             .catch(error => console.error('Error:', error));
@@ -54,29 +58,38 @@ class Wishlist extends Component{
     }
 
     render(){
+        
+        let gallery = (<Spinner/>)
+
+        if (this.state.wishlistArray.length == 0 && this.state.loaded) {
+            gallery = <Text>No images in wishlist</Text>
+        } else if (this.state.wishlistArray.length > 0 && this.state.loaded) {
+            gallery = (
+                <Gallery
+                    images={this.state.wishlistArray}
+                    clicked={clicked}
+                    longclick={longclick}
+                    passedUserId={this.state.userID}
+                />
+            )
+        }
 
         const { clicked } = this.props;
         const { longclick } = this.props;
         console.log('[Wishlist Tab js] Checking length of array:', this.state.wishlistArray.length);
         console.log('[Wishlist Tab js] clicked:', clicked);
         console.log('[Wishlist Tab js] wishlistArray at render:', this.state.wishlistArray);
-        if (this.state.wishlistArray.length == 0) {
-            return (
-                <Text>No images in wishlist</Text>
-            )
-        } else {
-            return (
+       
+        return (
+            <Container>
                 <Content>
-                    <Gallery
-                        images={this.state.wishlistArray}
-                        clicked={clicked}
-                        longclick={longclick}
-                        passedUserId={this.state.userID}
-                    />
+                    {gallery}
                 </Content>
 
-            );
-        }
+            </Container>
+           
+        );
+        
     }
 }
 

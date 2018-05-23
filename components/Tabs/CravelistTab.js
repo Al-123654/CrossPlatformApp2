@@ -5,7 +5,7 @@ import {
     Container, Header, Left, Body, Right, Icon, Title,
     Content, Text, Button, Item, Input, Form, Label, Thumbnail,
     Card, CardItem, Badge, ListItem, List, Footer, FooterTab,
-    Toast, Root
+    Toast, Root, Spinner
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import moment from 'moment';
@@ -23,7 +23,8 @@ class Cravelist extends Component {
 
         this.state = {
            cravelistArray: [],
-            userID: this.props.currentUserID
+            userID: this.props.currentUserID,
+            loaded: false
         }
     }
 
@@ -44,7 +45,10 @@ class Cravelist extends Component {
                     console.log('[Cravelist Tab js] To push images into array:', image._id)
                     tempCravelist.push(image._id);
                 })
-                this.setState({cravelistArray: [...tempCravelist] });
+                this.setState({
+                    cravelistArray: [...tempCravelist],
+                    loaded: true
+                });
                 console.log('[Cravelist Tab js]cravelistArray check:', this.state.cravelistArray);
             })
             .catch(error => console.error('Error:', error));
@@ -54,28 +58,35 @@ class Cravelist extends Component {
 
     render() {
 
+        let gallery = (<Spinner/>)
+
+        if (this.state.cravelistArray.length == 0 && this.state.loaded){
+            gallery = (<Text>No images in cravelist</Text>)
+        } else if (this.state.cravelistArray.length > 0 && this.state.loaded){
+            gallery = (
+                <Gallery
+                    images={this.state.cravelistArray}
+                    clicked={clicked}
+                    longclick={longclick}
+                    passedUserId={this.state.userID}
+                />
+            )
+        }
+
         const { clicked } = this.props;
         const { longclick } = this.props;
         console.log('[Cravelist Tab js] Checking length of array:', this.state.cravelistArray.length);
         console.log('[Cravelist Tab js] clicked:', clicked);
         console.log('[Cravelist Tab js]cravelistArray at render:', this.state.cravelistArray);
-        if (this.state.cravelistArray.length == 0) {
-            return (
-                <Text>No images in cravelist</Text>
-            )
-        } else {
-            return (
+       
+        return (
+            <Container>
                 <Content>
-                    <Gallery
-                        images={this.state.cravelistArray}
-                        clicked={clicked}
-                        longclick={longclick}
-                        passedUserId={this.state.userID}
-                    />
+                    {gallery}
                 </Content>
 
-            );
-        }
+            </Container>
+        )
        
     }
 }

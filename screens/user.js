@@ -397,12 +397,12 @@ class UserScreen extends Component{
 
         if(this.state.originalId == undefined){
             canEdit = (
-                <Button bordered onPress={() => {
-                    this.onEditPressedHandler(this.state.userId, this.state.fname,
-                        this.state.lname, this.state.username, this.state.userImages)
-                }}>
-                    <Text>Edit Profile</Text>
-                </Button>
+                    <Button style = {{marginLeft: 100}} bordered small onPress={() => {
+                        this.onEditPressedHandler(this.state.userId, this.state.fname,
+                            this.state.lname, this.state.username, this.state.userImages)
+                    }}>
+                        <Text>Edit Profile</Text>
+                    </Button>
             )
         }else{
             canEdit = (
@@ -425,105 +425,68 @@ class UserScreen extends Component{
                         </Button>
                     </Right>
                 </Header>
-                
-                {/* <Container> */}
-                    <Content>
-                        <Row>
-                            <Thumbnail large source={{ uri: GET_IMAGES_URI + this.state.userImages[0] + '/display' }} />
-                            <View style={{flex: 1, alignItems: 'center'}}> 
-                                <Text style={styles.textContainer}>{this.state.userImages.length}</Text>
-                                <Label style={styles.labelContainer}> Posts</Label>
-                            </View>
-                            <View style={{flex: 1, alignItems: 'center'}}> 
-                                <Text style={styles.textContainer}>{this.state.followingUsers.length}</Text>
-                                <Label style={styles.labelContainer}> Following</Label>
-                            </View>
-                            <View style={{flex: 1, alignItems: 'center'}}> 
-                                <Text style={styles.textContainer}>{this.state.followedUsers.length}</Text>
-                                <Label style={styles.labelContainer}> Followers</Label> 
-                            </View>
-                           
-                        </Row>
-                        <View>
+                <Content>
+                    <Row style = {{marginTop: 10}}>
+                        <Thumbnail style = {{marginLeft:20}} large source={{ uri: GET_IMAGES_URI + this.state.userImages[0] + '/display' }} 
+                        
+                        />
+                        <View style={{flex: 1, alignItems: 'center'}}> 
+                            <Text>{this.state.userImages.length}</Text>
+                            <Label> Posts</Label>
+                        </View>
+                        <View style={{flex: 1, alignItems: 'center'}}> 
+                            <Text>{this.state.followingUsers.length}</Text>
+                            <Label> Following</Label>
+                        </View>
+                        <View style={{flex: 1, alignItems: 'center'}}> 
+                            <Text>{this.state.followedUsers.length}</Text>
+                            <Label> Followers</Label> 
+                        </View>
+                        
+                    </Row>
+                    <Row>
+                        <View style={{ marginTop: 10, marginLeft: 15 }}>
                             <Text>{this.state.fname} {this.state.lname}</Text>
                         </View>
                         {canEdit}
-                        <Tabs initialPage={0}>
-                            <Tab heading={
-                                <TabHeading>
-                                    <Icon name="heart" />
+                    </Row>
+                    <Tabs style = {{marginTop: 30}} initialPage={0}>
+                        <Tab heading={
+                            <TabHeading>
+                                <Icon name="heart" />
 
-                                </TabHeading>
-                            }
-                            >
-                                <Favorite
-                                    clicked={this.onImageClicked}
-                                    longclick={this.onFavLongClick}
-                                    currentUserID={this.state.userId}
-                                />
-                            </Tab>
-                            <Tab heading="Wishlist">
-                                <Wishlist
-                                    clicked={this.onImageClicked}
-                                    longclick={this.onWishLongClick}
-                                    currentUserID={this.state.userId}
-                                />
-                            </Tab>
-                            <Tab heading="Cravelist">
-                                <Cravelist
-                                    clicked={this.onImageClicked}
-                                    longclick={this.onCraveLongClick}
-                                    currentUserID={this.state.userId}
-                                />
-                            </Tab>
-                            <Tab heading="Triedlist">
-                                <Triedlist
-                                    clicked={this.onImageClicked}
-                                    longclick={this.onTriedLongClick}
-                                    currentUserID={this.state.userId}
-                                />
-                            </Tab>
-                        </Tabs> 
-                    </Content>
-                   {/* <Tabs initialPage={0}>
-                            <Tab heading={
-                                <TabHeading>
-                                    <Icon name="heart" />
-
-                                </TabHeading>
-                            }
-                            >
-                                <Favorite
-                                    clicked={this.onImageClicked}
-                                    longclick={this.onFavLongClick}
-                                    currentUserID={this.state.userId}
-                                />
-                            </Tab>
-                            <Tab heading="Wishlist">
-                                <Wishlist
-                                    clicked={this.onImageClicked}
-                                    longclick={this.onWishLongClick}
-                                    currentUserID={this.state.userId}
-                                />
-                            </Tab>
-                            <Tab heading="Cravelist">
-                                <Cravelist
-                                    clicked={this.onImageClicked}
-                                    longclick={this.onCraveLongClick}
-                                    currentUserID={this.state.userId}
-                                />
-                            </Tab>
-                            <Tab heading="Triedlist">
-                                <Triedlist
-                                    clicked={this.onImageClicked}
-                                    longclick={this.onTriedLongClick}
-                                    currentUserID={this.state.userId}
-                                />
-                            </Tab>
-                        </Tabs>   */}             
-                </Container>
-            // </Container>
-            
+                            </TabHeading>
+                        }>
+                            <Favorite
+                                clicked={this.onImageClicked}
+                                longclick={this.onFavLongClick}
+                                currentUserID={this.state.userId}
+                            />
+                        </Tab>
+                        <Tab heading="Wishlist">
+                            <Wishlist
+                                clicked={this.onImageClicked}
+                                longclick={this.onWishLongClick}
+                                currentUserID={this.state.userId}
+                            />
+                        </Tab>
+                        <Tab heading="Cravelist">
+                            <Cravelist
+                                clicked={this.onImageClicked}
+                                longclick={this.onCraveLongClick}
+                                currentUserID={this.state.userId}
+                            />
+                        </Tab>
+                        <Tab heading="Triedlist">
+                            <Triedlist
+                                clicked={this.onImageClicked}
+                                longclick={this.onTriedLongClick}
+                                currentUserID={this.state.userId}
+                            />
+                        </Tab>
+                    </Tabs> 
+                </Content>
+            </Container>
         );
     };
 
@@ -535,20 +498,7 @@ const styles = StyleSheet.create({
         flex: 1,
         position: 'relative'
     },
-    labelContainer:{
-        // textAlign: 'right',
-        // alignContent: 'flex-start',
-        // flex:1,
-        // flexDirection: 'row'
-        // width: 50
-    },
-    textContainer:{
-        // width: 50,
-        // position: 'relative',
-        // textAlign: 'right',
-        // alignContent: 'flex-start'
-        // flexDirection: 'column'   
-    }
+    
 })
 
 module.exports = UserScreen;

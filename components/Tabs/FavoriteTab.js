@@ -5,7 +5,7 @@ import {
     Container, Header, Left, Body, Right, Icon, Title,
     Content, Text, Button, Item, Input, Form, Label, Thumbnail,
     Card, CardItem, Badge, ListItem, List, Footer, FooterTab,
-    Toast, Root
+    Toast, Root, Spinner
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import moment from 'moment';
@@ -26,7 +26,8 @@ class Favorite extends Component {
 
         this.state = {
             favImageArray: [],
-            userID: this.props.currentUserID
+            userID: this.props.currentUserID,
+            loaded: false
         }
 
     }
@@ -49,7 +50,10 @@ class Favorite extends Component {
                     console.log('[FavoriteTab js] To push images into array:', image._id)
                     tempFav.push(image._id);
                 })
-                this.setState({ favImageArray: [...tempFav] });
+                this.setState({ 
+                    favImageArray: [...tempFav],
+                    loaded: true 
+                });
                 console.log('[FavoriteTab js] favImageArray check:', this.state.favImageArray);
             })
             .catch(error => console.error('Error:', error));
@@ -58,30 +62,33 @@ class Favorite extends Component {
     }
 
     render() {
+
+        let gallery = (<Spinner />)
+
+        if (this.state.favImageArray.length == 0 && this.state.loaded) {
+            gallery = (<Text>No images favorited</Text>)
+        } else if (this.state.favImageArray.length > 0 && this.state.loaded){
+            gallery = (
+                <Gallery
+                    images={this.state.favImageArray}
+                    clicked={clicked}
+                    longclick={longclick}
+                    passedUserId={this.state.userID}
+                />
+            )
+        }
         const { clicked } = this.props;
         const {longclick} = this.props;
         console.log('[FavoriteTab js] Checking length of array:', this.state.favImageArray.length);
         console.log('[FavoriteTab js] clicked:', clicked);
         console.log('[FavoriteTab js] favImageArray at render:', this.state.favImageArray);
-        if (this.state.favImageArray.length == 0) {
-            return (
-                <Text>No images favorited</Text>
-            )
-        } else {
-            return (
+        
+        return (
+            <Container>
                 <Content>
-                    <Gallery
-                        images={this.state.favImageArray}
-                        clicked={clicked}
-                        longclick={longclick}
-                        passedUserId={this.state.userID}
-                    />
+                    {gallery}
                 </Content>
-
-            );
-        }
-        return(
-            <Text>Favorite</Text>
+            </Container>
         )
 
     }
