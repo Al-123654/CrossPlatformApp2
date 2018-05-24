@@ -220,8 +220,8 @@ class FeedsScreen extends Component {
 			return{
 				latitude: 4.5353,
 				longitude: 114.7277,
-				latitudeDelta: 0,
-				longitudeDelta: 0
+				latitudeDelta: 0.5,
+				longitudeDelta: 0.5
 			}	
 		}
 	}

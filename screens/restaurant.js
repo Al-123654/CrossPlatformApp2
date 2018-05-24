@@ -37,46 +37,13 @@ class RestaurantScreen extends Component{
             food: this.props.navigation.state.params.images,
             loggedID: this.props.navigation.state.params.previousId,
             locationSaved: null,
-            markers: [
-                {
-                    coordinate:{
-                        latitude: 4.872518,
-                        longitude: 114.901595
-                    },
-                    title: '1st Marker',
-                    description: 'Test 1'
-                },
-                {
-                    coordinate:{
-                        latitude: 4.901655,
-                        longitude: 114.900434
-                    },
-                    title: '2nd Marker',
-                    description: 'Test 2'
-                },
-                {
-                    coordinate:{
-                        latitude: 4.879594,
-                        longitude: 114.893613
-                    },
-                    title: '3rd Marker',
-                    description: 'Test 3'
-                }
-            ],
-            region:{
-                latitude: 4.868272,
-                longitude: 114.900799,
-                latitudeDelta: 0.0222,
-                longitudeDelta: 0.0201,
-            },
-            coordinates: this.props.navigation.state.params.coordinates
+            bruneiRegion: this.props.navigation.state.params.coordinates
         }
         console.log('[restaurant js] constructor - Restaurant ID: ', this.state.restaurantID)
         console.log('[restaurant js] constructor - Name of restaurant: ', this.state.restaurantName)
         console.log('[restaurant js] constructor - Restaurant Image: ', this.state.food[0])
         console.log('[restaurant js] constructor - Food: ', this.state.food)
-        console.log('[restaurant js] constructor - coordinates.lat: ', this.state.coordinates.lat)
-        console.log('[restaurant js] constructor - coordinates.lng: ', this.state.coordinates.lng)
+        console.log('[restaurant js] constructor - bruneiRegion', this.state.bruneiRegion)
     }
     componentDidMount = () => {
         this.getLocationSaved();
@@ -160,8 +127,6 @@ class RestaurantScreen extends Component{
 
    getLocationSaved = () => {
        let serverCoord;
-       let locationGet;
-       
        return fetch(GET_USERS_URI + this.state.loggedID, {
            method: 'GET',
            headers: {
@@ -183,38 +148,22 @@ class RestaurantScreen extends Component{
                         serverLng = latLng.lng
                         console.log('[restaurant js] getLocationSaved - serverLat: ', serverLat);
                         console.log('[restaurant js] getLocationSaved - serverLng: ', serverLng);
-                        console.log('[restaurant js] getLocationSaved - this.state.coordinates: ', this.state.coordinates)
-                        // if (serverLat == this.state.coordinates.lat && serverLng == this.state.coordinates.lng) {
-                        //     locationGet = true
-                        // } else {
-                        //     locationGet = false
-                        // }
-                        if (serverLat == this.state.coordinates.lat && serverLng == this.state.coordinates.lng) {
+                        console.log('[restaurant js] getLocationSaved - this.state.bruneiRegion.lat: ', this.state.bruneiRegion.lat)
+                        console.log('[restaurant js] getLocationSaved - this.state.bruneiRegion.lng: ', this.state.bruneiRegion.lng)
+                      
+                        if (serverLat == this.state.bruneiRegion.lat && serverLng == this.state.bruneiRegion.lng) {
                             this.setState({
                                 locationSaved: true
-                            })                           
+                            })                        
                         } else {
                             this.setState({
                                 locationSaved: false
                             })
                         }
                     })
-                    
-                    console.log('[restaurant js] getLocationSaved - serverLat: ', serverLat);
-                    console.log('[restaurant js] getLocationSaved - serverLng: ', serverLng);
-                    console.log('[restaurant js] getLocationSaved - this.state.coordinates: ', this.state.coordinates)
-                    // if (serverLat == this.state.coordinates.lat && serverLng == this.state.coordinates.lng) {
-                    //     this.setState({
-                    //         locationSaved: true
-                    //     })
-                    // } else {
-                    //     this.setState({
-                    //         locationSaved: false
-                    //     })
-                    // }
+                    console.log('[restaurant js] getLocationSaved - this.state.locationSaved: ', this.state.locationSaved);
+                   
                 }
-                console.log('[restaurant js] getLocationSaved - locationGet: ', locationGet);
-
            });
            }).catch(err => console.log('[restaurant js] getLocationSaved - error: ', err));
            
@@ -238,8 +187,10 @@ class RestaurantScreen extends Component{
             body: JSON.stringify({
                 location: {
                     id: this.state.restaurantID,
-                    lat: this.state.coordinates.lat,
-                    lng: this.state.coordinates.lng
+                    lat: this.state.bruneiRegion.lat,
+                    lng: this.state.bruneiRegion.lng,
+                    // title: this.state.restaurantName,
+                    // description: this.state.restaurantID
                 }
             })
         }).then(response => {
@@ -250,7 +201,7 @@ class RestaurantScreen extends Component{
             }
             response.json().then(data => {
                 console.log('[restaurant js] onLocationSavePressed-  data.locations: ', data.updatedUser.locations)
-                console.log('[restaurant js] onLocationSavePressed-  this.state.coordinates: ', this.state.coordinates)
+                console.log('[restaurant js] onLocationSavePressed-  this.state.bruneiRegion: ', this.state.bruneiRegion)
                 tempLocationLength = data.updatedUser.locations.length;
                 console.log('[restaurant js] onLocationSavePressed - tempLocationLength: ', tempLocationLength)
                 newMarker =  data.updatedUser.locations.map(markers => {
@@ -260,7 +211,7 @@ class RestaurantScreen extends Component{
                 console.log('[restaurant js] onLocationSavePressed - markerLat: ', markerLat);
                 console.log('[restaurant js] onLocationSavePressed - markerLng: ', markerLng);
 
-                if (markerLat == this.state.coordinates.lat && markerLng == this.state.coordinates.lng) {
+                if (markerLat == this.state.bruneiRegion.lat && markerLng == this.state.bruneiRegion.lng) {
                     this.setState({
                         locationSaved : true
                     }) 
@@ -301,9 +252,21 @@ class RestaurantScreen extends Component{
             displayFood = (<Text>No food available</Text>)
         }
 
+        let regionCoordinates = ({
+            latitude: Number(this.state.bruneiRegion.lat),
+            longitude: Number(this.state.bruneiRegion.lng),
+            latitudeDelta: 0.5,
+            longitudeDelta: 0.5
+        })
+        console.log('[restaurant js] render - regionCoordinates: ', regionCoordinates)
+
+        let restaurantMarker = ({
+            latitude: Number(this.state.bruneiRegion.lat),
+            longitude: Number(this.state.bruneiRegion.lng)
+        })
+
         let markerButton = (<Spinner/>);
         console.log('[restaurant js] render - locationSaved: ', this.state.locationSaved);
-        // console.log('[restaurant js] render - locationGet: ', this.locationGet);
         if(!this.state.locationSaved ){
             markerButton=(
                 <Button onPress={this.onLocationSave}>
@@ -362,19 +325,13 @@ class RestaurantScreen extends Component{
                             <MapView
                                 ref={map => this.map = map}
                                 style={styles.mapContainer}
-                                initialRegion={this.state.region}
+                                initialRegion={regionCoordinates}
                             >
-                            {this.state.markers.map((marker, index) => {
-                                return (
-                                    <MapView.Marker 
-                                        key={index} 
-                                        coordinate={marker.coordinate} 
-                                        title = {marker.title} 
-                                        description = {marker.description}   
-                                    >
-                                    </MapView.Marker>
-                                );
-                            })}
+                                <Marker
+                                    coordinate={restaurantMarker}
+                                    title={this.state.restaurantName}
+                                    description={this.state.restaurantID}
+                                />
                             </MapView>
                         </Row>      
                     </Content>
@@ -397,12 +354,12 @@ const styles = StyleSheet.create({
         position: 'relative'
     },
     mapContainer:{
-        flex:1,
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#F5FCFF',
         width: '100%',
-        height: 200
+        height: 300
     },
     markerWrap:{
         alignItems: "center",
