@@ -5,7 +5,7 @@ import validator from 'validator';
 import { 
 	Container, Header, Left, Body, Right, Icon, 
 	Title, Content, Text, Button, Form, Item, 
-	Input, Label, Footer, FooterTab
+    Input, Label, Footer, Spinner, FooterTab, Toast
 } from 'native-base';
 
 class RegisterScreen extends Component {
@@ -26,7 +26,8 @@ class RegisterScreen extends Component {
         logPassword: "",
         logEmail: "",
         logDetails: "",
-        disableButton: false
+        disableButton: false,
+        // registerLoaded:false
     };
 
     onChangedUsernameHandler = (username) => {
@@ -87,35 +88,59 @@ class RegisterScreen extends Component {
         });
         
         if (!validator.isAlphanumeric(this.state.username) ) {
-            this.setState({ logUsername: "Numbers and letters only" });
+            this.setState({ 
+                logUsername: "Numbers and letters only", 
+                disableButton: false
+            });
             return;
         }
         if (!validator.isLength(this.state.username, { min: 5, max: 10 })){
-            this.setState({ logUsername: "Min: 5, max: 10" });
+            this.setState({ 
+                logUsername: "Min: 5, max: 10",
+                disableButton: false
+            });
             return;
         }
         if(!validator.isLength(this.state.password,{min:8})){
-            this.setState({logPassword: "Min: 8"});
+            this.setState({
+                logPassword: "Min: 8",
+                disableButton: false
+            });
             return;
         }
         if(!validator.isAlpha(this.state.fname)){
-            this.setState({logFname: "Letters only"});
+            this.setState({
+                logFname: "Letters only",
+                disableButton: false
+            });
             return;
         }
         if (!validator.isLength(this.state.fname, { min: 2 })){
-            this.setState({ logFname: "Too short" });
+            this.setState({ 
+                logFname: "Too short", 
+                disableButton: false
+            });
             return;
         }        
         if (!validator.isAlpha(this.state.lname)){
-            this.setState({logLname: "Letters only"});
+            this.setState({
+                logLname: "Letters only",
+                disableButton: false
+            });
             return;
         } 
         if (!validator.isLength(this.state.lname, { min: 2 })){
-            this.setState({ logLname: "Too short" });
+            this.setState({ 
+                logLname: "Too short",
+                disableButton: false
+            });
             return;
         }       
         if(!validator.isEmail(this.state.email)){
-            this.setState({logEmail: "Invalid Email"});
+            this.setState({
+                logEmail: "Invalid Email",
+                disableButton: false
+            });
             return;
         }        
 
@@ -148,16 +173,42 @@ class RegisterScreen extends Component {
                     // go to user page
                     console.log('[register js] Response', data);
                     // this.props.navigation.navigate('User', data);
+                    Toast.show({
+                        text: 'Registered',
+                        buttonText: 'Ok',
+                        position:'top',
+                        duration: 4000
+                    })
                 });
 
             })
             .catch((error) => {
                 console.error(error);
             });
+
+            // this.setState({registerLoaded = true})
         
     }
 
     render() {
+
+        let registerButton;
+
+        if(this.state.disableButton){
+            registerButton = 
+              (  <Button disabled={this.state.disableButton} onPress={this.onRegisterFinishedHandler}>
+                    <Spinner />
+                </Button>)
+            
+        }else{
+            registerButton = (
+                <Button disabled={this.state.disableButton} onPress={this.onRegisterFinishedHandler}>
+                    <Icon name="person-add" />
+                    <Text style={{ fontSize: 15 }}>Register</Text>
+                </Button>
+            )
+        }
+
         return (
 			<Container>
 				<Header>
@@ -177,31 +228,42 @@ class RegisterScreen extends Component {
 					<Form>
 						<Item floatingLabel error={this.state.logUsername.length > 0}>
 							<Label>Username</Label>
-							<Input onChangeText={(text) => this.onChangedUsernameHandler(text)} />
+                            <Input onChangeText={(text) => this.onChangedUsernameHandler(text)}
+                                onSubmitEditing = {this.onRegisterFinishedHandler}
+                            />
 						</Item>
 						{this.state.logUsername.length > 0 ? (<Text style={styles.formLogText}>{this.state.logUsername}</Text>) : null}
 
 						<Item floatingLabel error={this.state.logPassword.length > 0}>
 							<Label>Password</Label>
-							<Input onChangeText={(text) => this.onChangedPasswordHandler(text)} />
+							<Input onChangeText={(text) => this.onChangedPasswordHandler(text)} 
+                                onSubmitEditing={this.onRegisterFinishedHandler}
+                                secureTextEntry={true}
+                            />
 						</Item>
 						{this.state.logPassword.length > 0 ? (<Text style={styles.formLogText}>{this.state.logPassword}</Text>) : null}
 
 						<Item floatingLabel error={this.state.logFname.length > 0}>
 							<Label>First name</Label>
-							<Input onChangeText={(text) => this.onChangedFnameHandler(text)} />
+							<Input onChangeText={(text) => this.onChangedFnameHandler(text)} 
+                                onSubmitEditing={this.onRegisterFinishedHandler}
+                            />
 						</Item>
 						{this.state.logFname.length > 0 ? (<Text style={styles.formLogText}>{this.state.logFname}</Text>) : null}
 
 						<Item floatingLabel error={this.state.logLname.length > 0}>
 							<Label>Last name</Label>
-							<Input onChangeText={(text) => this.onChangedLnameHandler(text)} />
+							<Input onChangeText={(text) => this.onChangedLnameHandler(text)} 
+                                onSubmitEditing={this.onRegisterFinishedHandler}
+                            />
 						</Item>
 						{this.state.logLname.length > 0 ? (<Text style={styles.formLogText}>{this.state.logLname}</Text>) : null}
 
 						<Item floatingLabel last error={this.state.logEmail.length > 0}>
 							<Label>Email</Label>
-							<Input onChangeText={(text) => this.onChangedEmailHandler(text)} />
+							<Input onChangeText={(text) => this.onChangedEmailHandler(text)} 
+                                onSubmitEditing={this.onRegisterFinishedHandler}
+                            />
 						</Item>
 						{this.state.logEmail.length > 0 ? (<Text style={styles.formLogText}>{this.state.logEmail}</Text>) : null}
 
@@ -213,10 +275,7 @@ class RegisterScreen extends Component {
 				</Content>
 				<Footer>
 					<FooterTab>
-                        <Button disabled={this.state.disableButton} onPress={this.onRegisterFinishedHandler}>
-                            <Icon name = "person-add"/>
-							<Text style={{fontSize:15}}>Register</Text>
-						</Button>
+                        {registerButton}
 					</FooterTab>
 				</Footer>
 			</Container>

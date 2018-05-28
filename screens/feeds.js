@@ -712,6 +712,7 @@ class FeedsScreen extends Component {
         return (
 			<Container>
 				<Header>
+					<Left></Left>
 					<Body><Title>{this.state.passedUsername}</Title></Body>
 					<Right>
 						{logoutLoader}
