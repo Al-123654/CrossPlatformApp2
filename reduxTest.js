@@ -1,18 +1,29 @@
-import {createStore} from 'redux'
+const redux = require('redux');
 
-state = {
-    test: 0
+let initialState = {
+	counter: 0
 }
 
-const reducer = (state = 0, action) => {
-    switch (action.type) {
-        case 'INCREMENT':
-            return state + 1
-        case 'DECREMENT':
-            return state - 1
-        default:
-            return state
-    }
+function reducer(state = initialState, action){
+	switch(action.type){
+		case 'INCREMENT':
+			return {
+				counter: state.counter + 1
+			}
+		case 'DECREMENT':
+			return {
+				counter: state.counter - 1
+			}
+	}
+	return state;
 }
 
-const store = createStore(reducer);
+const store = redux.createStore(reducer);
+
+// increment state counter
+store.dispatch({ type: 'INCREMENT' });
+console.log("[reduxTest] counter after INCREMENT: ", store.getState());
+
+// decrement state counter
+store.dispatch({ type: 'DECREMENT' });
+console.log("[reduxTest] counter after DECREMENT: ", store.getState());
