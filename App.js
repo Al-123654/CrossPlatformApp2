@@ -14,7 +14,6 @@ YellowBox.ignoreWarnings([
 	'Module RCTImageLoader requires main queue setup',
 	'Module RNFetchBlob requires main queue setup'
 ]);
-import * as Keychain from 'react-native-keychain';
 
 var RegisterScreen = require('./screens/register.js');
 var FeedsScreen = require('./screens/feeds.js');
@@ -29,7 +28,7 @@ class HomeScreen extends Component {
 
 	constructor(props) {
 		super(props);
-		this.testKeychain();
+		
 	}
 
 	state = {
@@ -44,27 +43,6 @@ class HomeScreen extends Component {
 		isLoggedIn: false,
 		disableButton: false
 	};
-
-	testKeychain = async () => {
-		const username = 'Test';
-		const password = 'passTestpass';
-
-		// store the credentials
-		await Keychain.setGenericPassword(username,password);
-
-		try {
-			// Retreive the credentials
-			const credentials = await Keychain.getGenericPassword();
-			if (credentials) {
-				console.log('[app js] Credentials successfully loaded for user ' + credentials.username);
-			} else {
-				console.log('[app js] No credentials stored');
-			}
-		} catch (error) {
-			console.log('[app js] Keychain couldn\'t be accessed!', error);
-		}
-		await Keychain.resetGenericPassword();
-	}
 
 	onChangedUsernameHandler = (username) => { if(username) this.setState({ username: username }); }
 	onChangedPasswordHandler = (password) => { if(password) this.setState({ password: password }); }

@@ -40,7 +40,6 @@ target 'CrossPlatformApp' do
   pod 'GoogleMaps'  # Remove this line if you don't want to support GoogleMaps on iOS
   pod 'Google-Maps-iOS-Utils' # Remove this line if you don't want to support GoogleMaps on iOS
   
-  pod 'RNKeychain', :path => '../node_modules/react-native-keychain'
 
   post_install do |installer|
   installer.pods_project.targets.each do |target|
