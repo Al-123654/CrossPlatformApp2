@@ -193,7 +193,6 @@ class RestaurantScreen extends Component{
                     id: this.state.restaurantID,
                     lat: this.state.bruneiRegion.lat,
                     lng: this.state.bruneiRegion.lng,
-                    title: this.state.restaurantTitle
                 },
             })
         }).then(response => {
