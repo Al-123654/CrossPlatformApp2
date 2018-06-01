@@ -33,14 +33,14 @@ class RestaurantScreen extends Component{
         // INITIALISE STATES
         this.state = {
             restaurantID: this.props.navigation.state.params.userId,
-            restaurantName: this.props.navigation.state.params.username,
+            restaurantTitle: this.props.navigation.state.params.title,
             food: this.props.navigation.state.params.images,
             loggedID: this.props.navigation.state.params.previousId,
             locationSaved: null,
             bruneiRegion: this.props.navigation.state.params.coordinates
         }
         console.log('[restaurant js] constructor - Restaurant ID: ', this.state.restaurantID)
-        console.log('[restaurant js] constructor - Name of restaurant: ', this.state.restaurantName)
+        console.log('[restaurant js] constructor - Name of restaurant: ', this.state.restaurantTitle)
         console.log('[restaurant js] constructor - Restaurant Image: ', this.state.food[0])
         console.log('[restaurant js] constructor - Food: ', this.state.food)
         console.log('[restaurant js] constructor - bruneiRegion', this.state.bruneiRegion)
@@ -125,6 +125,7 @@ class RestaurantScreen extends Component{
         console.log('[user js] onImageLongClick!!')
     }
 
+    //CHECK IF USER SAVED RESTAURANT, ALLOW USER TO ADD OR REMOVE
    getLocationSaved = () => {
        let serverCoord;
        return fetch(GET_USERS_URI + this.state.loggedID, {
@@ -169,9 +170,12 @@ class RestaurantScreen extends Component{
            
    }
 
+    // SAVE/REMOVE LOCATION DATA TO API 
     onLocationSave = () =>{
         let newMarker;
         let tempLocationLength;
+        let markerLat;
+        let markerLng;
         // const latMin = 4, latMax =  4.6;
         // const lngMin = 114, lngMax = 115;
         // let randomLat = (Math.random() * (latMax - latMin) + latMin).toFixed(4);
@@ -189,9 +193,8 @@ class RestaurantScreen extends Component{
                     id: this.state.restaurantID,
                     lat: this.state.bruneiRegion.lat,
                     lng: this.state.bruneiRegion.lng,
-                    // title: this.state.restaurantName,
-                    // description: this.state.restaurantID
-                }
+                    title: this.state.restaurantTitle
+                },
             })
         }).then(response => {
             console.log('[restaurant js] onLocationSavePressed - response: ', response);
@@ -281,11 +284,6 @@ class RestaurantScreen extends Component{
                 </Button>
             )
         }
-
-        
-        
-      
-    
         return(
             <Container>
                 <Header hasTabs>
@@ -294,7 +292,7 @@ class RestaurantScreen extends Component{
                             <Icon name='arrow-back' />
                         </Button>
                     </Left>
-                    <Body><Title>{this.state.restaurantName}</Title></Body>
+                    <Body><Title>{this.state.restaurantTitle}</Title></Body>
                     <Right>
                         <Button transparent onPress={this.onLogoutHandler}>
                             <Icon name='home' />
@@ -329,8 +327,8 @@ class RestaurantScreen extends Component{
                             >
                                 <Marker
                                     coordinate={restaurantMarker}
-                                    title={this.state.restaurantName}
-                                    description={this.state.restaurantID}
+                                    title={this.state.restaurantTitle}
+                                    // description={this.state.restaurantID}
                                 />
                             </MapView>
                         </Row>      

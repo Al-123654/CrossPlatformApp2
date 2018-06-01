@@ -62,13 +62,21 @@ class FeedsScreen extends Component {
 			restaurantUsers: null,
 			locations: props.navigation.state.params.data.locations,
 			mapRegion: null,
-			mapMarkers: (<Spinner/>)
+			mapMarkers: [],
+			
+			
 		};
 		console.log('[feeds js] constructor - Current states:', this.state);
-		this.fetchRestaurantUsers();
+		// this.fetchRestaurantUsers();
 	}
 
+	//GET RESTAURANT DATA FROM SERVER
 	fetchRestaurantUsers = () => {
+		let restaurantTitle;
+		let title= []
+		let restaurantCoordinates;
+		let coordinates;
+		let id = []
 		return fetch(GET_RESTAURANT_USERS_URI, {
 			method: 'GET',
 			headers: {
@@ -95,13 +103,19 @@ class FeedsScreen extends Component {
 					position: 'top',
 					duration: 2000
 				});
-				this.setState({ restaurantUsers: [...data] });
+				this.setState({restaurantUsers: [...data],});
+				console.log('[feeds js] fetchRestaurantUsers - this.state.restaurantUsers: ', this.state.restaurantUsers);
+				this.setMapMarkers();
 			});
 		}).catch((error) => {
 			console.log('[feeds js] fetchRestaurantUsers - error: ', error);
 		});
+		
+		
 	}
 
+
+	
 	_renderItem ({item, index}, parallaxProps) {
         return (
 			<View style={styles.item}>
@@ -132,6 +146,7 @@ class FeedsScreen extends Component {
 		}
 		// map-view related setup
 		this.setRegionBasedOnMarkers();
+		this.fetchRestaurantUsers();
 		this.setMapMarkers();
 	}
 
@@ -226,23 +241,89 @@ class FeedsScreen extends Component {
 		}
 	}
 
+	// TO DO: ADD A LOOP FOR GETTING RESTAURANT ID TO COMPARE TO MARKER
+	// HOW TO GET this.state.restaurantUsers
 	setMapMarkers = () => {
+		// let restaurantTitle;
+		// let restaurantId;
+		// let restaurantId2;
+		// let markerId;
+		
 		let mapMarkers = (<Text>No markers available</Text>);
-		if(this.state.locations.length > 0){
-			mapMarkers = this.state.locations.map(location => {
-				return (
-					<Marker 
-						key={location.id} 
-						coordinate={{
-							latitude: Number(location.lat),
-							longitude: Number(location.lng)
-						}}
-					/>
-				);
-			});
+		
+		// console.log('[feeds js] setMapMarkers - this.state.locations: ', this.state.locations);
+		// // check status of state.restaurantUsers 
+		// console.log('[feeds js] setMapMarkers - this.state.restaurantUsers: ', this.state.restaurantUsers)
+		
+		
+		// if (this.state.locations.length > 0) {
+		// 	console.log('[feeds js] this.state.locations.length: ', this.state.locations.length)
+		// 	mapMarkers = this.state.locations.map(location => {
+		// 		//TO DO: match marker with correct Restaurant Title
+		// 		return (
+		// 			<Marker
+		// 				key={location.id}
+		// 				coordinate={{
+		// 					latitude: Number(location.lat),
+		// 					longitude: Number(location.lng)
+		// 				}}
+		// 				title={restaurantTitle}
+		// 			/>
+		// 		);
+		// 	});
+		// }
+		// this.setState({ mapMarkers: mapMarkers });
+		if(this.state.restaurantUsers != null){
+			var locations = this.state.locations;
+			var restUsers = this.state.restaurantUsers;
+			console.log('[feeds js] setMapMarkers - locations: ', locations);
+			console.log('[feeds js] setMapMarkers - restUsers: ', restUsers	);
+
+			var locationsUpdated = [];
+
+			var locationsLength = this.state.locations.length;
+			var restUsersLength = this.state.restaurantUsers.length;
+
+			console.log ('[feeds js] setMapMarkers - locationsLength: ', locationsLength)
+			console.log ('[feeds js] setMapMarkers - restUsersLength: ', restUsersLength)
+
+			// loop through lcoations
+			for (var i = 0; i < locationsLength; i++) {
+				console.log("LOCATIONS ID: ", locations[i].id);
+
+				// loop through restUsers
+				for (var j = 0; j < restUsersLength; j++) {
+					console.log("REST ID: ", restUsers[j]._id);
+					if (locations[i].id == restUsers[j]._id) {
+						locationsUpdated.push({
+							id: locations[i].id,
+							lat: locations[i].lat,
+							lng: locations[i].lng,
+							title: restUsers[j].title
+						});
+					}
+					mapMarkers = locationsUpdated.map(location => {
+						console.log('[feeds js] setMapMarkers - location: ', location)
+						//TO DO: match marker with correct Restaurant Title
+						return (
+							<Marker
+								key={location.id}
+								coordinate={{
+									latitude: Number(location.lat),
+									longitude: Number(location.lng)
+								}}
+								title={location.title}
+							/>
+						);
+					});
+				}
+			console.log(locationsUpdated);
+			this.setState({mapMarkers: mapMarkers})
+			}
+		
 		}
-		this.setState({ mapMarkers: mapMarkers });
 	}
+	
 
 	onImageDelete = (imageId) => {
 		if(this.state.imageIdToDelete){
@@ -738,6 +819,7 @@ class FeedsScreen extends Component {
 							initialRegion={this.state.mapRegion}
 						>
 							{this.state.mapMarkers}
+						
 						</MapView>
 					</Row>
 				</Content>

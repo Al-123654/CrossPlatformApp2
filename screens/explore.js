@@ -208,6 +208,7 @@ class ExploreScreen extends Component {
        
 	}
 
+	// Clicking the follow button
 	onListItemPressed = (itemId, userId) => {
 		console.log('[explore js] onListItemPressed - itemID: ', itemId);
 		console.log('[explore js] onListItemPressed - itemID type: ', typeof itemId);
@@ -241,7 +242,8 @@ class ExploreScreen extends Component {
 		.catch(err=>console.log('[explore js] onListItemPressed - error: ', err));
 	}
 
-	onUserPagePress = (itemId, itemFname, itemLname, itemImages, itemUsername, itemFollowing, itemRole, previousId, coordinates) => {
+	// Clicking user icon
+	onUserPagePress = (itemId, itemFname, itemLname, itemImages, itemUsername, itemFollowing, itemRole, previousId, coordinates, title) => {
 
 		console.log('[explore js] Testing onUserPagePress');
 		console.log('[explore js] item._id: ', itemId);
@@ -253,6 +255,7 @@ class ExploreScreen extends Component {
 		console.log('[explore js] item.role: ', itemRole);
 		console.log('[explore js] passedId: ', previousId);
 		console.log('[explore js] item.coordinates: ', coordinates)
+		console.log('[explore js] item.title: ', title)
 
 		console.log('TESTING 123')
 		if(itemRole === 1){
@@ -277,7 +280,8 @@ class ExploreScreen extends Component {
 					following:itemFollowing,
 					role: itemRole,
 					previousId: previousId,
-					coordinates: coordinates
+					coordinates: coordinates,
+					title:title
 				}
 			})
 		}
@@ -323,7 +327,7 @@ class ExploreScreen extends Component {
 						<ListItem icon>
 							<Left>
 								<Icon name="ios-person-outline" onPress={() => this.onUserPagePress(item._id, 
-									item.fname, item.lname, item.images, item.username, item.following, item.role, this.state.passedUserId, item.coordinates)} />
+									item.fname, item.lname, item.images, item.username, item.following, item.role, this.state.passedUserId, item.coordinates, item.title)} />
 							</Left>
 							<Body>
 								<Text>{item.username}</Text>
