@@ -241,38 +241,13 @@ class FeedsScreen extends Component {
 		}
 	}
 
-	// TO DO: ADD A LOOP FOR GETTING RESTAURANT ID TO COMPARE TO MARKER
-	// HOW TO GET this.state.restaurantUsers
+
 	setMapMarkers = () => {
-		// let restaurantTitle;
-		// let restaurantId;
-		// let restaurantId2;
-		// let markerId;
+	
 		
 		let mapMarkers = (<Text>No markers available</Text>);
 		
-		// console.log('[feeds js] setMapMarkers - this.state.locations: ', this.state.locations);
-		// // check status of state.restaurantUsers 
-		// console.log('[feeds js] setMapMarkers - this.state.restaurantUsers: ', this.state.restaurantUsers)
-		
-		
-		// if (this.state.locations.length > 0) {
-		// 	console.log('[feeds js] this.state.locations.length: ', this.state.locations.length)
-		// 	mapMarkers = this.state.locations.map(location => {
-		// 		//TO DO: match marker with correct Restaurant Title
-		// 		return (
-		// 			<Marker
-		// 				key={location.id}
-		// 				coordinate={{
-		// 					latitude: Number(location.lat),
-		// 					longitude: Number(location.lng)
-		// 				}}
-		// 				title={restaurantTitle}
-		// 			/>
-		// 		);
-		// 	});
-		// }
-		// this.setState({ mapMarkers: mapMarkers });
+
 		if(this.state.restaurantUsers != null){
 			var locations = this.state.locations;
 			var restUsers = this.state.restaurantUsers;
@@ -287,7 +262,7 @@ class FeedsScreen extends Component {
 			console.log ('[feeds js] setMapMarkers - locationsLength: ', locationsLength)
 			console.log ('[feeds js] setMapMarkers - restUsersLength: ', restUsersLength)
 
-			// loop through lcoations
+			// loop through locations
 			for (var i = 0; i < locationsLength; i++) {
 				console.log("LOCATIONS ID: ", locations[i].id);
 
@@ -302,9 +277,10 @@ class FeedsScreen extends Component {
 							title: restUsers[j].title
 						});
 					}
+					// display markers on map
 					mapMarkers = locationsUpdated.map(location => {
 						console.log('[feeds js] setMapMarkers - location: ', location)
-						//TO DO: match marker with correct Restaurant Title
+						
 						return (
 							<Marker
 								key={location.id}
@@ -317,10 +293,9 @@ class FeedsScreen extends Component {
 						);
 					});
 				}
-			console.log(locationsUpdated);
-			this.setState({mapMarkers: mapMarkers})
 			}
-		
+			// update state
+			this.setState({ mapMarkers: mapMarkers })
 		}
 	}
 	
