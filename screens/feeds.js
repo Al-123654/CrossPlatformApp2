@@ -63,6 +63,7 @@ class FeedsScreen extends Component {
 			locations: props.navigation.state.params.data.locations,
 			mapRegion: null,
 			mapMarkers: [],
+			mapDisplay: null
 			
 			
 		};
@@ -167,6 +168,7 @@ class FeedsScreen extends Component {
 	}
 
 	setRegionBasedOnMarkers = () => {
+		
 		// adjust location array to meet requirements of calculateRegionBasedOnMarkers()
 		let adjustedLocationsArray = this.state.locations.map(location => {
 			return {
@@ -179,6 +181,7 @@ class FeedsScreen extends Component {
 		// calculate new region
 		const adjustedRegion = this.calculateRegionBasedOnMarkers(adjustedLocationsArray);
 		console.log("[feeds js] calculateRegionBasedOnMarkers - adjustedRegion: ", adjustedRegion);
+		
 		this.setState({mapRegion: adjustedRegion});
 	}
 
@@ -241,7 +244,7 @@ class FeedsScreen extends Component {
 		}
 	}
 
-
+	// display markers of saved restaurants
 	setMapMarkers = () => {
 	
 		
@@ -299,7 +302,7 @@ class FeedsScreen extends Component {
 		}
 	}
 	
-
+	// prompt to delete images
 	onImageDelete = (imageId) => {
 		if(this.state.imageIdToDelete){
 			this.deleteImage(imageId);
@@ -318,7 +321,7 @@ class FeedsScreen extends Component {
 			)
 		}	
 	}
-
+	// delete image from server if user is a particular role
 	deleteImage = (imageId) => {
 		let newImageArray = [...this.state.feedImagesArray];
 		console.log('[feeds js] deleteImage - Current array of images: ', newImageArray);
@@ -329,7 +332,7 @@ class FeedsScreen extends Component {
 		let deleteIndex = newImageArray.findIndex(function (el) {
 			return el === imageId;
 		});
-			
+		// if role is 2
 		if (this.state.role === 2) {
 			return fetch(GET_IMAGES_URI + imageId, {
 				method: 'DELETE',
@@ -552,7 +555,7 @@ class FeedsScreen extends Component {
 			} 
 		});
 	};
-
+	//upload image logic
 	onImagePickerHandler = () => {
 		if(this.state.role == 2){
 			let imagePickerOptions = {
@@ -623,7 +626,7 @@ class FeedsScreen extends Component {
 			});
 		}
 	}
-	
+	//enter image page if image is clicked
 	onImageClicked = (imageId,passedId) => {
         console.log("[feeds js] onImageClicked - imageId: ", imageId );
         return fetch(GET_IMAGES_URI+ imageId, {
@@ -674,6 +677,8 @@ class FeedsScreen extends Component {
 		
 	}
 
+	
+
 	render() {
 		console.log('[feeds js] render - Role of user at onImageDelete:', this.state.role);
 		console.log('[feeds js] render - feedImagesArray:', this.state.feedImagesArray);
@@ -691,14 +696,17 @@ class FeedsScreen extends Component {
 			</Button>
 		);
 		
+		//render images
 		if(this.state.feedImagesArray && this.state.areImagesLoaded){
 			if (this.state.feedImagesArray.length > 0) {
-				gallery = (<Gallery
+				gallery = (
+				<Gallery
 					images={this.state.feedImagesArray}
 					clicked={this.onImageClicked}
 					longclick={this.onImageDelete}
 					passedUserId={this.state.passedId}
 				/>);
+				
 			} else if (this.state.feedImagesArray.length === 0) {
 				gallery = (<Text>No images available</Text>);
 			}
@@ -742,7 +750,7 @@ class FeedsScreen extends Component {
 						</Button>
 						<Button full onPress={() => { this.onProfilePressedHandler(this.state.passedId, this.state.fname, 
 							this.state.lname, this.state.images, this.state.passedUsername ) }}>
-							<Icon name="ios-person" />
+							<Icon  name="ios-person" />
 							<Text>Profile</Text>
 						</Button>
 					</FooterTab>
@@ -765,6 +773,28 @@ class FeedsScreen extends Component {
 			);
 		}
 
+		// display map only if there are markers available
+		let displayMap;
+		if(this.state.locations.length > 0){
+			displayMap = (
+				<MapView
+					ref={map => this.map = map}
+					style={styles.mapContainer}
+					initialRegion={this.state.mapRegion}
+				>
+					{this.state.mapMarkers}
+				</MapView>
+			)
+			
+		}else{
+			displayMap = (
+				<View style={{ alignItems: 'center', marginLeft: 90, marginTop: 50 }}>
+					<Icon style={{ fontSize: 50, color: 'grey'  }} name='ios-close-circle-outline' />
+					<Text>No saved restaurants available</Text>
+				</View>
+			)
+		}
+
         return (
 			<Container>
 				<Header>
@@ -776,26 +806,16 @@ class FeedsScreen extends Component {
 				</Header>
 				<Content>
 					<Row><Text>Feeds</Text></Row>
-					<Row>
+					<Row style={{ marginLeft: 30, flex: 1, alignItems: 'center' }}>
 						{gallery}
 					</Row>
 
-					<Row><Text>Restaurants</Text></Row>
+					<Row style={{marginTop:20, alignItems: 'center'}}><Text>Restaurants</Text></Row>
 					<Row>
 						{carousel}
 					</Row>
 					<Row>
-						<Label>Map of saved restaurants</Label>
-					</Row>
-					<Row>
-						<MapView
-							ref={map => this.map = map}
-							style={styles.mapContainer}
-							initialRegion={this.state.mapRegion}
-						>
-							{this.state.mapMarkers}
-						
-						</MapView>
+						{displayMap}
 					</Row>
 				</Content>
 				{footers}
