@@ -57,7 +57,7 @@ export default class Gallery extends Component {
 							onLongPress={longclick} 
 							imageId={image}
 							passedUserId={passedUserId} 
-							// disabled = {disabled}
+							
 							/>)
 				)()
 				// (() =>
