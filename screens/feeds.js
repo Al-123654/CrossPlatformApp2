@@ -777,13 +777,16 @@ class FeedsScreen extends Component {
 		let displayMap;
 		if(this.state.locations.length > 0){
 			displayMap = (
-				<MapView
-					ref={map => this.map = map}
-					style={styles.mapContainer}
-					initialRegion={this.state.mapRegion}
-				>
-					{this.state.mapMarkers}
-				</MapView>
+				<View style= {{width: '100%'}}>
+					<Label style={{alignItems: 'center', marginLeft: 200, marginBottom: 10, fontSize: 20, fontWeight:'bold'}}>Map</Label>
+					<MapView
+						ref={map => this.map = map}
+						style={styles.mapContainer}
+						initialRegion={this.state.mapRegion}
+					>
+						{this.state.mapMarkers}
+					</MapView>
+				</View>
 			)
 			
 		}else{
@@ -805,16 +808,20 @@ class FeedsScreen extends Component {
 					</Right>
 				</Header>
 				<Content>
-					<Row><Text>Feeds</Text></Row>
-					<Row style={{ marginLeft: 30, flex: 1, alignItems: 'center' }}>
+					<Row style = {{marginTop: 10, alignItems: 'center', }}>
+						<Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 25}}>Feeds</Text>
+					</Row>
+					<Row style={{ marginTop: 10, marginLeft: 32, flex: 1, alignItems: 'center' }}>
 						{gallery}
 					</Row>
 
-					<Row style={{marginTop:20, alignItems: 'center'}}><Text>Restaurants</Text></Row>
-					<Row>
+					<Row style={{ marginTop: 20, alignItems: 'center', }}>
+						<Text style={{ fontSize: 20, fontWeight: 'bold',marginLeft: 25}}>Restaurants</Text>
+					</Row>
+					<Row style = {{marginTop: 10}}>
 						{carousel}
 					</Row>
-					<Row>
+					<Row style = {{marginTop:20}}>
 						{displayMap}
 					</Row>
 				</Content>
@@ -851,11 +858,11 @@ const styles = StyleSheet.create({
 	},
 	mapContainer: {
 		flex: 1,
-		justifyContent: 'center',
 		alignItems: 'center',
 		backgroundColor: '#F5FCFF',
 		width: '100%',
-		height: 300
+		height: 275,
+		// marginLeft: 32,
 	}
 });
 
