@@ -778,7 +778,7 @@ class FeedsScreen extends Component {
 		if(this.state.locations.length > 0){
 			displayMap = (
 				<View style= {{width: '100%'}}>
-					<Label style={{alignItems: 'center', marginLeft: 180, marginBottom: 10, fontSize: 20, fontWeight:'bold'}}>Map</Label>
+					<Label style={{alignItems: 'center', marginLeft: 130, marginBottom: 10, fontSize: 20, fontWeight:'bold'}}>Saved restaurants</Label>
 					<MapView
 						ref={map => this.map = map}
 						style={styles.mapContainer}
