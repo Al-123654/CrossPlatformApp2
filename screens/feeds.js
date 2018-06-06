@@ -9,7 +9,7 @@ import {
 	Container, Header, Left, Body, Right, Icon, 
 	Title, Content, Text, Button, Item, Input, 
 	Form, Label, Thumbnail, Footer, FooterTab, Spinner, Toast, Drawer,
-	Card, CardItem } from 'native-base';
+	Card, CardItem, ListItem, List } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import Gallery from '../components/Gallery/Gallery';
 import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
@@ -778,7 +778,7 @@ class FeedsScreen extends Component {
 		if(this.state.locations.length > 0){
 			displayMap = (
 				<View style= {{width: '100%'}}>
-					<Label style={{alignItems: 'center', marginLeft: 200, marginBottom: 10, fontSize: 20, fontWeight:'bold'}}>Map</Label>
+					<Label style={{alignItems: 'center', marginLeft: 180, marginBottom: 10, fontSize: 20, fontWeight:'bold'}}>Map</Label>
 					<MapView
 						ref={map => this.map = map}
 						style={styles.mapContainer}
@@ -809,19 +809,19 @@ class FeedsScreen extends Component {
 				</Header>
 				<Content>
 					<Row style = {{marginTop: 10, alignItems: 'center', }}>
-						<Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 25}}>Feeds</Text>
+						<Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 50 }}>Feeds</Text>
 					</Row>
-					<Row style={{ marginTop: 10, marginLeft: 32, flex: 1, alignItems: 'center' }}>
+					<Row style={{ marginTop: 10, marginLeft: 50, flex: 1, alignItems: 'center' }}>
 						{gallery}
 					</Row>
 
 					<Row style={{ marginTop: 20, alignItems: 'center', }}>
-						<Text style={{ fontSize: 20, fontWeight: 'bold',marginLeft: 25}}>Restaurants</Text>
+						<Text style={{ fontSize: 20, fontWeight: 'bold',marginLeft: 50}}>Restaurants</Text>
 					</Row>
-					<Row style = {{marginTop: 10}}>
+					<Row style = {{marginTop: 10, marginLeft: 20}}>
 						{carousel}
 					</Row>
-					<Row style = {{marginTop:20}}>
+					<Row style = {{marginTop:40}}>
 						{displayMap}
 					</Row>
 				</Content>
@@ -843,17 +843,17 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(0, 0, 0, 0.4)',
 		zIndex: 999,
 		color: '#fff',
-		width: '100%',
+		width: '89%',
 		padding: 10
 	},
 	imageContainer: {
-		width: '100%',
+		width: '89%',
 		height: 250,
 		flex: 1,
 		position: 'relative'
 	},
 	image: {
-		width: '100%',
+		width: '89%',
 		height: 100
 	},
 	mapContainer: {
