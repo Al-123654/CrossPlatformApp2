@@ -17,6 +17,7 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 // const LOGOUT_URI = 'http://localhost:5000/logout';
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users';
 const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
+const GET_IMAGE_URI = 'https://app-api-testing.herokuapp.com/api/images';
 
 class ExploreScreen extends Component {
 
@@ -327,23 +328,56 @@ class ExploreScreen extends Component {
 			jsxList = (
 				<List dataArray = {listOfUsersCopy}
 					renderRow={(item) =>
-						<ListItem icon>
-							<Left>
-								<Icon name="ios-person-outline" onPress={() => this.onUserPagePress(item._id, 
-									item.fname, item.lname, item.images, item.username, item.following, item.role, 
-									this.state.passedUserId, item.coordinates, item.title, item.profile_pic)} />
-							</Left>
-							<Body>
-								<Text>{item.username}</Text>
-							</Body>
-							<Right>
-								<Button bordered primary small
+						item.profile_pic ?
+							<ListItem avatar>
+								<Left>
+									<Thumbnail small
+										source={{ uri: GET_IMAGE_URI + '/' + item.profile_pic + '/display' }}
+										onPress={() => this.onUserPagePress(item._id, 
+											item.fname, item.lname, item.images, item.username, item.following, item.role, 
+											this.state.passedUserId, item.coordinates, item.title, item.profile_pic)
+										} 
+									/>
+								</Left>
+								<Body>
+									<Text
+										onPress={() => this.onUserPagePress(item._id, 
+											item.fname, item.lname, item.images, item.username, item.following, item.role, 
+											this.state.passedUserId, item.coordinates, item.title, item.profile_pic)
+										} >
+										{item.title || item.username}</Text>
+									<Text style={{fontSize: 13}}>{item.title ? item.username : ''}</Text>
+								</Body>
+								<Right>
+									<Button bordered primary small
+										onPress={() => this.onListItemPressed(item._id, this.state.passedUserId)}>
+										<Text>{item.isFollowed ? 'Unfollow' : 'Follow'}</Text>
+									</Button>
+								</Right>
+							</ListItem>
+						:
+							<ListItem icon>
+								<Left>
+									<Icon fontSize="36" name="ios-contact-outline" />
+								</Left>
+								<Body>
+									<Text
+										onPress={() => this.onUserPagePress(item._id, 
+											item.fname, item.lname, item.images, item.username, item.following, item.role, 
+											this.state.passedUserId, item.coordinates, item.title, item.profile_pic)
+										} >
+										{item.title || item.username}
+									</Text>
+									<Text style={{fontSize: 13}}>{item.title ? item.username : ''}</Text>
+								</Body>
+								<Right>
+									<Button bordered primary small
 									onPress={() => this.onListItemPressed(item._id, this.state.passedUserId)}
 									>
-									<Text>{item.isFollowed ? 'Unfollow' : 'Follow'}</Text>
-								</Button>
-							</Right>
-						</ListItem>
+										<Text>{item.isFollowed ? 'Unfollow' : 'Follow'}</Text>
+									</Button>
+								</Right>
+							</ListItem>
 					}>
 				</List>
 			);
