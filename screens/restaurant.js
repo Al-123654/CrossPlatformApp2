@@ -37,18 +37,23 @@ class RestaurantScreen extends Component{
             food: this.props.navigation.state.params.images,
             loggedID: this.props.navigation.state.params.previousId,
             locationSaved: null,
-            bruneiRegion: this.props.navigation.state.params.coordinates
+            bruneiRegion: this.props.navigation.state.params.coordinates,
+            followedUsers: "",
+            profilePic: this.props.navigation.state.params.profile_pic
         }
         console.log('[restaurant js] constructor - Restaurant ID: ', this.state.restaurantID)
         console.log('[restaurant js] constructor - Name of restaurant: ', this.state.restaurantTitle)
         console.log('[restaurant js] constructor - Restaurant Image: ', this.state.food[0])
         console.log('[restaurant js] constructor - Food: ', this.state.food)
         console.log('[restaurant js] constructor - bruneiRegion', this.state.bruneiRegion)
+        console.log('[restaurant js] constructor - profilePic', this.state.profilePic)
+        console.log('[restaurant js] constructor - image uri + profilePic: ',  GET_IMAGES_URI + this.state.profilePic + '/display' )
     }
     componentDidMount = () => {
         this.getLocationSaved();
+        this.displayFollowed();
     }
-   
+
     onLogoutHandler = () => {
 
         Alert.alert(
@@ -125,6 +130,38 @@ class RestaurantScreen extends Component{
         console.log('[user js] onImageLongClick!!')
     }
 
+    // get followed
+    displayFollowed = () => {
+        fetch(GET_FOLLOWED_BY + this.state.restaurantID, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then(response => {
+
+            if (response.status !== 200) {
+                Toast.show({
+                    text: 'Search failed!',
+                    buttonText: 'Ok',
+                    position: 'top',
+                    duration: 2000
+                });
+                return;
+            }
+            // if fetch ok
+            response.json().then(respObj => {
+                console.log('[restaurant js] displayFollowed - respObj:', respObj)
+
+                this.setState({
+                    followedUsers: respObj
+                })
+
+            }).catch(error => console.error('Error: ', error));
+
+        })
+    }
+
     //CHECK IF USER SAVED RESTAURANT, ALLOW USER TO ADD OR REMOVE
    getLocationSaved = () => {
        let serverCoord;
@@ -176,12 +213,6 @@ class RestaurantScreen extends Component{
         let tempLocationLength;
         let markerLat;
         let markerLng;
-        // const latMin = 4, latMax =  4.6;
-        // const lngMin = 114, lngMax = 115;
-        // let randomLat = (Math.random() * (latMax - latMin) + latMin).toFixed(4);
-        // let randomLng = (Math.random() * (lngMax - lngMin) + lngMin).toFixed(4);
-        // console.log('restaurant js onLocationSave -  randomLat: ', randomLat);
-        // console.log('restaurant js onLocationSave -  randomLng: ', randomLng);
 
         return fetch(GET_USERS_URI, {
             method: 'PUT',
@@ -288,37 +319,51 @@ class RestaurantScreen extends Component{
                 <Header hasTabs>
                     <Left>
                         <Button transparent onPress={this.onBackBtnPressed}>
-                            <Icon name='arrow-back' />
+                            <Icon name='arrow-back'/>
                         </Button>
                     </Left>
                     <Body><Title>{this.state.restaurantTitle}</Title></Body>
                     <Right>
                         <Button transparent onPress={this.onLogoutHandler}>
-                            <Icon name='home' />
+                            <Icon name='home'/>
                         </Button>
                     </Right>
                 </Header>
                 <Container>
-                    
                     <Content>
-                        <Row>
-                            <Label>Restaurant Image: </Label>
+                        <Row style = {{marginTop: 10}}>
+                            {/* display restaurant picture */}
+                            <Thumbnail style={{ marginLeft: 20 }} large source={{ uri: GET_IMAGES_URI + this.state.profilePic + '/display'}}/>
+                            
+                            <View style={{flex: 1, alignItems: 'center'}}>
+                                <Text>{this.state.food.length}</Text>
+                                <Label> Meals</Label>
+                            </View>
+                            <View style={{ flex: 1, alignItems: 'center' }}>
+                                <Text>{this.state.followedUsers.length}</Text>
+                                <Label> Followers</Label> 
+                            </View>
                         </Row>
                         <Row>
-                           <Image 
-                           style = {styles.imageContainer}
-                           source = {{uri: GET_IMAGES_URI + this.state.food[0] + '/display'}}/>
+                            <Label style={{marginLeft: 20, marginTop: 20, alignItems:'center',
+                            fontSize: 20, fontWeight: 'bold'}}
+                            >
+                                Food available:
+                            </Label>
                         </Row>
-                        <Row>
-                            <Label>Food Available: </Label>
-                        </Row>
-                        <Row>
+                        <Row style={{marginLeft: 50, marginTop: 20, alignItems: 'center'}}>
                             {displayFood}
                         </Row>
+                        
                         <Row>
-                            <Label>Map of restaurant</Label>
+                            <Label style={{
+                                marginLeft: 125, alignItems: 'center', marginTop: 20,
+                                fontSize: 20, fontWeight: 'bold'
+                            }}>
+                                Map of restaurant
+                            </Label>
                         </Row>
-                        <Row>
+                        <Row style = {{alignItems: 'center', marginTop: 20}}>
                             <MapView
                                 ref={map => this.map = map}
                                 style={styles.mapContainer}
@@ -327,7 +372,6 @@ class RestaurantScreen extends Component{
                                 <Marker
                                     coordinate={restaurantMarker}
                                     title={this.state.restaurantTitle}
-                                    // description={this.state.restaurantID}
                                 />
                             </MapView>
                         </Row>      
@@ -345,10 +389,12 @@ class RestaurantScreen extends Component{
 
 const styles = StyleSheet.create({
     imageContainer: {
-        width: '100%',
+        width: '85%',
         height: 250,
-        flex: 1,
-        position: 'relative'
+        // flex: 1,
+        position: 'relative',
+        // marginLeft: 50,
+        // alignItems:'center'
     },
     mapContainer:{
         flex: 1,
@@ -356,7 +402,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#F5FCFF',
         width: '100%',
-        height: 300
+        height: 350
     },
     markerWrap:{
         alignItems: "center",

@@ -243,7 +243,8 @@ class ExploreScreen extends Component {
 	}
 
 	// Clicking user icon
-	onUserPagePress = (itemId, itemFname, itemLname, itemImages, itemUsername, itemFollowing, itemRole, previousId, coordinates, title) => {
+	onUserPagePress = (itemId, itemFname, itemLname, itemImages, itemUsername, 
+		itemFollowing, itemRole, previousId, coordinates, title, profile_pic) => {
 
 		console.log('[explore js] Testing onUserPagePress');
 		console.log('[explore js] item._id: ', itemId);
@@ -256,6 +257,7 @@ class ExploreScreen extends Component {
 		console.log('[explore js] passedId: ', previousId);
 		console.log('[explore js] item.coordinates: ', coordinates)
 		console.log('[explore js] item.title: ', title)
+		console.log('[explore js] item.profile_pic: ', profile_pic)
 
 		console.log('TESTING 123')
 		if(itemRole === 1){
@@ -281,7 +283,8 @@ class ExploreScreen extends Component {
 					role: itemRole,
 					previousId: previousId,
 					coordinates: coordinates,
-					title:title
+					title:title,
+					profile_pic:profile_pic
 				}
 			})
 		}
@@ -327,7 +330,8 @@ class ExploreScreen extends Component {
 						<ListItem icon>
 							<Left>
 								<Icon name="ios-person-outline" onPress={() => this.onUserPagePress(item._id, 
-									item.fname, item.lname, item.images, item.username, item.following, item.role, this.state.passedUserId, item.coordinates, item.title)} />
+									item.fname, item.lname, item.images, item.username, item.following, item.role, 
+									this.state.passedUserId, item.coordinates, item.title, item.profile_pic)} />
 							</Left>
 							<Body>
 								<Text>{item.username}</Text>

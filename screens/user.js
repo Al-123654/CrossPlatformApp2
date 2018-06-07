@@ -117,7 +117,7 @@ class UserScreen extends Component{
         console.log('[user js] onBackBtnPressed');
         this.props.navigation.goBack();
     }
-
+    // get following
     displayFollowing = () => {
         fetch(ALL_USER_URI + this.state.userId, {
             method:'GET',
@@ -148,6 +148,7 @@ class UserScreen extends Component{
 
         })
     }
+    // get followed
     displayFollowed = () => {
         fetch(GET_FOLLOWED_BY + this.state.userId, {
             method:'GET',
