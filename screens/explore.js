@@ -342,7 +342,15 @@ class ExploreScreen extends Component {
 											this.state.passedUserId, item.coordinates, item.title, item.profile_pic)
 										} >
 										{item.title || item.username}</Text>
-									<Text style={{fontSize: 13}}>{item.title ? item.username : ''}</Text>
+									<Text 
+										style={{fontSize: 13}}
+										onPress={() => this.onUserPagePress(item._id,
+											item.fname, item.lname, item.images, item.username, item.following, item.role,
+											this.state.passedUserId, item.coordinates, item.title, item.profile_pic)
+										}
+										>
+										{item.title ? item.username : ''}
+									</Text>
 								</Body>
 								<Right>
 									<Button bordered primary small
