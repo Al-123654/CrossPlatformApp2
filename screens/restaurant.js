@@ -32,14 +32,15 @@ class RestaurantScreen extends Component{
 
         // INITIALISE STATES
         this.state = {
-            restaurantID: this.props.navigation.state.params.userId,
+            restaurantID: this.props.navigation.state.params.userId,// id of restaurant
             restaurantTitle: this.props.navigation.state.params.title,
             food: this.props.navigation.state.params.images,
-            loggedID: this.props.navigation.state.params.previousId,
+            loggedID: this.props.navigation.state.params.previousId,// id of user viewing profile
             locationSaved: null,
             bruneiRegion: this.props.navigation.state.params.coordinates,
             followedUsers: "",
-            profilePic: this.props.navigation.state.params.profile_pic
+            profilePic: this.props.navigation.state.params.profile_pic,
+            savedLocationBtn: false
         }
         console.log('[restaurant js] constructor - Restaurant ID: ', this.state.restaurantID)
         console.log('[restaurant js] constructor - Name of restaurant: ', this.state.restaurantTitle)
@@ -165,6 +166,8 @@ class RestaurantScreen extends Component{
     //CHECK IF USER SAVED RESTAURANT, ALLOW USER TO ADD OR REMOVE
    getLocationSaved = () => {
        let serverCoord;
+       let serverLat 
+       let serverLng 
        return fetch(GET_USERS_URI + this.state.loggedID, {
            method: 'GET',
            headers: {
@@ -181,24 +184,52 @@ class RestaurantScreen extends Component{
                 console.log('[restaurant js] getLocationSaved - data.locations: ', data.locations)
                 console.log('[restaurant js] getLocationSaved - data.locations.length: ', data.locations.length)
                 if(data.locations.length > 0){
-                    serverCoord = data.locations.map(latLng => {
-                        serverLat = latLng.lat
-                        serverLng = latLng.lng
+                    // serverCoord = data.locations.map(latLng => {
+                    //     console.log('[restaurant js] getLocationSaved - latLng: ', latLng);
+                    //     serverLat = latLng.lat
+                    //     serverLng = latLng.lng
+                    //     console.log('[restaurant js] getLocationSaved - serverLat: ', serverLat);
+                    //     console.log('[restaurant js] getLocationSaved - serverLng: ', serverLng);
+                    //     console.log('[restaurant js] getLocationSaved - this.state.bruneiRegion.lat: ', this.state.bruneiRegion.lat)
+                    //     console.log('[restaurant js] getLocationSaved - this.state.bruneiRegion.lng: ', this.state.bruneiRegion.lng)
+                      
+                    //     // if (serverLat == this.state.bruneiRegion.lat && serverLng == this.state.bruneiRegion.lng) {
+                    //     //     this.setState({
+                    //     //         locationSaved: true
+                    //     //     })                        
+                    //     // } else {
+                    //     //     this.setState({
+                    //     //         locationSaved: false
+                    //     //     })
+                    //     // }
+                    // })
+
+                    // loop through all available saved restaurants
+                    for(i = 0; i != data.locations.length; i++){
+                        console.log('restaurant js getLocationSaved -  data.locations at for loop: ', data.locations)
+                        console.log('restaurant js getLocationSaved -  data.locations.lat at for loop: ', data.locations[i].lat)
+                        serverLat = data.locations[i].lat
+                        serverLng = data.locations[i].lng
                         console.log('[restaurant js] getLocationSaved - serverLat: ', serverLat);
                         console.log('[restaurant js] getLocationSaved - serverLng: ', serverLng);
                         console.log('[restaurant js] getLocationSaved - this.state.bruneiRegion.lat: ', this.state.bruneiRegion.lat)
                         console.log('[restaurant js] getLocationSaved - this.state.bruneiRegion.lng: ', this.state.bruneiRegion.lng)
-                      
+
                         if (serverLat == this.state.bruneiRegion.lat && serverLng == this.state.bruneiRegion.lng) {
                             this.setState({
-                                locationSaved: true
-                            })                        
+                                locationSaved: true,
+                                savedLocationBtn: true
+                            })
+                            break;
                         } else {
                             this.setState({
-                                locationSaved: false
+                                locationSaved: false,
+                                savedLocationBtn: true
                             })
                         }
-                    })
+                    }
+
+                   
                     console.log('[restaurant js] getLocationSaved - this.state.locationSaved: ', this.state.locationSaved);
                    
                 }
@@ -246,7 +277,8 @@ class RestaurantScreen extends Component{
 
                 if (markerLat == this.state.bruneiRegion.lat && markerLng == this.state.bruneiRegion.lng) {
                     this.setState({
-                        locationSaved : true
+                        locationSaved : true,
+                        savedLocationBtn: true
                     }) 
                     Toast.show({
                         text: 'Location saved',
@@ -256,7 +288,8 @@ class RestaurantScreen extends Component{
                     })
                 } else {
                     this.setState({
-                        locationSaved : false
+                        locationSaved : false,
+                        savedLocationBtn: true
                     }) 
                     Toast.show({
                         text: 'Location removed',
@@ -266,7 +299,7 @@ class RestaurantScreen extends Component{
                     
                 }   
             }); 
-            console.log('[restaurant js] onLocationSavePressed - locationSaved: ', this.state.locationSaved);
+            // console.log('[restaurant js] onLocationSavePressed - locationSaved: ', this.state.locationSaved);
             duration: 4000
         }).catch(err => console.log('[restaurant js] onLocationSavePressed - error: ', err));
     }
@@ -300,14 +333,14 @@ class RestaurantScreen extends Component{
 
         let markerButton = (<Spinner/>);
         console.log('[restaurant js] render - locationSaved: ', this.state.locationSaved);
-        if(!this.state.locationSaved ){
+        if(!this.state.locationSaved && this.state.savedLocationBtn ){
             markerButton=(
                 <Button onPress={this.onLocationSave}>
                     <Text>Save location</Text>
                 </Button>
             )
             
-        }else{
+        }else if(this.state.locationSaved && this.state.savedLocationBtn){
             markerButton = (
                 <Button onPress={this.onLocationSave}>
                     <Text>Remove location</Text>
