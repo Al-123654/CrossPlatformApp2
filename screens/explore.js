@@ -333,10 +333,6 @@ class ExploreScreen extends Component {
 								<Left>
 									<Thumbnail small
 										source={{ uri: GET_IMAGE_URI + '/' + item.profile_pic + '/display' }}
-										onPress={() => this.onUserPagePress(item._id, 
-											item.fname, item.lname, item.images, item.username, item.following, item.role, 
-											this.state.passedUserId, item.coordinates, item.title, item.profile_pic)
-										} 
 									/>
 								</Left>
 								<Body>
