@@ -62,7 +62,7 @@ class Wishlist extends Component{
         let gallery = (<Spinner/>)
 
         if (this.state.wishlistArray.length == 0 && this.state.loaded) {
-            gallery = <Text>No images in wishlist</Text>
+            gallery = <Text style={{ marginLeft: 90, marginTop: 150 }}>No images in wishlist</Text>
         } else if (this.state.wishlistArray.length > 0 && this.state.loaded) {
             gallery = (
                 <Gallery
@@ -83,7 +83,9 @@ class Wishlist extends Component{
         return (
             <Container>
                 <Content>
-                    {gallery}
+                    <View style={{ marginLeft: 50 }}>
+                        {gallery}
+                    </View>
                 </Content>
 
             </Container>

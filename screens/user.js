@@ -46,7 +46,8 @@ class UserScreen extends Component{
             followedUsers: "",
             followingUsers:"",
             areImagesLoaded: false,
-            originalId: props.navigation.state.params.previousId
+            originalId: props.navigation.state.params.previousId,
+            profilePicture: props.navigation.state.params.profile_pic
             // favImagesArray:[],
             // wishListArray:[],
             // craveListArray:[],
@@ -251,7 +252,7 @@ class UserScreen extends Component{
 
         if(this.state.originalId == undefined){
             canEdit = (
-                    <Button style = {{marginLeft: 100}} bordered small onPress={() => {
+                    <Button bordered small onPress={() => {
                         this.onEditPressedHandler(this.state.userId, this.state.fname,
                             this.state.lname, this.state.username, this.state.userImages)
                     }}>
@@ -280,10 +281,9 @@ class UserScreen extends Component{
                     </Right>
                 </Header>
                 <Content>
-                    <Row style = {{marginTop: 10}}>
-                        <Thumbnail style = {{marginLeft:20}} large source={{ uri: GET_IMAGES_URI + this.state.userImages[0] + '/display' }} 
-                        
-                        />
+                    <Row style={{ marginTop: 20, marginLeft: 40}}>
+                        {/* <Thumbnail style = {{marginLeft:20}} large source={{ uri: GET_IMAGES_URI + this.state.profilePicture + '/display' }} /> */}
+                        <Icon fontSize="36" name="ios-contact-outline" />
                         <View style={{flex: 1, alignItems: 'center'}}> 
                             <Text>{this.state.userImages.length}</Text>
                             <Label> Posts</Label>
@@ -299,10 +299,14 @@ class UserScreen extends Component{
                         
                     </Row>
                     <Row>
-                        <View style={{ marginTop: 10, marginLeft: 15 }}>
+                        <View style={{ marginTop: 20, marginLeft: 20 }}>
                             <Text>{this.state.fname} {this.state.lname}</Text>
+                            
                         </View>
-                        {canEdit}
+                        <View style={{ marginLeft: 100, marginTop:15 }}>
+                            {canEdit}
+                        </View>
+                        
                     </Row>
                     <Tabs style = {{marginTop: 30}} initialPage={0}>
                         <Tab heading={

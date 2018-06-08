@@ -61,7 +61,7 @@ class Triedlist extends Component {
         let gallery = (<Spinner />)
 
         if (this.state.triedlistArray.length == 0 && this.state.loaded) {
-            gallery = (<Text>No images in triedlist</Text>)
+            gallery = (<Text style={{ marginLeft: 90, marginTop: 150 }}>No images in triedlist</Text>)
         } else if (this.state.triedlistArray.length > 0 && this.state.loaded){
             gallery = (
                 <Gallery
@@ -82,7 +82,9 @@ class Triedlist extends Component {
         return(
             <Container>
                 <Content>
-                    {gallery}
+                    <View style={{ marginLeft: 50 }}>
+                        {gallery}
+                    </View>
                 </Content>
             </Container>
         )
