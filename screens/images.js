@@ -543,7 +543,7 @@ class ImageScreen extends Component{
 		)
 		if(this.state.userId){
 			deleteImageButton = (
-				<Button full onPress={this.onDeleteImageBtnPressed}>
+				<Button bordered small onPress={this.onDeleteImageBtnPressed}>
 					<Text>Delete Image</Text>
 				</Button>
 			)
@@ -683,7 +683,10 @@ class ImageScreen extends Component{
 							/>
 
 						</Button>
-						{deleteImageButton}
+						<View style = {{marginLeft: 25, marginTop: 10}}>
+							{deleteImageButton}
+						</View>
+						
 
 					 </Row>
 					
