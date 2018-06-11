@@ -157,7 +157,7 @@ class FeedsScreen extends Component {
 				images: item.images,
 				following: item.following,
 				role: item.role,
-				// previousId: previousId,
+				previousId: this.state.passedId,
 				coordinates: item.coordinates,
 				title: item.title,
 				profile_pic: item.profile_pic
