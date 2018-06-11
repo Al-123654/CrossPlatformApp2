@@ -67,8 +67,9 @@ class FeedsScreen extends Component {
 			
 			
 		};
-		console.log('[feeds js] constructor - Current states:', this.state);
-		// this.fetchRestaurantUsers();
+		this.goToRestaurant = this.goToRestaurant.bind(this);
+		this._renderItem = this._renderItem.bind(this);
+		console.log('[feeds js] constructor - Current states:', this.state);	
 	}
 
 	//GET RESTAURANT DATA FROM SERVER
@@ -115,31 +116,61 @@ class FeedsScreen extends Component {
 		
 	}
 
-
-	
+	//setting up carousel elements for rendering
 	_renderItem ({item, index}, parallaxProps) {
+		console.log('[feeds js] _renderItem - item: ', item);
+		console.log('[feeds js] _renderItem - item._id: ', item._id);
+		console.log('[feeds js] _renderItem - item.username: ', item.username);
+		console.log('[feeds js] _renderItem - item.role: ', item.role);
+		console.log('[feeds js] _renderItem - item.coordinates: ', item.coordinates);
+		console.log('[feeds js] _renderItem - item.title: ', item.title);
+		console.log('[feeds js] _renderItem - item.profile_pic: ', item.profile_pic);
+		console.log('[feeds js] _renderItem - item.following: ', item.following);
+		console.log('[feeds js] _renderItem - item.images: ', item.images);
+		
         return (
 			<View style={styles.item}>
-				<TouchableOpacity onPress={() => console.log("[feeds js] _renderItem - Clicked carousel item!")}>
+				<TouchableOpacity onPress = {() => {this.goToRestaurant(item)}}
+				>
 					<ParallaxImage
 						source={{ uri: GET_IMAGES_URI + item.images[0] + '/display' }}
 						containerStyle={styles.imageContainer}
 						style={styles.image}
 						parallaxFactor={0.2}
 						{...parallaxProps} />
+
 				</TouchableOpacity>
 				<Text style={styles.title} numberOfLines={2}>
 					{ item.username }
 				</Text>
 			</View>
         );
-    }
+	}
+	// function for carousel to navigate to restaurant after click
+	goToRestaurant = (item) => {
+		console.log('[feeds js] testFunction - Carousel image pressed');
+		console.log('[feeds js] goToRestaurant - item: ', item)
+		this.props.navigation.navigate({
+			key: 'RestaurantPage1', routeName: 'Restaurant', params: {
+				userId: item._id,
+				username: item.username,
+				images: item.images,
+				following: item.following,
+				role: item.role,
+				// previousId: previousId,
+				coordinates: item.coordinates,
+				title: item.title,
+				profile_pic: item.profile_pic
+			}
+		})
+		
+	}
 
 	componentDidMount = () => {
 		if(this.state.imageIdToDelete){
-			// runs only if deleting using btn from images js
 			console.log("[feeds js] componentDidMount - feedImagesArray from images: ", this.state.feedImagesArray);
 			console.log("[feeds js] componentDidMount - imageIdToDelete: ", this.state.imageIdToDelete);
+			// runs only if deleting using btn from images js
 			this.onImageDelete(this.state.imageIdToDelete);
 		}else{
 			this.getUserImages();
@@ -629,6 +660,7 @@ class FeedsScreen extends Component {
 	//enter image page if image is clicked
 	onImageClicked = (imageId,passedId) => {
         console.log("[feeds js] onImageClicked - imageId: ", imageId );
+        console.log("[feeds js] onImageClicked - passedId: ", passedId );
         return fetch(GET_IMAGES_URI+ imageId, {
             method: 'GET',
             headers:{
@@ -695,7 +727,8 @@ class FeedsScreen extends Component {
 				<Icon name='home' />
 			</Button>
 		);
-		
+		console.log('[feeds js] render - testFunction: ', this.testFunction)
+		console.log('[feeds js] render - onImageClicked: ', this.onImageClicked)
 		//render images
 		if(this.state.feedImagesArray && this.state.areImagesLoaded){
 			if (this.state.feedImagesArray.length > 0) {
@@ -765,7 +798,7 @@ class FeedsScreen extends Component {
 				<Carousel
 					ref={(c) => { this._carousel = c; }}
 					data={this.state.restaurantUsers}
-					renderItem={this._renderItem}
+					renderItem={this._renderItem.bind(this)}
 					sliderWidth={Dimensions.get('window').width}
 					itemWidth={Dimensions.get('window').width * 0.85}
 					hasParallaxImages={true}
