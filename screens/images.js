@@ -549,9 +549,7 @@ class ImageScreen extends Component{
 			)
 		}else{
 			deleteImageButton = (
-				<Button disabled full>
-
-				</Button>
+				<Text></Text>
 			)
 		}
 		
