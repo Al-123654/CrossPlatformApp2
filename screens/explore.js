@@ -4,7 +4,7 @@ import {
 	 Image, Alert , 
 	TouchableOpacity, TouchableHighlight
 } from 'react-native';
-import { StackNavigator, NavigationActions } from 'react-navigation';
+import { createStackNavigator, NavigationActions, StackActions } from 'react-navigation';
 import { 
 	Container, Header, Left, Body, Right, Icon, 
 	Title, Content, Text, Button, Item, Input, 
@@ -187,7 +187,7 @@ class ExploreScreen extends Component {
                                     duration: 4000
                                 });
 								console.log("[explore js] onLogoutPressHandler - LOGGING OUT!");
-								const resetAction = NavigationActions.reset({
+								const resetAction = StackActions.reset({
 									index: 0,
 									actions: [NavigationActions.navigate({ routeName: 'Home' })],
 								});

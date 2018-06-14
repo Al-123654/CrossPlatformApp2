@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {  TextInput, StyleSheet, View,  Image, Alert, FlatList } from 'react-native';
-import { StackNavigator, } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation';
 import validator from 'validator';
 import { 
 	Container, Header, Left, Body, Right, Icon, 

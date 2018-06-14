@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Platform, StyleSheet, View, Image, Alert, TouchableOpacity } from 'react-native';
-import { StackNavigator, NavigationActions } from 'react-navigation';
+import { createStackNavigator, StackActions,  NavigationActions } from 'react-navigation';
 import { Container, Header, Left, Body, Right, Icon, Title, 
 	Content, Text, Button, Item, Input, Form, Label, Thumbnail, 
 	Card, CardItem, Badge, ListItem, List, Footer, FooterTab,
@@ -143,7 +143,7 @@ class ImageScreen extends Component{
 								// this.props.navigation.navigate('Home');
 								// console.log("[images js] onLogoutPressHandler - LOGGED OUT");
 								console.log("[images js] onLogoutPressHandler - LOGGING OUT!");
-								const resetAction = NavigationActions.reset({
+								const resetAction = StackActions.reset({
 									index: 0,
 									actions: [NavigationActions.navigate({ routeName: 'Home' })],
 								});

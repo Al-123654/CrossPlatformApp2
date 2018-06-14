@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Platform, StyleSheet, View, Image, Alert, TouchableOpacity, TouchableHighlight, Dimensions } from 'react-native';
-import { StackNavigator, NavigationActions } from 'react-navigation';
+import { createStackNavigator, NavigationActions, StackActions } from 'react-navigation';
 import RNFetchBlob from 'react-native-fetch-blob';
 import {
     Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input,
@@ -94,7 +94,7 @@ class UserScreen extends Component{
                                 })
                                 
                                 console.log("[user js] onLogoutPressHandler - LOGGING OUT!");
-                                const resetAction = NavigationActions.reset({
+                                const resetAction = StackActions.reset({
                                     index: 0,
                                     actions: [NavigationActions.navigate({ routeName: 'Home' })],
                                 });

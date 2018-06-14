@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Platform, StyleSheet,  View, Image, YellowBox } from 'react-native';
-import { StackNavigator, navigationOptions} from 'react-navigation';
+import { createStackNavigator} from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
 import { 
@@ -204,7 +204,8 @@ class HomeScreen extends Component {
 	}
 }
 
-const RootStack = StackNavigator(
+// for react-navigation
+const RootStack = createStackNavigator(
 	{
 		Home: {
 			screen: HomeScreen,
@@ -279,10 +280,12 @@ const RootStack = StackNavigator(
 // 	}
 // }
 
-export default () =>
-	<Root>
-		<RootStack/>
-	</Root>;
+export default class App extends Component {
+	// wrap rootstack with root for Toast messages to work normally
+	render() {
+		return (<Root><RootStack /></Root>);
+	}
+}
 
 const styles = StyleSheet.create({
 	iconContainer: {

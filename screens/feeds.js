@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { 
 	Platform, Dimensions, StyleSheet, View, Image, 
 	Alert , TouchableOpacity, TouchableHighlight, YellowBox} from 'react-native';
-import { StackNavigator, NavigationActions  } from 'react-navigation';
+import { createStackNavigator, NavigationActions, StackActions  } from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
 import { 
@@ -555,7 +555,7 @@ class FeedsScreen extends Component {
                                     duration: 4000
                                 })
 								console.log("[feeds js] onLogoutPressHandler - LOGGING OUT!");
-								const resetAction = NavigationActions.reset({
+								const resetAction = StackActions.reset({
 									index: 0,
 									actions: [NavigationActions.navigate({ routeName: 'Home' })],
 								});
