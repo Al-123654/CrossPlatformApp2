@@ -16,7 +16,7 @@ const COMMENT_URI = 'https://app-api-testing.herokuapp.com/api/comments/';
 // const COMMENT_URI = 'http://localhost:5000/api/comments/';
 // const LOGOUT_URI = 'http://localhost:5000/logout';
 
-class ImageScreen extends Component{
+class FoodScreen extends Component{
     constructor(props) {
 		super(props);
 		console.log('[images js] constructor - passedParams: ', props.navigation.state.params);
@@ -748,4 +748,4 @@ const styles = StyleSheet.create({
 	}
 
 })
-module.exports=ImageScreen;
+module.exports=FoodScreen;

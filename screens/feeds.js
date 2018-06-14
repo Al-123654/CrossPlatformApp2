@@ -671,7 +671,7 @@ class FeedsScreen extends Component {
 		.then (response => response.json())
         .then(response => {
             console.log('[feeds js] onImageClicked - response from server: ', response);
-			this.props.navigation.navigate({ key: 'Images1', routeName: 'Image', params: { 
+			this.props.navigation.navigate({ key: 'Food1', routeName: 'Food', params: { 
 					data:response,
 					userId: passedId,
 					userData: this.props.navigation.state.params,

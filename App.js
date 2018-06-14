@@ -17,7 +17,7 @@ YellowBox.ignoreWarnings([
 
 var RegisterScreen = require('./screens/register.js');
 var FeedsScreen = require('./screens/feeds.js');
-var ImageScreen = require('./screens/images.js');
+var FoodScreen = require('./screens/food.js');
 var ExploreScreen = require('./screens/explore.js');
 var ProfileScreen = require('./screens/profile.js');
 var UserScreen = require('./screens/user.js');
@@ -108,15 +108,33 @@ class HomeScreen extends Component {
 			response.json().then(data => {
 				console.log('[app js] componentDidMount json response: ', data);
 				console.log("[app js] LOGGED IN!");
+				console.log('[app js] data.message: ', data.message)
+
 				// go to feeds page
-				Toast.show({
-					text: 'Login successful',
-					buttonText: 'Ok',
-					position: 'top',
-					duration: 4000
-				});
-				console.log('[app js] Response', data);
-				this.props.navigation.navigate('Feeds', data);
+				if(data.message == 'Users only.'){
+					Toast.show({
+						text: data.message,
+						buttonText: 'Ok',
+						position: 'top',
+						duration: 4000
+					})
+					this.setState({
+						disableButton: false,
+						isLoggedIn: false
+					})
+
+				}else{
+					Toast.show({
+						text: 'Login successful',
+						buttonText: 'Ok',
+						position: 'top',
+						duration: 4000
+					});
+					console.log('[app js] Response', data);
+					this.props.navigation.navigate('Feeds', data);
+				}
+				
+				
 			});
 		}).catch((error) => {
 			console.log(error);
@@ -228,8 +246,8 @@ const RootStack = createStackNavigator(
 				gesturesEnabled:false
 			}
 		},
-		Image:{
-			screen:ImageScreen,
+		Food:{
+			screen:FoodScreen,
 			navigationOptions:{
 				header: null,
 				gesturesEnabled: false

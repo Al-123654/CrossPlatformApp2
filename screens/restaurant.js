@@ -116,7 +116,7 @@ class RestaurantScreen extends Component{
             .then(response => {
                 console.log('[user js] onImageClicked - response from server: ', response);
                 this.props.navigation.navigate({
-                    key: 'Images1', routeName: 'Image', params: {
+                    key: 'Food1', routeName: 'Food', params: {
                         data: response,
                         userId: passedId,
                         userData: this.props.navigation.state.params,
