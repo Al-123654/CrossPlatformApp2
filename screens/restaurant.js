@@ -346,17 +346,17 @@ class RestaurantScreen extends Component{
                 </Header>
                 <Container>
                     <Content>
-                        <Row style = {{marginTop: 10}}>
+                        <Row style={{ marginTop: 10, alignItems: 'center', justifyContent: 'space-between'}}>
                             {/* display restaurant picture */}
                             <Thumbnail style={{ marginLeft: 20 }} large source={{ uri: GET_IMAGES_URI + this.state.profilePic + '/display'}}/>
                             
-                            <View style={{flex: 1, alignItems: 'center'}}>
+                            <View style={{flex: 1, alignItems: 'center', marginLeft: 90}}>
                                 <Text>{this.state.food.length}</Text>
-                                <Label> Meals</Label>
+                                <Label style = {{fontSize: 14,}}> Meals</Label>
                             </View>
-                            <View style={{ flex: 1, alignItems: 'center' }}>
+                            <View style={{ flex: 1, alignItems: 'center',}}>
                                 <Text>{this.state.followedUsers.length}</Text>
-                                <Label> Followers</Label> 
+                                <Label style = {{fontSize: 14,}}> Followers</Label> 
                             </View>
                         </Row>
                         <Row>
