@@ -46,12 +46,9 @@ class UserScreen extends Component{
             followedUsers: "",
             followingUsers:"",
             areImagesLoaded: false,
-            originalId: props.navigation.state.params.previousId,
+            originalId: props.navigation.state.params.previousId,// ID of actual user if accessing from explore page
             profilePicture: props.navigation.state.params.profile_pic
-            // favImagesArray:[],
-            // wishListArray:[],
-            // craveListArray:[],
-            // triedListArray:[],
+           
         }
         console.log('[user js]States - UserId: ', this.state.userId);
         console.log('[user js]States - Fname: ', this.state.fname);
@@ -68,6 +65,10 @@ class UserScreen extends Component{
         // this.getCraveImages();
         // this.getTriedImages();
         // this.getWishImages();
+    }
+
+    getFavImages = () => {
+        
     }
 
     onLogoutHandler = () => {
@@ -182,8 +183,11 @@ class UserScreen extends Component{
     }
 
 
-    onImageClicked = (imageId) => {
+    onImageClicked = (imageId, passedId) => {
+        let navigation = this.props.navigation;
+        console.log('[user js] onImageClicked - navigation: ', navigation);
         console.log("[user js] onImageClicked - imageId: ", imageId);
+        console.log("[user js] onImageClicked - passedId: ", passedId);
         return fetch(GET_IMAGES_URI + imageId, {
             method: 'GET',
             headers: {
@@ -195,13 +199,14 @@ class UserScreen extends Component{
             .then(response => {
                 console.log('[user js] onImageClicked - response from server: ', response);
                 this.props.navigation.navigate({
-                    key: 'Images1', routeName: 'Image', params: {
+                    key: 'Food1', routeName: 'Food', params: {
                         data: response,
                         userId: this.props.navigation.state.params._id,
                         userData: this.props.navigation.state.params,
                         imagesDisplayed: this.state.userImages
                     }
                 })
+                console.log('[user js] onImageClicked - navigation after navigation: ', navigation);
             })
             .catch(error => console.error('Error: ', error));
     };
@@ -264,6 +269,7 @@ class UserScreen extends Component{
                 <Text></Text>
             )
         }
+        console.log('[user js] render - this.onImageClicked: ', this.onImageClicked)
 
         return(
             <Container>
@@ -311,34 +317,33 @@ class UserScreen extends Component{
                     <Tabs style = {{marginTop: 30}} initialPage={0}>
                         <Tab heading={
                             <TabHeading>
-                                <Icon name="heart" />
-
+                                <Icon name="heart" /> 
                             </TabHeading>
                         }>
                             <Favorite
                                 clicked={this.onImageClicked}
-                                longclick={this.onFavLongClick}
+                                longclick={this.onImageLongClick}
                                 currentUserID={this.state.userId}
                             />
                         </Tab>
                         <Tab heading="Wishlist">
                             <Wishlist
                                 clicked={this.onImageClicked}
-                                longclick={this.onWishLongClick}
+                                longclick={this.onImageLongClick}
                                 currentUserID={this.state.userId}
                             />
                         </Tab>
                         <Tab heading="Cravelist">
                             <Cravelist
                                 clicked={this.onImageClicked}
-                                longclick={this.onCraveLongClick}
+                                longclick={this.onImageLongClick}
                                 currentUserID={this.state.userId}
                             />
                         </Tab>
                         <Tab heading="Triedlist">
                             <Triedlist
                                 clicked={this.onImageClicked}
-                                longclick={this.onTriedLongClick}
+                                longclick={this.onImageLongClick}
                                 currentUserID={this.state.userId}
                             />
                         </Tab>

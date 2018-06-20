@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Platform, StyleSheet, View, Image, Alert, TouchableOpacity } from 'react-native';
-import { StackNavigator, } from 'react-navigation';
+import { createStackNavigator, NavigationActions, StackActions } from 'react-navigation';
 import {
     Container, Header, Left, Body, Right, Icon, Title,
     Content, Text, Button, Item, Input, Form, Label, Thumbnail,
@@ -15,7 +15,7 @@ import Gallery from '../Gallery/Gallery';
 
 
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
-// const GET_USERS_URI = 'http://localhost:5000/api/users/';
+const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
 
 class Favorite extends Component {
     constructor(props) {
@@ -27,12 +27,15 @@ class Favorite extends Component {
         this.state = {
             favImageArray: [],
             userID: this.props.currentUserID,
-            loaded: false
+            loaded: false,
+            imageClicked: false
         }
 
     }
     // get images favorited by user only
     componentDidMount() {
+        let navigation = this.props.navigation;
+        console.log('[Favorite Tab] componentDidMount - navigation: ', navigation);
 
         fetch(GET_USERS_URI + this.state.userID + '?fav=1', {
             method: 'GET',
@@ -60,27 +63,25 @@ class Favorite extends Component {
 
 
     }
-
     render() {
-
         let gallery = (<Spinner />)
 
         if (this.state.favImageArray.length == 0 && this.state.loaded) {
         gallery = (<Text style = {{marginLeft: 90, marginTop: 150}}>No images favorited</Text>)
         } else if (this.state.favImageArray.length > 0 && this.state.loaded){
+            
+            console.log('[FavoriteTab] this.props: ', this.props)// Check if the values from user js 
+                                                                // have been passed 
             gallery = (
                 <Gallery
                     images={this.state.favImageArray}
-                    clicked={clicked}
-                    longclick={longclick}
+                    clicked={this.props.clicked}
+                    longclick={this.props.longclick}
                     passedUserId={this.state.userID}
                 />
             )
         }
-        const { clicked } = this.props;
-        const {longclick} = this.props;
         console.log('[FavoriteTab js] Checking length of array:', this.state.favImageArray.length);
-        console.log('[FavoriteTab js] clicked:', clicked);
         console.log('[FavoriteTab js] favImageArray at render:', this.state.favImageArray);
         
         return (

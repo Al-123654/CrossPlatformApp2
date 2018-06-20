@@ -66,17 +66,13 @@ class Triedlist extends Component {
             gallery = (
                 <Gallery
                     images={this.state.triedlistArray}
-                    clicked={clicked}
-                    longclick={longclick}
+                    clicked={this.props.clicked}
+                    longclick={this.props.longclick}
                     passedUserId={this.state.userID}
                 />
             )
         }
-
-        const { clicked } = this.props;
-        const { longclick } = this.props;
         console.log('[Triedlist Tab js] Checking length of array:', this.state.triedlistArray.length);
-        console.log('[Triedlist Tab js] clicked:', clicked);
         console.log('[Triedlist Tab js]triedlistArray at render:', this.state.triedlistArray);
         
         return(
