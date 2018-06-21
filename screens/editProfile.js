@@ -30,6 +30,8 @@ class EditScreen extends Component{
             lname: props.navigation.state.params.lname,
             userImages: props.navigation.state.params.userImages,
             username: props.navigation.state.params.username,
+            logFname: "",
+            logLname: "",
         }
 
         console.log('[editProfile js] State - userId: ', this.state.userId)
@@ -119,52 +121,81 @@ class EditScreen extends Component{
         //     return;
         // }
 
-        // return fetch('', {
-        //     method: 'POST',
-        //     headers: {
-        //         Accept: 'application/json',
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify({
-        //         username: this.state.username,
-        //         password: this.state.password,
-        //         fname: this.state.fname,
-        //         lname: this.state.lname
-        //     }),
-        // }).then((response) => {
-        //     console.log('[editProfile js] responseOnLogin: ', response);
-        //     if (response.status !== 200) {
+        if (!validator.isAlpha(this.state.fname)) {
+            this.setState({
+                logFname: "Letters only",
+                disableButton: false
+            });
+            return;
+        }
+        if (!validator.isLength(this.state.fname, { min: 2 })) {
+            this.setState({
+                logFname: "Too short",
+                disableButton: false
+            });
+            return;
+        }
+        if (!validator.isAlpha(this.state.lname)) {
+            this.setState({
+                logLname: "Letters only",
+                disableButton: false
+            });
+            return;
+        }
+        if (!validator.isLength(this.state.lname, { min: 2 })) {
+            this.setState({
+                logLname: "Too short",
+                disableButton: false
+            });
+            return;
+        }  
 
-        //         console.log('[editProfile js] responseOnLogin bad response: ', response);
-        //         // this.setState({log:"Cannot log in"})
-        //         Toast.show({
-        //             text: 'Cannot log in',
-        //             buttonText: 'Ok',
-        //             position: 'top',
-        //             duration: 4000
-        //         });
-        //         this.setState({
-        //             disableButton: false,
-        //             isLoggedIn: false
-        //         });
-        //         return;
-        //     }
-        //     response.json().then(data => {
-        //         console.log('[editProfile js]  json response: ', data);
-        //         console.log("[editProfile js] CHANGES SAVED");
-        //         // go to feeds page
-        //         Toast.show({
-        //             text: 'Changes saved successfullyx',
-        //             buttonText: 'Ok',
-        //             position: 'top',
-        //             duration: 4000
-        //         });
-        //         console.log('[editProfile js] Response', data);
-        //         this.props.navigation.navigate('Feeds', data);
-        //     });
-        // }).catch((error) => {
-        //     console.log(error);
-        // });
+        return fetch(GET_USERS_URI, {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: this.state.username,
+                password: this.state.password,
+                fname: this.state.fname,
+                lname: this.state.lname
+            }),
+        }).then((response) => {
+            console.log('[editProfile js] responseOnLogin: ', response);
+            if (response.status !== 200) {
+
+                console.log('[editProfile js] responseOnLogin bad response: ', response);
+                // this.setState({log:"Cannot log in"})
+                Toast.show({
+                    text: 'Cannot save changes',
+                    buttonText: 'Ok',
+                    position: 'top',
+                    duration: 4000
+                });
+                this.setState({
+                    disableButton: false,
+                    isLoggedIn: false
+                });
+                return;
+            }
+            response.json().then(data => {
+                console.log('[editProfile js]  json response: ', data);
+                console.log("[editProfile js] CHANGES SAVED");
+                // go to feeds page
+                Toast.show({
+                    text: 'Changes saved successfully',
+                    buttonText: 'Ok',
+                    position: 'top',
+                    duration: 4000
+                });
+                console.log('[editProfile js] Response', data);
+                this.props.navigation.navigate('Feeds', data);
+            });
+        }).catch((error) => {
+            console.log(error);
+        });
     }
     
     render(){
@@ -190,22 +221,24 @@ class EditScreen extends Component{
                         placeholder = {this.state.fname}
                         onChangeText={(text) => this.onChangedFnameHandler(text)}
                     />
+                    {this.state.logFname.length > 0 ? (<Text style={styles.formLogText}>{this.state.logFname}</Text>) : null}
                     <Label>Last Name</Label>
                     <Input
                         placeholder={this.state.lname}
                         onChangeText={(text) => this.onChangedLnameHandler(text)}
                     />
+                    {this.state.logLname.length > 0 ? (<Text style={styles.formLogText}>{this.state.logLname}</Text>) : null}  
                     <Label>Username</Label>
                     <Input
                         placeholder={this.state.username}
                         onChangeText={(text) => this.onChangedUsernameHandler(text)}
                     />
-                    <Label>Password</Label>
+                    {/* <Label>Password</Label>
                     <Input
                         placeholder={this.state.password}
                         onChangeText={(text) => this.onChangedPasswordHandler(text)}
                         secureTextEntry={true}
-                    />
+                    /> */}
                     <Button bordered onPress = {this.onChangesSave}>
                         <Text>Save Changes</Text>
                     </Button>
@@ -215,4 +248,18 @@ class EditScreen extends Component{
         )
     };
 }
+const styles = StyleSheet.create({
+    formMessages: {
+        marginTop: 10,
+        marginLeft: 10,
+        flex: 1,
+        flexDirection: 'column'
+    },
+    formLogText: {
+        fontSize: 12,
+        color: 'red',
+        marginTop: 5,
+        marginLeft: 18
+    }
+});
 module.exports = EditScreen

@@ -39,8 +39,8 @@ class UserScreen extends Component{
         // INITIALIZE STATES
         this.state = {
             userId: props.navigation.state.params.userId,
-            fname: props.navigation.state.params.fname,
-            lname: props.navigation.state.params.lname,
+            fname: '',
+            lname: '',
             userImages: props.navigation.state.params.images,
             username:props.navigation.state.params.username,
             followedUsers: "",
@@ -51,8 +51,6 @@ class UserScreen extends Component{
            
         }
         console.log('[user js]States - UserId: ', this.state.userId);
-        console.log('[user js]States - Fname: ', this.state.fname);
-        console.log('[user js]States - Lname: ', this.state.lname);
         console.log('[user js]States - User Images: ', this.state.userImages);
         console.log('[user js]States - Username: ', this.state.username);
         console.log('[user js]States - originalId: ', this.state.originalId);
@@ -65,6 +63,24 @@ class UserScreen extends Component{
         // this.getCraveImages();
         // this.getTriedImages();
         // this.getWishImages();
+        this.fetchFnameLname();
+    }
+
+    fetchFnameLname = () => {
+        fetch(GET_USERS_URI + this.state.userId,{
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then(response => response.json())
+            .then(response => {
+            console.log('[user js] fetchFnameLname - response: ', response)
+            this.setState({
+                fname: response.fname,
+                lname: response.lname
+            })
+        })
     }
 
     getFavImages = () => {
