@@ -99,12 +99,13 @@ class FeedsScreen extends Component {
 			}
 			response.json().then(data => {
 				console.log('[feeds js] fetchRestaurantUsers - json response: ', data);
-				Toast.show({
-					text: 'Fetched restaurants',
-					buttonText: 'Ok',
-					position: 'top',
-					duration: 2000
-				});
+				// Toast.show({
+				// 	text: 'Fetched restaurants',
+				// 	buttonText: 'Ok',
+				// 	position: 'top',
+				// 	duration: 2000
+				// });
+				console.log('[feeds js] Fetched restaurants')
 				this.setState({restaurantUsers: [...data],});
 				console.log('[feeds js] fetchRestaurantUsers - this.state.restaurantUsers: ', this.state.restaurantUsers);
 				this.setMapMarkers();

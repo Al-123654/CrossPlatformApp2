@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Platform, StyleSheet, View, Image, Alert, TouchableOpacity } from 'react-native';
-import { createStackNavigator, NavigationActions, StackActions } from 'react-navigation';
+// import { createStackNavigator, NavigationActions, StackActions } from 'react-navigation';
 import {
     Container, Header, Left, Body, Right, Icon, Title,
     Content, Text, Button, Item, Input, Form, Label, Thumbnail,
@@ -15,7 +15,7 @@ import Gallery from '../Gallery/Gallery';
 
 
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
-const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
+
 
 class Favorite extends Component {
     constructor(props) {
@@ -67,11 +67,9 @@ class Favorite extends Component {
         let gallery = (<Spinner />)
 
         if (this.state.favImageArray.length == 0 && this.state.loaded) {
-        gallery = (<Text style = {{marginLeft: 90, marginTop: 150}}>No images favorited</Text>)
+        gallery = (<Text style = {{marginLeft: 130, marginTop: 150}}>No images favorited</Text>)
         } else if (this.state.favImageArray.length > 0 && this.state.loaded){
             
-            console.log('[FavoriteTab] this.props: ', this.props)// Check if the values from user js 
-                                                                // have been passed 
             gallery = (
                 <Gallery
                     images={this.state.favImageArray}
@@ -87,7 +85,7 @@ class Favorite extends Component {
         return (
             <Container>
                 <Content>
-                    <View style = {{marginLeft: 50}}>
+                    <View>
                         {gallery}
                     </View>
                 </Content>

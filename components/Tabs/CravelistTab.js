@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Platform, StyleSheet, View, Image, Alert, TouchableOpacity } from 'react-native';
-import { StackNavigator, } from 'react-navigation';
 import {
     Container, Header, Left, Body, Right, Icon, Title,
     Content, Text, Button, Item, Input, Form, Label, Thumbnail,
@@ -61,7 +60,7 @@ class Cravelist extends Component {
         let gallery = (<Spinner/>)
 
         if (this.state.cravelistArray.length == 0 && this.state.loaded){
-            gallery = (<Text style={{ marginLeft: 90, marginTop: 150 }}>No images in cravelist</Text>)
+            gallery = (<Text style={{ marginLeft: 130, marginTop: 150 }}>No images in cravelist</Text>)
         } else if (this.state.cravelistArray.length > 0 && this.state.loaded){
             gallery = (
                 <Gallery
@@ -78,7 +77,7 @@ class Cravelist extends Component {
         return (
             <Container>
                 <Content>
-                    <View style={{ marginLeft: 50 }}>
+                    <View>
                         {gallery}
                     </View>
                 </Content>

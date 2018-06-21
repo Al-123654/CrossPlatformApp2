@@ -255,6 +255,8 @@ class UserScreen extends Component{
 
         let canEdit;
 
+        //if user clicks on profile button 
+        // and not accessing through explore page display Edit Profile button
         if(this.state.originalId == undefined){
             canEdit = (
                     <Button bordered small onPress={() => {
@@ -289,7 +291,7 @@ class UserScreen extends Component{
                 <Content>
                     <Row style={{ marginTop: 20, marginLeft: 40}}>
                         {/* <Thumbnail style = {{marginLeft:20}} large source={{ uri: GET_IMAGES_URI + this.state.profilePicture + '/display' }} /> */}
-                        <Icon fontSize="36" name="ios-contact-outline" />
+                        <Icon fontSize="36" name="ios-contact-outline" />{/*Placeholder for profile image*/}
                         <View style={{flex: 1, alignItems: 'center'}}> 
                             <Text>{this.state.userImages.length}</Text>
                             <Label> Posts</Label>
@@ -320,28 +322,48 @@ class UserScreen extends Component{
                                 <Icon name="heart" /> 
                             </TabHeading>
                         }>
+                        {/* Pass data/functions into tabs */}
                             <Favorite
                                 clicked={this.onImageClicked}
                                 longclick={this.onImageLongClick}
                                 currentUserID={this.state.userId}
                             />
                         </Tab>
-                        <Tab heading="Wishlist">
+                        <Tab heading={
+                            <TabHeading>
+                                <Icon
+                                    name={"ios-color-wand-outline"}
+                                />
+                            </TabHeading>
+                        }>
                             <Wishlist
                                 clicked={this.onImageClicked}
                                 longclick={this.onImageLongClick}
                                 currentUserID={this.state.userId}
                             />
                         </Tab>
-                        <Tab heading="Cravelist">
-                            <Cravelist
+                         
+                         <Tab heading={
+                            <TabHeading>
+                                <Icon
+                                    name={"ios-checkmark-circle-outline"}
+                                />
+                            </TabHeading>
+                        }>
+                            <Triedlist
                                 clicked={this.onImageClicked}
                                 longclick={this.onImageLongClick}
                                 currentUserID={this.state.userId}
                             />
                         </Tab>
-                        <Tab heading="Triedlist">
-                            <Triedlist
+                        <Tab heading={
+                            <TabHeading>
+                                <Icon
+                                    name={"ios-happy-outline"}
+                                />
+                            </TabHeading>
+                        }>
+                            <Cravelist
                                 clicked={this.onImageClicked}
                                 longclick={this.onImageLongClick}
                                 currentUserID={this.state.userId}
