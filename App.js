@@ -110,8 +110,9 @@ class HomeScreen extends Component {
 				console.log("[app js] LOGGED IN!");
 				console.log('[app js] data.message: ', data.message)
 
-				// go to feeds page
+				
 				if(data.message == 'Users only.'){
+					//If restaurant tries to log in deny login
 					Toast.show({
 						text: data.message,
 						buttonText: 'Ok',
@@ -124,6 +125,7 @@ class HomeScreen extends Component {
 					})
 
 				}else{
+					// If user tries to log in go to feeds
 					Toast.show({
 						text: 'Login successful',
 						buttonText: 'Ok',
