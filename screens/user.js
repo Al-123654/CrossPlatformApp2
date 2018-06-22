@@ -59,10 +59,6 @@ class UserScreen extends Component{
     componentDidMount =() => {
         this.displayFollowed();
         this.displayFollowing();
-        // this.getFavImages();
-        // this.getCraveImages();
-        // this.getTriedImages();
-        // this.getWishImages();
         this.fetchFnameLname();
     }
 
