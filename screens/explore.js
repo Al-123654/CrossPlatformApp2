@@ -81,7 +81,8 @@ class ExploreScreen extends Component {
 			.catch(error => console.log("[explore js] fetchCurrentUser - Error fetching search results: ", error));
 	}
 
-	// use currentUserDetails to return to feeds when user clicks on feeds 
+	// navigate back to feeds using currentUserDetails
+	// Back button sends to feeds but does not update feeds page
 	onFeedsPressHandler = (data) => {
 		console.log("[explore js] onFeedsPressHandler");
 		console.log('[explore js] onFeedsPressHandler - data: ', data)
@@ -304,7 +305,7 @@ class ExploreScreen extends Component {
 			})
 		}
 	}
-
+	// go to profile page from explore
 	onProfilePressedHandler = (data) => {
 		console.log('[explore js] onProfilePressedHandler pressed! ');
 		console.log('[explore js] onProfilePressedHandler - data: ', data);
