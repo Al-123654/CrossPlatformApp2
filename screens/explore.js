@@ -9,7 +9,7 @@ import {
 	Container, Header, Left, Body, Right, Icon, 
 	Title, Content, Text, Button, Item, Input, 
 	Form, Label, Thumbnail, Card, CardItem, ListItem, 
-	List, Toast, Spinner 
+	List, Toast, Spinner, Footer, FooterTab
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
@@ -79,6 +79,20 @@ class ExploreScreen extends Component {
 				});
 			})
 			.catch(error => console.log("[explore js] fetchCurrentUser - Error fetching search results: ", error));
+	}
+
+	// use currentUserDetails to return to feeds when user clicks on feeds 
+	onFeedsPressHandler = (data) => {
+		console.log("[explore js] onFeedsPressHandler");
+		console.log('[explore js] onFeedsPressHandler - data: ', data)
+		console.log('[explore js] onFeedsPressHandler - data._id: ', data._id)
+		console.log('[explore js] onFeedsPressHandler - data.fname: ', data.fname)
+		// console.log('[explore js] onFeedsPressHandler - data: ', data)
+
+		this.props.navigation.navigate({key: 'Feeds1', routeName: 'Feeds', params:{
+			data:data
+		}})
+			
 	}
 
 	fetchUsers = () => {
@@ -289,11 +303,43 @@ class ExploreScreen extends Component {
 				}
 			})
 		}
-		
+	}
 
+	onProfilePressedHandler = (data) => {
+		console.log('[explore js] onProfilePressedHandler pressed! ');
+		console.log('[explore js] onProfilePressedHandler - data: ', data);
+		console.log('[explore js] onProfilePressedHandler - data._id: ', data._id);
+		console.log('[explore js] onProfilePressedHandler - data.images: ', data.images);
+		
+		this.props.navigation.navigate({
+			key: 'User1', routeName: 'User', params: {
+				userId: data._id,
+				fname: data.fname,
+				lname: data.lname,
+				images: data.images,
+				username: data.username
+			}
+		})
 	}
 
     render() {
+
+		let footer = (
+			<Footer>
+				<FooterTab>
+					<Button onPress={() => this.onFeedsPressHandler(this.state.currentUserDetails)}>
+						<Text>Feeds</Text>
+					</Button>
+					<Button onPress={() => this.onProfilePressedHandler(this.state.currentUserDetails)}>
+						<Icon name="ios-person" />
+						<Text>Profile</Text>
+					</Button>
+				</FooterTab>
+			</Footer>
+		
+		)
+
+	
 
 		let jsxList = null;
 		if(this.state.isListLoading) {
@@ -425,6 +471,7 @@ class ExploreScreen extends Component {
 						</Row>
 					</Grid>
                 </Content>
+				{footer}
             </Container>
 		);
     }
