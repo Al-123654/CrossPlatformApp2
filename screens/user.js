@@ -46,14 +46,15 @@ class UserScreen extends Component{
             followedUsers: "",
             followingUsers:"",
             areImagesLoaded: false,
-            originalId: props.navigation.state.params.previousId,// ID of actual user if accessing from explore page
-            profilePicture: props.navigation.state.params.profile_pic
+            previousId: props.navigation.state.params.previousId,// ID of actual user if accessing from explore page
+            profilePicture: props.navigation.state.params.profile_pic,
+            response: ""
            
         }
         console.log('[user js]States - UserId: ', this.state.userId);
         console.log('[user js]States - User Images: ', this.state.userImages);
         console.log('[user js]States - Username: ', this.state.username);
-        console.log('[user js]States - originalId: ', this.state.originalId);
+        console.log('[user js]States - previousId: ', this.state.previousId);
     }
 
     componentDidMount =() => {
@@ -73,15 +74,13 @@ class UserScreen extends Component{
             .then(response => {
             console.log('[user js] fetchFnameLname - response: ', response)
             this.setState({
+                response: response,
                 fname: response.fname,
                 lname: response.lname
             })
         })
     }
 
-    getFavImages = () => {
-        
-    }
 
     onLogoutHandler = () => {
 
@@ -103,7 +102,7 @@ class UserScreen extends Component{
                                     text: 'Logout successful',
                                     buttonText: 'Ok',
                                     position: 'top',
-                                    duration: 4000
+                                    duration: 3000
                                 })
                                 
                                 console.log("[user js] onLogoutPressHandler - LOGGING OUT!");
@@ -127,11 +126,23 @@ class UserScreen extends Component{
             ]
         )
     }
+
+    /**
+     * Return to previous route 
+     */
+
     onBackBtnPressed = () => {
-        console.log('[user js] onBackBtnPressed');
+       
+        console.log('[user js] onBackBtnPressed - this.state: ', this.state)
+       
         this.props.navigation.goBack();
+       
     }
-    // get following
+    
+    /**
+     * Get number of users followed
+     */
+
     displayFollowing = () => {
         fetch(ALL_USER_URI + this.state.userId, {
             method:'GET',
@@ -162,8 +173,13 @@ class UserScreen extends Component{
 
         })
     }
-    // get followed
-    displayFollowed = () => {
+    
+
+    /**
+     * get number of followers
+     */
+    
+     displayFollowed = () => {
         fetch(GET_FOLLOWED_BY + this.state.userId, {
             method:'GET',
             headers:{
@@ -262,6 +278,38 @@ class UserScreen extends Component{
         })
     }
 
+    onFeedsPressHandler = () => {
+        return fetch(GET_USERS_URI + this.state.userId, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(response => {
+                console.log('[user js] onFeedsPressHandler - response from server: ', response);
+                this.props.navigation.navigate({
+                    key: 'Feeds1', routeName: 'Feeds', params: {
+                        data: response,
+                    }
+                })
+                // console.log('[user js] onFeedsPressHandler - navigation after navigation: ', navigation);
+            })
+            .catch(error => console.error('Error: ', error));
+
+    }
+
+    onExplorePressedHandler = (currentUserId) => {
+        console.log('[feeds js] onExplorePressedHandler - clicked!');
+        console.log('[feeds js] onExplorePressedHandler - ID passed by app js: ', currentUserId);
+        this.props.navigation.navigate({
+            key: 'Explore1', routeName: 'Explore', params: {
+                currentUserId: currentUserId
+            }
+        });
+    };
+
     render(){
      
 
@@ -269,7 +317,7 @@ class UserScreen extends Component{
 
         //if user clicks on profile button 
         // and not accessing through explore page display Edit Profile button
-        if(this.state.originalId == undefined){
+        if(this.state.previousId === undefined){
             canEdit = (
                     <Button bordered small onPress={() => {
                         this.onEditPressedHandler(this.state.userId, this.state.fname,
@@ -304,26 +352,27 @@ class UserScreen extends Component{
                     <Row style={{ marginTop: 20, marginLeft: 40}}>
                         {/* <Thumbnail style = {{marginLeft:20}} large source={{ uri: GET_IMAGES_URI + this.state.profilePicture + '/display' }} /> */}
                         <Icon fontSize="36" name="ios-contact-outline" />{/*Placeholder for profile image*/}
-                        <View style={{flex: 1, alignItems: 'center'}}> 
+                        <View style = {{flex: 1,alignItems: 'flex-end'}}> 
                             <Text>{this.state.userImages.length}</Text>
                             <Label> Posts</Label>
                         </View>
-                        <View style={{flex: 1, alignItems: 'center'}}> 
+                        <View style = {{flex: 1,alignItems: 'flex-end'}}> 
                             <Text>{this.state.followingUsers.length}</Text>
                             <Label> Following</Label>
                         </View>
-                        <View style={{flex: 1, alignItems: 'center'}}> 
+                        <View style = {{flex: 1,alignItems: 'flex-end'}}> 
                             <Text>{this.state.followedUsers.length}</Text>
                             <Label> Followers</Label> 
                         </View>
                         
                     </Row>
                     <Row>
-                        <View style={{ marginTop: 20, marginLeft: 20 }}>
-                            <Text>{this.state.fname} {this.state.lname}</Text>
-                            
+                        <View style={{ marginTop: 10, marginLeft: 20 }}>
+                            <Text>{this.state.fname} {this.state.lname}</Text> 
                         </View>
-                        <View style={{ marginLeft: 100, marginTop:15 }}>
+                    </Row>
+                    <Row>
+                        <View style={{ flex: 1, flexDirection: 'row-reverse', alignItems: 'flex-end' }}>
                             {canEdit}
                         </View>
                         
@@ -383,6 +432,18 @@ class UserScreen extends Component{
                         </Tab>
                     </Tabs> 
                 </Content>
+                <Footer>
+                    <FooterTab>
+                        <Button  onPress={this.onFeedsPressHandler}>
+                            <Icon name='pizza' />
+                            <Text>Feeds</Text>
+                        </Button>
+                        <Button  onPress={() => { this.onExplorePressedHandler(this.state.userId) }}>
+                            <Icon name="navigate" />
+                            <Text>Explore</Text>
+                        </Button>
+                    </FooterTab>
+                </Footer>
             </Container>
         );
     };

@@ -97,7 +97,7 @@ class HomeScreen extends Component {
 					text: 'Cannot log in',
 					buttonText: 'Ok',
 					position: 'top',
-					duration: 4000
+					duration: 3000
 				});
 				this.setState({
 					disableButton: false,
@@ -117,7 +117,7 @@ class HomeScreen extends Component {
 						text: data.message,
 						buttonText: 'Ok',
 						position: 'top',
-						duration: 4000
+						duration: 3000
 					})
 					this.setState({
 						disableButton: false,
@@ -130,7 +130,7 @@ class HomeScreen extends Component {
 						text: 'Login successful',
 						buttonText: 'Ok',
 						position: 'top',
-						duration: 4000
+						duration: 3000
 					});
 					console.log('[app js] Response', data);
 					this.props.navigation.navigate('Feeds', data);

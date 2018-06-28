@@ -1,3 +1,7 @@
+/**
+ * food js
+ */
+
 import React, { Component } from 'react';
 import { Platform, StyleSheet, View, Image, Alert, TouchableOpacity } from 'react-native';
 import { createStackNavigator, StackActions,  NavigationActions } from 'react-navigation';
@@ -12,51 +16,49 @@ import validator from 'validator';
 const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
 const IMAGE_ROOT_URI = 'https://app-api-testing.herokuapp.com/api/images/';
 const COMMENT_URI = 'https://app-api-testing.herokuapp.com/api/comments/';
-// const IMAGE_ROOT_URI = 'http://localhost:5000/api/images/';
-// const COMMENT_URI = 'http://localhost:5000/api/comments/';
-// const LOGOUT_URI = 'http://localhost:5000/logout';
+
 
 class FoodScreen extends Component{
     constructor(props) {
 		super(props);
-		console.log('[images js] constructor - passedParams: ', props.navigation.state.params);
-		console.log('[images js] constructor - passedParams: userData ', props.navigation.state.params.userData);
-		// console.log('[images js] constructor - passedParams: message ', props.navigation.state.params.userData.message);
-		console.log('[images js] constructor - passedParams: imagesDisplayed ', props.navigation.state.params.imagesDisplayed);
+		console.log('[food js] constructor - passedParams: ', props.navigation.state.params);
+		console.log('[food js] constructor - passedParams: userData ', props.navigation.state.params.userData);
+		console.log('[food js] constructor - passedParams: imagesDisplayed ', props.navigation.state.params.imagesDisplayed);
 
-		// check if image favorited from serverside
+		/** 
+		 * Check from api if image is in favorite, wishlist, tried or crave
+		*/
 		let isFavorite= false;
 		if (typeof props.navigation.state.params.data.favorite !== 'undefined' && 
 		props.navigation.state.params.data.favorite.length > 0){
 			props.navigation.state.params.data.favorite.forEach(function(favoriteId){
-				console.log('[images js] constructor - favoriteId: ', favoriteId);
+				console.log('[food js] constructor - favoriteId: ', favoriteId);
 				if(favoriteId == props.navigation.state.params.userId){
-					console.log('[images js] constructor - User already Favorited this image.');
+					console.log('[food js] constructor - User already Favorited this image.');
 					isFavorite = true;
 				}
 			});
 		}
-		// check if image in wishlist from serverside
+		
 		let inWishlist= false;
 		if (typeof props.navigation.state.params.data.wishlist !== 'undefined' && 
 		props.navigation.state.params.data.wishlist.length > 0){
 			props.navigation.state.params.data.wishlist.forEach(function(wishlistId){
-				console.log('[images js] constructor - wishlistId: ', wishlistId);
+				console.log('[food js] constructor - wishlistId: ', wishlistId);
 				if(wishlistId == props.navigation.state.params.userId){
-					console.log('[images js] constructor - User already Favorited this image.');
+					console.log('[food js] constructor - User already Favorited this image.');
 					inWishlist = true;
 				}
 			});
 		}
 
-		// check if image is tried from serverside
 		let inTriedlist = false;
 		if (typeof props.navigation.state.params.data.tried !== 'undefined' &&
 			props.navigation.state.params.data.tried.length > 0) {
 			props.navigation.state.params.data.tried.forEach(function (triedId) {
-				console.log('[images js] constructor - triedId: ', triedId);
+				console.log('[food js] constructor - triedId: ', triedId);
 				if (triedId == props.navigation.state.params.userId) {
-					console.log('[images js] constructor - User already Favorited this image.');
+					console.log('[food js] constructor - User already Favorited this image.');
 					inTriedlist = true;
 				}
 			});
@@ -65,15 +67,17 @@ class FoodScreen extends Component{
 		if (typeof props.navigation.state.params.data.craving !== 'undefined' &&
 			props.navigation.state.params.data.craving.length > 0) {
 			props.navigation.state.params.data.craving.forEach(function (cravingId) {
-				console.log('[images js] constructor - cravingId: ', cravingId);
+				console.log('[food js] constructor - cravingId: ', cravingId);
 				if (cravingId == props.navigation.state.params.userId) {
-					console.log('[images js] constructor - User already Favorited this image.');
+					console.log('[food js] constructor - User already Favorited this image.');
 					inCravelist = true;
 				}
 			});
 		}
 
-		// INITIALIZE STATES
+		/**
+		 * INITIALIZE STATES
+		 */
 		this.state = {
 			imageId: props.navigation.state.params.data._id,
 			userId: props.navigation.state.params.userId,
@@ -101,17 +105,17 @@ class FoodScreen extends Component{
 			imagesFromFeeds: props.navigation.state.params.imagesDisplayed
 		};
 
-		// logs
-		console.log('[images js] constructor - After init.');
-		console.log('[images js] constructor - imageId: ', this.state.imageId);
-		console.log('[images js] constructor - userId: ', this.state.userId);
-		console.log('[images js] constructor - isImageFavorite: ', this.state.isImageFavorite);
-		console.log('[images js] constructor - noOfFavorite: ', this.state.noOfFavorite);
-		console.log('[images js] constructor - comment: ', this.state.commentId);
+		
+		console.log('[food js] constructor - After init.');
+		console.log('[food js] constructor - imageId: ', this.state.imageId);
+		console.log('[food js] constructor - userId: ', this.state.userId);
+		console.log('[food js] constructor - isImageFavorite: ', this.state.isImageFavorite);
+		console.log('[food js] constructor - noOfFavorite: ', this.state.noOfFavorite);
+		console.log('[food js] constructor - comment: ', this.state.commentId);
 	}
 	
 	onBackBtnPressed = () => {
-		console.log('[images js] onBackBtnPressed');
+		console.log('[food js] onBackBtnPressed');
 		this.props.navigation.goBack();
 	}
 
@@ -138,11 +142,9 @@ class FoodScreen extends Component{
                                     text: 'Logout successful',
                                     buttonText: 'Ok',
                                     position: 'top',
-                                    duration: 4000
+                                    duration: 3000
                                 })
-								// this.props.navigation.navigate('Home');
-								// console.log("[images js] onLogoutPressHandler - LOGGED OUT");
-								console.log("[images js] onLogoutPressHandler - LOGGING OUT!");
+								console.log("[food js] onLogoutPressHandler - LOGGING OUT!");
 								const resetAction = StackActions.reset({
 									index: 0,
 									actions: [NavigationActions.navigate({ routeName: 'Home' })],
@@ -163,15 +165,20 @@ class FoodScreen extends Component{
 			]
 		)
 	}
-    //FAVORITE THE IMAGE
+   
+	/**
+	 * Favorite image logic
+	 * If image not favorited by user yet - add to favorite and save to api
+	 * If image has been favorited by user - remove from api
+	 */
     onFavoritePressHandler = (imageId) => {
-		console.log('[images js] onFavoritePressHandler - Favorite btn Pressed!');
-		console.log('[images js] onFavoritePressHandler - imageUri: ',IMAGE_ROOT_URI);
-		console.log('[images js] onFavoritePressHandler - imageId: ', imageId);
-		console.log('[images js] onFavoritePressHandler - URI + imageId: ' ,IMAGE_ROOT_URI + imageId);
+		console.log('[food js] onFavoritePressHandler - Favorite btn Pressed!');
+		console.log('[food js] onFavoritePressHandler - imageUri: ',IMAGE_ROOT_URI);
+		console.log('[food js] onFavoritePressHandler - imageId: ', imageId);
+		console.log('[food js] onFavoritePressHandler - URI + imageId: ' ,IMAGE_ROOT_URI + imageId);
 
 		
-		// SEND REQUEST TO API
+		
 		return fetch (IMAGE_ROOT_URI + imageId + '/?fav=1', {
             method: 'POST',
             headers: {
@@ -181,17 +188,16 @@ class FoodScreen extends Component{
 		})
 		.then((response) => response.json())
 		.then((responseJson) => {
-			console.log("[images js] onFavoritePressHandler - responseJson: ", responseJson);
+			console.log("[food js] onFavoritePressHandler - responseJson: ", responseJson);
 
-			// CHECK IF IMAGE FAVORITED
 			let isFavorite= false;
 			const userId = this.state.userId;
-			console.log("[images js] onFavoritePressHandler - responseJson Favorites: ", responseJson.favorite);
+			console.log("[food js] onFavoritePressHandler - responseJson Favorites: ", responseJson.favorite);
 			if (typeof responseJson.favorite !== 'undefined' && responseJson.favorite.length > 0) {
 				responseJson.favorite.forEach(function(favoriteId){
-					console.log('[images js] onFavoritePressHandler - favoriteId: ', favoriteId);
+					console.log('[food js] onFavoritePressHandler - favoriteId: ', favoriteId);
 					if(favoriteId == userId){
-						console.log('[images js] onFavoritePressHandler - User already Favouritethis image.');
+						console.log('[food js] onFavoritePressHandler - User already Favouritethis image.');
 						isFavorite= true;
 					}
 				});
@@ -201,17 +207,21 @@ class FoodScreen extends Component{
 				isImageFavorite: isFavorite
 			});
 		})
-		.catch(error => console.log('[images js] onFavoritePressHandler - Error:', error));    
+		.catch(error => console.log('[food js] onFavoritePressHandler - Error:', error));    
 	}
-	//CHECK IF IMAGE IN WISHLIST
+	/**
+	 * Wishlist logic
+	 * If image not added to wishlist by user yet - add to wishlist and save to api
+	 * If image is already in user wishlist - remove from api
+	 */
     onWishlistPressHandler = (imageId) => {
-		console.log('[images js] onWishlistPressHandler - Favorite btn Pressed!');
-		console.log('[images js] onWishlistPressHandler - imageUri: ',IMAGE_ROOT_URI);
-		console.log('[images js] onWishlistPressHandler - imageId: ', imageId);
-		console.log('[images js] onWishlistPressHandler - URI + imageId: ' ,IMAGE_ROOT_URI + imageId);
+		console.log('[food js] onWishlistPressHandler - Favorite btn Pressed!');
+		console.log('[food js] onWishlistPressHandler - imageUri: ',IMAGE_ROOT_URI);
+		console.log('[food js] onWishlistPressHandler - imageId: ', imageId);
+		console.log('[food js] onWishlistPressHandler - URI + imageId: ' ,IMAGE_ROOT_URI + imageId);
 
 		
-		// SEND REQUEST TO API
+		
 		return fetch (IMAGE_ROOT_URI + imageId + '/?wish=1', {
             method: 'POST',
             headers: {
@@ -221,17 +231,17 @@ class FoodScreen extends Component{
 		})
 		.then((response) => response.json())
 		.then((responseJson) => {
-			console.log("[images js] onWishlistPressHandler - responseJson: ", responseJson);
+			console.log("[food js] onWishlistPressHandler - responseJson: ", responseJson);
 
-			// CHECK IF IMAGE WISHLISTED
+			
 			let inWishlist = false;
 			const userId = this.state.userId;
-			console.log("[images js] onWishlistPressHandler - responseJson Wishlist: ", responseJson.wishlist);
+			console.log("[food js] onWishlistPressHandler - responseJson Wishlist: ", responseJson.wishlist);
 			if (typeof responseJson.wishlist !== 'undefined' && responseJson.wishlist.length > 0) {
 				responseJson.wishlist.forEach(function(wishlistId){
-					console.log('[images js] onWishlistPressHandler - wishlistId: ', wishlistId);
+					console.log('[food js] onWishlistPressHandler - wishlistId: ', wishlistId);
 					if(wishlistId == userId){
-						console.log('[images js] onWishlistPressHandler - User already wishlist this image.');
+						console.log('[food js] onWishlistPressHandler - User already wishlist this image.');
 						inWishlist= true;
 					}
 				});
@@ -241,18 +251,22 @@ class FoodScreen extends Component{
 				inImageWishlist: inWishlist
 			});
 		})
-		.catch(error => console.log('[images js] onWishListPressHandler - Error:', error));    
+		.catch(error => console.log('[food js] onWishListPressHandler - Error:', error));    
 	}
 
-	// CHECK IF IMAGE IN TRIEDLIST
+	/**
+	 * Triedlist logic
+	 * If image not added to triedlist by user yet - add to triedlist and save to api
+	 * If image is already in user triedlist - remove from api
+	 */
 	onTriedlistPressHandler = (imageId) => {
-		console.log('[images js] onTriedlistPressHandler - Tried btn Pressed!');
-		console.log('[images js] onTriedlistPressHandler - imageUri: ',IMAGE_ROOT_URI);
-		console.log('[images js] onTriedlistPressHandler - imageId: ', imageId);
-		console.log('[images js] onTriedlistPressHandler - URI + imageId: ',IMAGE_ROOT_URI + imageId);
+		console.log('[food js] onTriedlistPressHandler - Tried btn Pressed!');
+		console.log('[food js] onTriedlistPressHandler - imageUri: ',IMAGE_ROOT_URI);
+		console.log('[food js] onTriedlistPressHandler - imageId: ', imageId);
+		console.log('[food js] onTriedlistPressHandler - URI + imageId: ',IMAGE_ROOT_URI + imageId);
 
 
-		// SEND REQUEST TO API
+		
 		return fetch (IMAGE_ROOT_URI + imageId + '/?tried=1', {
 			method: 'POST',
 			headers: {
@@ -262,17 +276,17 @@ class FoodScreen extends Component{
 		})
 			.then((response) => response.json())
 			.then((responseJson) => {
-				console.log("[images js] onTriedlistPressHandler - responseJson: ", responseJson);
+				console.log("[food js] onTriedlistPressHandler - responseJson: ", responseJson);
 
-				// CHECK IF IMAGE IN TRIEDLIST
+				
 				let inTriedlist = false;
 				const userId = this.state.userId;
-				console.log("[images js] onTriedlistPressHandler - responseJson Tried: ", responseJson.tried);
+				console.log("[food js] onTriedlistPressHandler - responseJson Tried: ", responseJson.tried);
 				if (typeof responseJson.tried !== 'undefined' && responseJson.tried.length > 0) {
 					responseJson.tried.forEach(function (triedId) {
-						console.log('[images js] onTriedlistPressHandler - triedId: ', triedId);
+						console.log('[food js] onTriedlistPressHandler - triedId: ', triedId);
 						if (triedId == userId) {
-							console.log('[images js] onTriedlistPressHandler - User already tried this image.');
+							console.log('[food js] onTriedlistPressHandler - User already tried this image.');
 							inTriedlist = true;
 						}
 					});
@@ -282,16 +296,19 @@ class FoodScreen extends Component{
 					inImageTriedlist: inTriedlist
 				});
 			})
-			.catch(error => console.log('[images js] onTriedListPressHandler - Error:', error)); 
+			.catch(error => console.log('[food js] onTriedListPressHandler - Error:', error)); 
 	}
+	/**
+	 * Cravelist logic
+	 * If image not added to cravelist by user yet - add to cravelist and save to api
+	 * If image is already in user cravelist - remove from api
+	 */
 	onCravelistPressHandler = (imageId) => {
-		console.log('[images js] onCravelistPressHandler - Crave btn Pressed!');
-		console.log('[images js] onCravelistPressHandler - imageUri: ',IMAGE_ROOT_URI);
-		console.log('[images js] onCravelistPressHandler - imageId: ', imageId);
-		console.log('[images js] onCravelistPressHandler - URI + imageId: ',IMAGE_ROOT_URI + imageId);
+		console.log('[food js] onCravelistPressHandler - Crave btn Pressed!');
+		console.log('[food js] onCravelistPressHandler - imageUri: ',IMAGE_ROOT_URI);
+		console.log('[food js] onCravelistPressHandler - imageId: ', imageId);
+		console.log('[food js] onCravelistPressHandler - URI + imageId: ',IMAGE_ROOT_URI + imageId);
 
-
-		// SEND REQUEST TO API
 		return fetch (IMAGE_ROOT_URI + imageId + '/?crave=1', {
 			method: 'POST',
 			headers: {
@@ -301,17 +318,17 @@ class FoodScreen extends Component{
 		})
 			.then((response) => response.json())
 			.then((responseJson) => {
-				console.log("[images js] onCravelistPressHandler - responseJson: ", responseJson);
+				console.log("[food js] onCravelistPressHandler - responseJson: ", responseJson);
 
-				// CHECK IF IMAGE IN TRIEDLIST
+
 				let inCravelist = false;
 				const userId = this.state.userId;
-				console.log("[images js] onCravelistPressHandler - responseJson Crave: ", responseJson.craving);
+				console.log("[food js] onCravelistPressHandler - responseJson Crave: ", responseJson.craving);
 				if (typeof responseJson.craving !== 'undefined' && responseJson.craving.length > 0) {
 					responseJson.craving.forEach(function (cravingId) {
-						console.log('[images js] onCravelistPressHandler - cravingId: ', cravingId);
+						console.log('[food js] onCravelistPressHandler - cravingId: ', cravingId);
 						if (cravingId == userId) {
-							console.log('[images js] onCravelistPressHandler - User already craving this image.');
+							console.log('[food js] onCravelistPressHandler - User already craving this image.');
 							inCravelist = true;
 						}
 					});
@@ -321,18 +338,24 @@ class FoodScreen extends Component{
 					inImageCravelist: inCravelist
 				});
 			})
-			.catch(error => console.log('[images js] onCraveListPressHandler - Error:', error)); 
+			.catch(error => console.log('[food js] onCraveListPressHandler - Error:', error)); 
 	}
-	//ENTER COMMENT IN COMMENT BOX
+	
+	/**
+	 * Logic to enter comments into comment box
+	 */
 	createComment = (comment) => {
 		if(comment){
 			this.setState({
 				comment:comment
 			});
-			console.log('[images js] createComment - Comment being entered:', comment);
+			console.log('[food js] createComment - Comment being entered:', comment);
 		}
 	}
-	//SAVE COMMENT TO API
+	/**
+	 * Logic to post comments from comment box
+	 * After posting updates comments section to include the newly posted comment
+	 */
 	postComment = () => {
 		if (validator.isLength(this.state.comment,{min:1, max: 200})){
 			this.setState({
@@ -351,7 +374,7 @@ class FoodScreen extends Component{
 			})
 				.then((response) => response.json())
 				.then((responseJson) => {
-					console.log('[images js] postComment - response from server postComment:', responseJson);
+					console.log('[food js] postComment - response from server postComment:', responseJson);
 					//DISPLAY THE NEW COMMENT ON SCREEN WITH PREVIOUS COMMENTS
 					let tempCommentId = [];
 					responseJson.comments.forEach((comments, index) => {
@@ -359,19 +382,19 @@ class FoodScreen extends Component{
 							comments
 						)
 					})
-					console.log('[images js] postComment - tempCommentId', tempCommentId);
-					console.log('[images js] postComment - postingComment just after user posts comment:',this.state.postingComment);
+					console.log('[food js] postComment - tempCommentId', tempCommentId);
+					console.log('[food js] postComment - postingComment just after user posts comment:',this.state.postingComment);
 					
 					this.setState({
 						commentId: tempCommentId
 					})
-					console.log('[images js] postComment - status of disableComment at postComment:', this.state.disableComment)
-					console.log('[images js] postComment - this.state.commentId', this.state.commentId)
+					console.log('[food js] postComment - status of disableComment at postComment:', this.state.disableComment)
+					console.log('[food js] postComment - this.state.commentId', this.state.commentId)
 					Toast.show({
                         text: 'Comment posted',
                         buttonText: 'Ok',
                         position: 'top',
-                        duration: 4000
+                        duration: 3000
 					});
 					this.fetchComments();				
 				})
@@ -379,18 +402,24 @@ class FoodScreen extends Component{
 					console.error(error)
 				});
 			
-			console.log('[images js] postComment - commentId after comment posted', this.state.commentId)
+			console.log('[food js] postComment - commentId after comment posted', this.state.commentId)
 			
 		}else{
 			Toast.show({
 				text: 'Comment too long/short',
 				position: 'top',
 				buttonText: 'Ok',
-			 	duration: 4000
+			 	duration: 3000
 			})
 		}
 	}
 
+	/** 
+	 * Fetch comments from api
+	 * Displays the first 20 comments
+	 * After user clicks the button displays next 20 comments
+	 * Comments sorted by time created
+	*/
 	fetchComments(){
 		let commentArray = [];
 		let firstPageComments = [];
@@ -398,8 +427,8 @@ class FoodScreen extends Component{
 
 		// //FETCHING COMMENTS
 		if (this.state.commentId.length >= 1){
-			console.log('[images js] fetchComments - commentId at fetchComment:', this.state.commentId)
-			console.log('[images js] fetchComments - commentId.length at fetchComment:', this.state.commentId.length)
+			console.log('[food js] fetchComments - commentId at fetchComment:', this.state.commentId)
+			console.log('[food js] fetchComments - commentId.length at fetchComment:', this.state.commentId.length)
 			this.state.commentId.forEach((commentID, index) => {
 				return fetch(COMMENT_URI + commentID, {
 					method: 'GET',
@@ -410,31 +439,30 @@ class FoodScreen extends Component{
 				})
 					.then((response) => response.json())
 					.then((responseJson) => {
-						console.log("[images js] fetchComments - Response from server fetchComment:", responseJson);
-						console.log("[images js] fetchComments - Comment to display fetchComment:", responseJson.comment);
-						console.log("[images js] fetchComments - ID to display fetchComment:", responseJson.owner);
-						console.log("[images js] fetchComments - Date created fetchComment:", responseJson.date_created);
-						console.log("[images js] fetchComments - Owner fetchComment :", responseJson.owner_username);
+						console.log("[food js] fetchComments - Response from server fetchComment:", responseJson);
+						console.log("[food js] fetchComments - Comment to display fetchComment:", responseJson.comment);
+						console.log("[food js] fetchComments - ID to display fetchComment:", responseJson.owner);
+						console.log("[food js] fetchComments - Date created fetchComment:", responseJson.date_created);
+						console.log("[food js] fetchComments - Owner fetchComment :", responseJson.owner_username);
 
 						commentArray.push(
 							responseJson
 						);
-						console.log('[images js] fetchComments - commentArray at fetchComment:', commentArray);
-						console.log('[images js] fetchComments - Length of commentArray at fetchComment', commentArray.length);
-						console.log('[images js] fetchComments - Length of commentId at fetchComment', this.state.commentId.length);
+						console.log('[food js] fetchComments - commentArray at fetchComment:', commentArray);
+						console.log('[food js] fetchComments - Length of commentArray at fetchComment', commentArray.length);
+						console.log('[food js] fetchComments - Length of commentId at fetchComment', this.state.commentId.length);
 						if (this.state.commentId.length === commentArray.length) {
-							console.log('[images js] fetchComments - NO MORE IMAGES TO LOOP THROUGH');
-							//SORTING COMMENTS FROM NEWEST TO OLDEST
+							console.log('[food js] fetchComments - NO MORE IMAGES TO LOOP THROUGH');
 							let sortedArray = commentArray.sort(function (a,b) {
 								if(moment(a.date_created).isBefore(b.date_created)){
 									return 1;
 								}
 								return -1;
 							})
-							console.log('[images js] fetchComments - sortedArray:', sortedArray);
+							console.log('[food js] fetchComments - sortedArray:', sortedArray);
 							if(commentArray.length > 4){
-								firstPageComments =  commentArray.slice(0,20);
-								nextPageComments = commentArray.slice(20);
+								firstPageComments =  sortedArray.slice(0,20);
+								nextPageComments = sortedArray.slice(20);
 								this.setState({
 									areCommentsLoaded: true,
 									arrayOfComments: [...firstPageComments],
@@ -445,16 +473,16 @@ class FoodScreen extends Component{
 							}else{
 								this.setState({
 									areCommentsLoaded: true,
-									arrayOfComments: [...commentArray],
+									arrayOfComments: [...sortedArray],
 									disableComment: false,
 									postingComment: false
 								})
 							}
-							console.log('[images js] fetchComments - postingComments after fetchComments():',this.state.postingComment);
+							console.log('[food js] fetchComments - postingComments after fetchComments():',this.state.postingComment);
 						}
 					})
 					.catch((error) => {
-						console.log('[images js] fetchComments - error:', error)
+						console.log('[food js] fetchComments - error:', error)
 					});
 			})
 		}else{
@@ -463,73 +491,72 @@ class FoodScreen extends Component{
 				disableComment: false,
 				postingComment: false
 			})
-			console.log('[images js] fetchComments - status of disableButton at fetchComment:', this.state.disableButton)
-			console.log('[images js] fetchComments - postingComments after fetchComments():', this.state.postingComment);
+			console.log('[food js] fetchComments - status of disableButton at fetchComment:', this.state.disableButton)
+			console.log('[food js] fetchComments - postingComments after fetchComments():', this.state.postingComment);
 		}
 	}
 	
 	
 	componentDidMount(){
-		console.log('[images js] componentDidMount');
+		console.log('[food js] componentDidMount');
 		this.fetchComments();
 	}
 	onBackBtnPressed = (disabled) => {
 		console.log('[image js] onBackBtnPressed');
 		this.props.navigation.goBack();
 	}
+	/**
+	 * Logic to display more comments
+	 */
 
 	onMoreCommentsPressed(){
 		let evenMoreComments;
-		console.log('[images js] onMoreCommentsPressed');
-		console.log('[images js] onMoreCommentsPressed - moreComments:', this.state.moreComments)
+		console.log('[food js] onMoreCommentsPressed');
+		console.log('[food js] onMoreCommentsPressed - moreComments:', this.state.moreComments)
 		if(this.state.moreComments.length > 20){
 			evenMoreComments = this.state.moreComments.slice(0,20)
-			console.log('[images js] onMoreCommentsPressed - additional Comments:', evenMoreComments)
+			console.log('[food js] onMoreCommentsPressed - additional Comments:', evenMoreComments)
 			this.setState({
-				// isMoreCommentsPressed: true,
 				arrayOfComments: [...this.state.arrayOfComments, ...evenMoreComments],
 				moreComments: this.state.moreComments.slice(20)
 			});
-			console.log('[images js] onMoreCommentsPressed - moreComments new slice:', this.state.moreComments.slice(20));
+			console.log('[food js] onMoreCommentsPressed - moreComments new slice:', this.state.moreComments.slice(20));
 		}else{
 			this.setState({
-				// isMoreCommentsPressed: true,
 				arrayOfComments: [...this.state.arrayOfComments, ...this.state.moreComments]
 			});
 		}
 	}
+	/**
+	 * Logic to delete image and then return to feeds
+	 * Only restaurant can do perform this action
+	 * Remove from code??
+	 */
 
 	onDeleteImageBtnPressed = () => {
 		const imageIdToDelete = this.state.imageId;
 		const passedData = {...this.props.navigation.state.params.userData};
-		console.log('[images js] onDeleteImageBtnPressed - imagesFromFeeds: ', this.state.imagesFromFeeds);
+		console.log('[food js] onDeleteImageBtnPressed - imagesFromFeeds: ', this.state.imagesFromFeeds);
 		let imagesFromFeeds = [...this.state.imagesFromFeeds];
 		
 		const imageIndexToDelete = imagesFromFeeds.findIndex(function(el){
 			return el === imageIdToDelete;
 		});
 
-		console.log('[images js] onDeleteImageBtnPressed - image Id to delete:', this.state.imageId);
-		console.log('[images js] onDeleteImageBtnPressed - index of image to delete: ', imageIndexToDelete);
+		console.log('[food js] onDeleteImageBtnPressed - image Id to delete:', this.state.imageId);
+		console.log('[food js] onDeleteImageBtnPressed - index of image to delete: ', imageIndexToDelete);
 
-		// slice 1 from images array
-		// let removedImageId = imagesFromFeeds.splice(imageIndexToDelete, 1);
-		// console.log('[images js] onDeleteImageBtnPressed - image id deleted: ', imageIndexToDelete);
+	
 
 		this.props.navigation.replace('Feeds', {
 			data: passedData.data,
 			imageIdToDelete: imageIdToDelete,
 			processedImages: imagesFromFeeds
 		});
-
-		// this.props.navigation.replace('Feeds', {
-		// 	data: passedData.data,
-		// 	imageIdToDelete: imageIdToDelete,
-		// });
 	}
 
     render(){
-		// initialise comments and image to display
+		
 		let listOfComments = (<Spinner />);
 		let logoutLoader = (
 			<Button transparent onPress={this.onLogoutHandler}>
@@ -554,7 +581,7 @@ class FoodScreen extends Component{
 		}
 		
 
-		// logic after user clicks postComment
+		
 		if (this.state.disableComment){
 			canComment = (
 				<Button disabled={this.state.disableComment} full>
@@ -572,8 +599,8 @@ class FoodScreen extends Component{
 		
 		
 		if(this.state.areCommentsLoaded){
-			console.log('[images js] render - arrayOfComments.length at render:',  this.state.arrayOfComments.length);
-			console.log('[images js] render - commentId.length at render:',  this.state.commentId.length);
+			console.log('[food js] render - arrayOfComments.length at render:',  this.state.arrayOfComments.length);
+			console.log('[food js] render - commentId.length at render:',  this.state.commentId.length);
 			if(this.state.arrayOfComments.length >= 1){
 				listOfComments = [];
 				
@@ -587,16 +614,16 @@ class FoodScreen extends Component{
 					</ListItem>)
 				
 			}); 	
-			console.log('[images js] render - listOfComments.length:', listOfComments.length)
+			console.log('[food js] render - listOfComments.length:', listOfComments.length)
 				if (listOfComments.length >= 4 && listOfComments.length != this.state.commentId.length && !this.state.postingComment) {
-					console.log('[images js] render - arrayOfComments.length if more than 4 comments:', this.state.arrayOfComments.length);
+					console.log('[food js] render - arrayOfComments.length if more than 4 comments:', this.state.arrayOfComments.length);
 					displayMoreCommentsButton = <Button onPress={() => { this.onMoreCommentsPressed() }}>
 						<Text>More Comments</Text>
 					</Button>
 				}
 				imageLoader = <Image source={{ uri:IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} />
 			}else{
-				console.log('[images js] render - inside else if in render')
+				console.log('[food js] render - inside else if in render')
 				listOfComments = (<Text>No comments</Text>);
 				imageLoader = <Image source={{ uri:IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} />
 			}
@@ -629,9 +656,8 @@ class FoodScreen extends Component{
 					</Right>
                 </Header>
                 <Content>
-					{/* <Image source={{ uri:IMAGE_ROOT_URI + this.state.imageId + '/display' }} style={{ height: 200, width: null, flex: 1 }} /> */}
 					 {imageLoader}
-					 {/* Favorite Button */}
+					
 					 <Row>
 						<Button
 							transparent style={{ alignSelf: 'flex-end', position: "relative" }} onPress={() => { this.onFavoritePressHandler(this.state.imageId) }}
@@ -644,7 +670,6 @@ class FoodScreen extends Component{
 								name={this.state.isImageFavorite ? "ios-heart" : "ios-heart-outline"}
 							/>
 						</Button>
-						{/* Wishlist button */}
 						<Button
 							transparent style={{ alignSelf: 'flex-start', position: "relative" }} onPress={() => { this.onWishlistPressHandler(this.state.imageId) }}
 						>
@@ -656,7 +681,6 @@ class FoodScreen extends Component{
 								name={this.state.inImageWishlist ? "ios-color-wand" : "ios-color-wand-outline"}
 							/>
 						</Button>
-						{/* Triedlist button */}
 						<Button
 							transparent style={{ alignSelf: 'flex-start', position: "relative" }} onPress={() => { this.onTriedlistPressHandler(this.state.imageId) }}
 						>

@@ -1,3 +1,7 @@
+/**
+ * explore js
+ */
+
 import React, { Component } from 'react';
 import { 
 	Platform,  StyleSheet, View, 
@@ -13,8 +17,7 @@ import {
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
-// const GET_USERS_URI = 'http://localhost:5000/api/users';
-// const LOGOUT_URI = 'http://localhost:5000/logout';
+
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users';
 const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout';
 const GET_IMAGE_URI = 'https://app-api-testing.herokuapp.com/api/images';
@@ -52,7 +55,9 @@ class ExploreScreen extends Component {
 			this.fetchUsers();
 		}
 	}
-
+	/**
+	 * Get current user's details
+	 */
 	fetchCurrentUser = () => {
 		console.log("[explore js] fetchCurrentUser");
 		fetch(GET_USERS_URI + '/' + this.state.passedUserId)
@@ -81,8 +86,10 @@ class ExploreScreen extends Component {
 			.catch(error => console.log("[explore js] fetchCurrentUser - Error fetching search results: ", error));
 	}
 
-	// navigate back to feeds using currentUserDetails
-	// Back button sends to feeds but does not update feeds page
+	/**
+	 * navigate back to feeds using currentUserDetails
+	 * Back button sends to feeds but does not update feeds page
+	 */
 	onFeedsPressHandler = (data) => {
 		console.log("[explore js] onFeedsPressHandler");
 		console.log('[explore js] onFeedsPressHandler - data: ', data)
@@ -224,7 +231,9 @@ class ExploreScreen extends Component {
        
 	}
 
-	// Clicking the follow button
+	/**
+	 * Function for when user clicks follow button
+	 */
 	onListItemPressed = (itemId, userId) => {
 		console.log('[explore js] onListItemPressed - itemID: ', itemId);
 		console.log('[explore js] onListItemPressed - itemID type: ', typeof itemId);
@@ -258,7 +267,11 @@ class ExploreScreen extends Component {
 		.catch(err=>console.log('[explore js] onListItemPressed - error: ', err));
 	}
 
-	// Clicking user icon
+	/**
+	 * Navigate to user or restaurant page when clicking on icon
+	 * If role = 1, navigate to user page
+	 * If role = 2, navigate to restaurant page
+	 */
 	onUserPagePress = (itemId, itemFname, itemLname, itemImages, itemUsername, 
 		itemFollowing, itemRole, previousId, coordinates, title, profile_pic) => {
 
@@ -275,7 +288,6 @@ class ExploreScreen extends Component {
 		console.log('[explore js] item.title: ', title)
 		console.log('[explore js] item.profile_pic: ', profile_pic)
 
-		console.log('TESTING 123')
 		if(itemRole === 1){
 			this.props.navigation.navigate({
 				key: 'UserPage1', routeName: 'User', params: {
@@ -300,12 +312,15 @@ class ExploreScreen extends Component {
 					previousId: previousId,
 					coordinates: coordinates,
 					title:title,
-					profile_pic:profile_pic
+					profile_pic:profile_pic,
+					
 				}
 			})
 		}
 	}
-	// go to profile page from explore
+	/**
+	 * Go to profile page from explore
+	 */
 	onProfilePressedHandler = (data) => {
 		console.log('[explore js] onProfilePressedHandler pressed! ');
 		console.log('[explore js] onProfilePressedHandler - data: ', data);
@@ -329,6 +344,7 @@ class ExploreScreen extends Component {
 			<Footer>
 				<FooterTab>
 					<Button onPress={() => this.onFeedsPressHandler(this.state.currentUserDetails)}>
+						<Icon name='pizza'/>
 						<Text>Feeds</Text>
 					</Button>
 					<Button onPress={() => this.onProfilePressedHandler(this.state.currentUserDetails)}>
@@ -441,7 +457,7 @@ class ExploreScreen extends Component {
             <Container>
                 <Header>
 					<Left>
-						<Button transparent onPress={this.onBackBtnPressed}>
+						<Button transparent onPress={() => this.onBackBtnPressed(this.state.currentUserDetails)}>
 							<Icon name='arrow-back' />
 						</Button>
 					</Left>

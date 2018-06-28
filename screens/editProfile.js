@@ -1,3 +1,7 @@
+/**
+ * editProfile.js
+ */
+
 import React, { Component } from 'react';
 import { Platform, StyleSheet, View, Image, Alert, TouchableOpacity, TouchableHighlight, Dimensions } from 'react-native';
 import { createStackNavigator, StackActions, NavigationActions } from 'react-navigation';
@@ -103,52 +107,6 @@ class EditScreen extends Component{
 
     onChangesSave = () => {
         console.log('[editProfile js] onChangesSave button pressed')
-        // if (!validator.isLength(this.state.username, { min: 5 })) {
-        //     this.setState({
-        //         logUsername: "Min: 5",
-        //         disableButton: false,
-        //         isLoggedIn: false
-        //     });
-        //     return;
-        // }
-
-        // if (!validator.isLength(this.state.password, { min: 5 })) {
-        //     this.setState({
-        //         logPassword: "Min: 5",
-        //         disableButton: false,
-        //         isLoggedIn: false
-        //     });
-        //     return;
-        // }
-
-        if (!validator.isAlpha(this.state.fname)) {
-            this.setState({
-                logFname: "Letters only",
-                disableButton: false
-            });
-            return;
-        }
-        if (!validator.isLength(this.state.fname, { min: 2 })) {
-            this.setState({
-                logFname: "Too short",
-                disableButton: false
-            });
-            return;
-        }
-        if (!validator.isAlpha(this.state.lname)) {
-            this.setState({
-                logLname: "Letters only",
-                disableButton: false
-            });
-            return;
-        }
-        if (!validator.isLength(this.state.lname, { min: 2 })) {
-            this.setState({
-                logLname: "Too short",
-                disableButton: false
-            });
-            return;
-        }  
 
         return fetch(GET_USERS_URI, {
             method: 'PUT',
@@ -225,7 +183,7 @@ class EditScreen extends Component{
                             />
                         </Item>
                         {this.state.logFname.length > 0 ? (<Text style={styles.formLogText}>{this.state.logFname}</Text>) : null}
-                        <Item>
+                        <Item inlineLabel>
                             <Label>Last Name</Label>
                             <Input
                                 placeholder={this.state.lname}
@@ -247,10 +205,15 @@ class EditScreen extends Component{
                         onChangeText={(text) => this.onChangedPasswordHandler(text)}
                         secureTextEntry={true}
                     /> */}
-                    <Button bordered onPress = {this.onChangesSave}>
-                        <Text>Save Changes</Text>
-                    </Button>
+                    
                 </Content>
+                <Footer>
+                    <FooterTab>
+                        <Button onPress={this.onChangesSave}>
+                            <Text>Save Changes</Text>
+                        </Button>
+                    </FooterTab>
+                </Footer>
                 
             </Container>
         )

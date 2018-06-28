@@ -38,6 +38,7 @@ class FeedsScreen extends Component {
         // call props.navigation.state.params here
 		const { params } = this.props.navigation.state;
 		console.log('[feeds js] constructor - Data carried over: ', this.props.navigation.state);
+		console.log('[feeds js] constructor - routeName: ', this.props.navigation.state.routeName);
 		// console.log('[feeds js] constructor - Data carried over: params ', this.props.navigation.state.params);
 		// console.log('[feeds js] constructor - Data carried over: params.data ', this.props.navigation.state.params.data);
 		// console.log('[feeds js] constructor - Data carried over: params.processedImages ', this.props.navigation.state.params.processedImages);
@@ -57,13 +58,15 @@ class FeedsScreen extends Component {
 			isLoggedOut: false,
 			role: props.navigation.state.params.data.role,
 			imageIdToDelete : props.navigation.state.params.imageIdToDelete ?  props.navigation.state.params.imageIdToDelete : null,
+			followedToRemove : props.navigation.state.params.followedUser ?  props.navigation.state.params.followedUser : null,
 			userImages: null,
 			followedImages: null,
 			restaurantUsers: null,
 			locations: props.navigation.state.params.data.locations,
 			mapRegion: null,
 			mapMarkers: [],
-			mapDisplay: null
+			mapDisplay: null,
+			
 			
 			
 		};
@@ -117,7 +120,10 @@ class FeedsScreen extends Component {
 		
 	}
 
-	//setting up carousel elements for rendering
+	/**
+	 * Rendering the carousel
+	 */
+
 	_renderItem ({item, index}, parallaxProps) {
 		console.log('[feeds js] _renderItem - item: ', item);
 		console.log('[feeds js] _renderItem - item._id: ', item._id);
@@ -147,10 +153,13 @@ class FeedsScreen extends Component {
 			</View>
         );
 	}
-	// function for carousel to navigate to restaurant after click
+	/**
+	 * Function for carousel to navigate to restaurant when carousel image is clicked
+	 */
 	goToRestaurant = (item) => {
 		console.log('[feeds js] testFunction - Carousel image pressed');
 		console.log('[feeds js] goToRestaurant - item: ', item)
+	
 		this.props.navigation.navigate({
 			key: 'RestaurantPage1', routeName: 'Restaurant', params: {
 				userId: item._id,
@@ -161,7 +170,8 @@ class FeedsScreen extends Component {
 				previousId: this.state.passedId,
 				coordinates: item.coordinates,
 				title: item.title,
-				profile_pic: item.profile_pic
+				profile_pic: item.profile_pic,
+		
 			}
 		})
 		
@@ -792,7 +802,7 @@ class FeedsScreen extends Component {
 			)
 		}
 
-		// carousel display
+		
 		let carousel = (<Spinner/>);
 		if(this.state.restaurantUsers){
 			carousel = (
