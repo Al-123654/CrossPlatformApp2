@@ -104,11 +104,20 @@ class RestaurantScreen extends Component{
             ]
         )
     }
+    /**
+     * navigate back to feeds with back btn
+     * performs another fetch to get new data before returning back to feeds
+     */
     onBackBtnPressed = () => {
-       
         console.log('[restaurant js] onBackBtnPressed');
-        this.props.navigation.goBack();
+        this.props.navigation.replace('Feeds', {
+            data: this.state.currentUserDetails,
+            markerSaved: 1
+        })
+        
     }
+
+
     onImageClicked = (imageId, passedId) => {
         console.log("[restaurant js] onImageClicked - imageId: ", imageId);
         return fetch(GET_IMAGES_URI + imageId, {
@@ -169,6 +178,8 @@ class RestaurantScreen extends Component{
         })
     }
 
+  
+
    /**
     * Check to see if the restaurant has already been saved and display the correct prompt
     * serverLat and serverLng: variables used to compare the restaurant coordinates with those saved by the user in the api
@@ -176,10 +187,8 @@ class RestaurantScreen extends Component{
    getLocationSaved = () => {
        
        let serverLat;
-      
        let serverLng;
 
-       // fetch data from api
        return fetch(GET_USERS_URI + this.state.userId, {
            method: 'GET',
            headers: {
@@ -192,10 +201,10 @@ class RestaurantScreen extends Component{
                return;
            }
            response.json().then(data => {
-                console.log('[restaurant js] getLocationSaved - json response: ', data);
                 this.setState({
                     currentUserDetails: data
                 })
+                console.log('[restaurant js] getLocationSaved - json response: ', data);
                 console.log('[restaurant js] getLocationSaved - data.locations: ', data.locations)
                 console.log('[restaurant js] getLocationSaved - data.locations.length: ', data.locations.length)
                 if(data.locations.length > 0){
@@ -214,6 +223,7 @@ class RestaurantScreen extends Component{
                         if (serverLat == this.state.restaurantCoord.lat && serverLng == this.state.restaurantCoord.lng) {
                             this.setState({
                                 locationSaved: true,
+                                // currentUserDetails: data
                             })
                             break;
                         } 
@@ -223,7 +233,7 @@ class RestaurantScreen extends Component{
                 }else{
                     this.setState({
                         locationSaved:false,
-
+                        // currentUserDetails: data
                     })
                 }
            });
@@ -244,6 +254,7 @@ class RestaurantScreen extends Component{
         let markerLat;
         let markerLng;
 
+        //perform a fetch and put the restaurant coordinates into the user 
         return fetch(GET_USERS_URI, {
             method: 'PUT',
             headers: {
@@ -263,6 +274,7 @@ class RestaurantScreen extends Component{
                 return;
             }
             response.json().then(data => {
+                console.log('[restaurant js] onLocationSavePressed-  data.updatedUser: ', data.updatedUser)
                 console.log('[restaurant js] onLocationSavePressed-  data.locations: ', data.updatedUser.locations)
                 console.log('[restaurant js] onLocationSavePressed-  this.state.restaurantCoord: ', this.state.restaurantCoord)
                 newMarker =  data.updatedUser.locations.map(markers => {
@@ -272,10 +284,10 @@ class RestaurantScreen extends Component{
                 console.log('[restaurant js] onLocationSavePressed - markerLat: ', markerLat);
                 console.log('[restaurant js] onLocationSavePressed - markerLng: ', markerLng);
 
-                
                 if (markerLat == this.state.restaurantCoord.lat && markerLng == this.state.restaurantCoord.lng) {
                     this.setState({
                         locationSaved : true,
+                        currentUserDetails:data.updatedUser
 
                     }) 
                     Toast.show({
@@ -287,6 +299,7 @@ class RestaurantScreen extends Component{
                 } else {
                     this.setState({
                         locationSaved : false,
+                        currentUserDetails:data.updatedUser
 
                     }) 
                     Toast.show({
@@ -295,32 +308,23 @@ class RestaurantScreen extends Component{
                         position: 'top',
                         duration: 3000
                     })
-                }   
+                }
+                console.log('[restaurant js] onLocationSavePressed - currentUserDetails: ', this.state.currentUserDetails)   
             }); 
         }).catch(err => console.log('[restaurant js] onLocationSavePressed - error: ', err));
     }
 
-    onFeedsPressHandler = () => {
-        /** 
-         * return to feeds
-         * refresh with new data
-        */
-        return fetch(GET_USERS_URI + this.state.userId, {
-            method: 'GET',
-            headers: {
-                'content-type': 'application/json'
-            },
-        }).then(response => {
-            console.log('[restaurant js] onFeedsPressHandler - response: ', response);
-            response.json().then(data => {
-                console.log('restaurant js onFeedsPressHandler - data: ', data)
-                this.props.navigation.navigate({
-                    key: 'Feeds1', routeName: 'Feeds', params: {
-                        data: data
-                    }
-                })
-            })
-        }).catch(err => console.log('[restaurant js] getLocationSaved - error: ', err));
+    /**
+     * Go to feeds button                                     
+     */
+    onFeedsPressHandler = (data) => {
+        console.log('[restaurant js] onFeedsPressHandler - data: ', data)
+        this.props.navigation.navigate({
+            key: 'Feeds1', routeName: 'Feeds', params: {
+                data: data
+            }
+        })
+       
     }
 
     onExplorePressedHandler = (currentUserId) => {
@@ -450,7 +454,7 @@ class RestaurantScreen extends Component{
                 </Container>
                 <Footer>
                     <FooterTab >
-                        <Button onPress={this.onFeedsPressHandler}>
+                        <Button onPress={() => {this.onFeedsPressHandler(this.state.currentUserDetails)}}>
                             <Icon name='pizza' />
                             <Text>Feeds</Text>
                         </Button>
