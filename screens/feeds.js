@@ -1,3 +1,7 @@
+/**
+ * feeds js
+ */
+
 import React, { Component } from 'react';
 import { 
 	Platform, Dimensions, StyleSheet, View, Image, 
@@ -36,9 +40,12 @@ class FeedsScreen extends Component {
 		super(props);
 		
         // call props.navigation.state.params here
-		const { params } = this.props.navigation.state;
-		console.log('[feeds js] constructor - Data carried over: ', this.props.navigation.state);
-		console.log('[feeds js] constructor - routeName: ', this.props.navigation.state.routeName);
+		// const { params } = this.props.navigation.state;
+		// console.log('[feeds js] constructor - Data carried over: ', this.props.navigation.state);
+		// console.log('[feeds js] constructor - params: ', this.props.navigation.state.params);
+		const { params } = props.navigation.state;
+		console.log('[feeds js] constructor - Data carried over: ', props.navigation.state);
+		console.log('[feeds js] constructor - params: ', props.navigation.state.params);
 		// console.log('[feeds js] constructor - Data carried over: params ', this.props.navigation.state.params);
 		// console.log('[feeds js] constructor - Data carried over: params.data ', this.props.navigation.state.params.data);
 		// console.log('[feeds js] constructor - Data carried over: params.processedImages ', this.props.navigation.state.params.processedImages);
@@ -58,24 +65,25 @@ class FeedsScreen extends Component {
 			isLoggedOut: false,
 			role: props.navigation.state.params.data.role,
 			imageIdToDelete : props.navigation.state.params.imageIdToDelete ?  props.navigation.state.params.imageIdToDelete : null,
-			followedToRemove : props.navigation.state.params.followedUser ?  props.navigation.state.params.followedUser : null,
+			followingRefresh: props.navigation.state.params.followed ? props.navigation.state.params.followed: null ,
 			userImages: null,
 			followedImages: null,
 			restaurantUsers: null,
-			locations: props.navigation.state.params.data.locations,
+			locations: props.navigation.state.params.data.locations ? props.navigation.state.params.data.locations: null,
 			mapRegion: null,
 			mapMarkers: [],
 			mapDisplay: null,
-			
-			
-			
+			mapRefresh: props.navigation.state.params.markerSaved ? props.navigation.state.params.markerSaved : null
+
 		};
 		this.goToRestaurant = this.goToRestaurant.bind(this);
 		this._renderItem = this._renderItem.bind(this);
 		console.log('[feeds js] constructor - Current states:', this.state);	
 	}
 
-	//GET RESTAURANT DATA FROM SERVER
+	/**
+	 * Fetch Restaurant data from server to diplay markers
+	 */
 	fetchRestaurantUsers = () => {
 		let restaurantTitle;
 		let title= []
@@ -102,12 +110,6 @@ class FeedsScreen extends Component {
 			}
 			response.json().then(data => {
 				console.log('[feeds js] fetchRestaurantUsers - json response: ', data);
-				// Toast.show({
-				// 	text: 'Fetched restaurants',
-				// 	buttonText: 'Ok',
-				// 	position: 'top',
-				// 	duration: 2000
-				// });
 				console.log('[feeds js] Fetched restaurants')
 				this.setState({restaurantUsers: [...data],});
 				console.log('[feeds js] fetchRestaurantUsers - this.state.restaurantUsers: ', this.state.restaurantUsers);
@@ -155,6 +157,7 @@ class FeedsScreen extends Component {
 	}
 	/**
 	 * Function for carousel to navigate to restaurant when carousel image is clicked
+	 * 
 	 */
 	goToRestaurant = (item) => {
 		console.log('[feeds js] testFunction - Carousel image pressed');
@@ -177,19 +180,33 @@ class FeedsScreen extends Component {
 		
 	}
 
+	/**
+	 * Set up image and map display logic
+	 */
+
 	componentDidMount = () => {
 		if(this.state.imageIdToDelete){
 			console.log("[feeds js] componentDidMount - feedImagesArray from images: ", this.state.feedImagesArray);
 			console.log("[feeds js] componentDidMount - imageIdToDelete: ", this.state.imageIdToDelete);
 			// runs only if deleting using btn from images js
 			this.onImageDelete(this.state.imageIdToDelete);
+		}else if(this.state.followingRefresh){
+			console.log('[feeds js] Removing following')
+			this.getUserImages();
+			this.getFollowedImages();
 		}else{
 			this.getUserImages();
 			this.getFollowedImages();
 		}
-		// map-view related setup
-		this.setRegionBasedOnMarkers();
+		
+		if(this.state.mapRefresh){
+			console.log('[feeds js] Refreshing map')
+			this.fetchRestaurantUsers();
+			this.setRegionBasedOnMarkers();
+			this.setMapMarkers();
+		}
 		this.fetchRestaurantUsers();
+		this.setRegionBasedOnMarkers();
 		this.setMapMarkers();
 	}
 
@@ -208,7 +225,10 @@ class FeedsScreen extends Component {
 			});
 		}
 	}
-
+	/**
+	 * Function to set the region according to the markers
+	 * 
+	 */
 	setRegionBasedOnMarkers = () => {
 		
 		// adjust location array to meet requirements of calculateRegionBasedOnMarkers()

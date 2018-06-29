@@ -29,7 +29,9 @@ class ExploreScreen extends Component {
 		//TODO: check if props.navigation.state.params exists
 		console.log('[explore js] constructor - passedParams: ', props.navigation.state.params);
 
-		// initialize state
+		/**
+		 * Initialize states
+		 */
 		this.state = {
 			searchTerm: null,
 			listOfUsers: null,
@@ -72,8 +74,6 @@ class ExploreScreen extends Component {
 					});
 					return;
 				}
-
-				// if fetch ok
 				response.json().then(respObj => {
 					console.log('[explore js] fetchCurrentUser - Response object: ', respObj);
 					console.log('[explore js] fetchCurrentUser - Lookup ok!!!');
@@ -87,22 +87,24 @@ class ExploreScreen extends Component {
 	}
 
 	/**
-	 * navigate back to feeds using currentUserDetails
-	 * Back button sends to feeds but does not update feeds page
+	 * @ desc navigate back to feeds using currentUserDetails
+	 * 
 	 */
 	onFeedsPressHandler = (data) => {
 		console.log("[explore js] onFeedsPressHandler");
 		console.log('[explore js] onFeedsPressHandler - data: ', data)
 		console.log('[explore js] onFeedsPressHandler - data._id: ', data._id)
 		console.log('[explore js] onFeedsPressHandler - data.fname: ', data.fname)
-		// console.log('[explore js] onFeedsPressHandler - data: ', data)
+		
 
 		this.props.navigation.navigate({key: 'Feeds1', routeName: 'Feeds', params:{
 			data:data
 		}})
 			
 	}
-
+	/**
+	 * Fetch list of users when user enters a search term
+	 */
 	fetchUsers = () => {
 		console.log("[explore js] fetchUsers!");
 		if(this.state.searchTerm){
@@ -119,13 +121,13 @@ class ExploreScreen extends Component {
 					return;
 				}
 
-				// if fetch ok
+				
 				response.json().then(respObj => {
 					console.log('[explore js] fetchUsers - Response object: ', respObj);
 					console.log('[explore js] fetchUsers - Search ok!!!');
 					console.log('[explore js] fetchUsers - Response object data: ', respObj.data);
 
-					// check data contents
+					
 					if(respObj.data){
 						if(respObj.data.length === 0){
 							// if no results
@@ -135,7 +137,6 @@ class ExploreScreen extends Component {
 								
 							});
 						}else{
-							// if more than one results
 							this.setState({
 								listOfUsers: respObj.data,
 								isListLoading: false,
@@ -147,7 +148,6 @@ class ExploreScreen extends Component {
 			})
 			.catch(error => console.log("[explore js] fetchUsers - Error fetching search results: ", error));
 		}
-		// if nothing entered in search field
 		else{
 			this.setState({
 				listOfUsers : null,
@@ -157,20 +157,22 @@ class ExploreScreen extends Component {
 		}
 	}
 
-	//user enters data into search field
+	/**
+	 * Logic when user types in search box
+	 */
 	onChangedSearchHandler = (text) => {
-		// if user enters data into search field
+		
 		if(text && text.length >= 1){
 			console.log('[explore js] onChangedSearchHandler - text in searchbox: ', text);
 			this.setState({searchTerm: text});
 		}
-		// if user does not enter data into search field
+		
 		else{
 			this.setState({searchTerm: null});
 		}
 	}
 
-	//user clicks search button
+	
 	onSubmitSearchHandler = () => {
 		console.log("[explore js] onSubmitSearchHandler - Clicked search btn.");
 		this.setState({
@@ -180,10 +182,19 @@ class ExploreScreen extends Component {
 		});
 		this.fetchUsers();
 	}
-
+	
+	/**
+	 * Using Back Button to return to feeds and refresh the feeds page
+	 * 
+	 */
 	onBackBtnPressed = () => {
-		console.log('[explore js] onBackBtnPressed');
-		this.props.navigation.goBack();
+		console.log('[explore js] onBackBtnPressed!!')
+		console.log('[explore js] onBackBtnPressed - this.currentUserDetails: ', this.state.currentUserDetails)
+
+		this.props.navigation.replace('Feeds',{
+			data: this.state.currentUserDetails,
+			followed: 1
+		});
 	}
 
     onLogoutHandler = () => {
@@ -362,7 +373,9 @@ class ExploreScreen extends Component {
 		if(this.state.isListLoading) {
 			jsxList = (<Spinner />);
 		}
-
+		/**
+		 * loop through list of users, comparing ids with following list
+		 */
 		if(this.state.listOfUsers !== null && this.state.currentUserDetails !== null){
 			console.log("[explore js] render - listOfUsers: ", this.state.listOfUsers);
 			console.log("[explore js] render - currentUserDetails: ", this.state.currentUserDetails);
@@ -372,7 +385,7 @@ class ExploreScreen extends Component {
 			let followingList = [...this.state.currentUserDetails.following];
 			let isFollowedCount = 0;
 
-			// loop through list of users, comparing ids with following list
+			
 			for (var i = 0; i < listOfUsersCopy.length; i++) {
 				console.log('[explore js] render - ID lisOfUsersCopy: ', listOfUsersCopy[i]._id );
 				for (var j = 0; j < followingList.length; j++) {
