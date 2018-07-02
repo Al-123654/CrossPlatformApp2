@@ -5,14 +5,14 @@
 import React, { Component } from 'react';
 import { Platform, StyleSheet, View, Image, Alert, TouchableOpacity, TouchableHighlight, Dimensions } from 'react-native';
 import { createStackNavigator, StackActions, NavigationActions } from 'react-navigation';
-// import RNFetchBlob from 'react-native-fetch-blob';
+
 import {
     Container, Header, Left, Body, Right, Icon, Title, Content, Text, Button, Item, Input,
     Form, Label, Thumbnail, Footer, FooterTab, Tab, Tabs, TabHeading, Toast, ListItem,
     Spinner
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
-// import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
+
 
 import Gallery from '../components/Gallery/Gallery';
 import validator from 'validator';
@@ -20,8 +20,6 @@ import validator from 'validator';
 const ALL_USER_URI = 'https://app-api-testing.herokuapp.com/api/users?followedList=1&userid='
 const LOGOUT_URI = 'https://app-api-testing.herokuapp.com/logout'
 const GET_USERS_URI = 'https://app-api-testing.herokuapp.com/api/users/';
-// const GET_FOLLOWED_BY = 'https://app-api-testing.herokuapp.com/api/users?usersFollowing=1&userid='
-// const GET_IMAGES_URI = 'https://app-api-testing.herokuapp.com/api/images/';
 
 class EditScreen extends Component{
     constructor (props){
@@ -80,8 +78,6 @@ class EditScreen extends Component{
                                     position: 'top',
                                     duration: 4000
                                 })
-                                // this.props.navigation.navigate('Home');
-                                // console.log("[profile js] onLogoutPressHandler - LOGGED OUT");
                                 console.log("[profile js] onLogoutPressHandler - LOGGING OUT!");
                                 const resetAction = StackActions.reset({
                                     index: 0,
@@ -105,55 +101,134 @@ class EditScreen extends Component{
 
     }
 
+    /**
+     * @desc Save changes to api
+     * @desc IF new values do not pass validation return warning prompt
+     */
     onChangesSave = () => {
         console.log('[editProfile js] onChangesSave button pressed')
-
-        return fetch(GET_USERS_URI, {
-            method: 'PUT',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: this.state.username,
-                password: this.state.password,
-                fname: this.state.fname,
-                lname: this.state.lname
-            }),
-        }).then((response) => {
-            console.log('[editProfile js] responseOnLogin: ', response);
-            if (response.status !== 200) {
-
-                console.log('[editProfile js] responseOnLogin bad response: ', response);
-                // this.setState({log:"Cannot log in"})
-                Toast.show({
-                    text: 'Cannot save changes',
-                    buttonText: 'Ok',
-                    position: 'top',
-                    duration: 4000
-                });
-                this.setState({
-                    disableButton: false,
-                    isLoggedIn: false
-                });
-                return;
-            }
-            response.json().then(data => {
-                console.log('[editProfile js]  json response: ', data);
-                console.log("[editProfile js] CHANGES SAVED");
-                // go to feeds page
-                Toast.show({
-                    text: 'Changes saved successfully',
-                    buttonText: 'Ok',
-                    position: 'top',
-                    duration: 4000
-                });
-                console.log('[editProfile js] Response', data);
-                this.props.navigation.navigate('Feeds', data);
+        
+        if (!validator.isLength(this.state.fname, { min: 2 })) {
+            console.log('[editProfile js] onChangesSave - validator.isLength fname: ', validator.isLength(this.state.fname, { min: 2 }))
+            this.setState({
+                logFname: "Too short"
             });
-        }).catch((error) => {
-            console.log(error);
-        });
+            return;
+        }
+        
+        if(!validator.isLength(this.state.lname, {min: 2})){
+            console.log('[editProfile js] onChangesSave - validator.isLength lname: ', validator.isLength(this.state.lname, { min: 2 }))
+            this.setState({
+                logLname: "Too short"
+            });
+            return;
+        }
+
+
+        if(validator.isAlpha(this.state.fname) || validator.isAlpha(this.state.lname)){
+            console.log('[editProfile js] onChangesSave - validator.isAlpha(fname): ', validator.isAlpha(this.state.fname))
+            console.log('[editProfile js] onChangesSave - validator.isAlpha(lname): ', validator.isAlpha(this.state.lname))
+            console.log('[editProfile js] onChangesSave - validator.isLength: ', validator.isLength(this.state.fname, { min: 2 }))
+            return fetch(GET_USERS_URI, {
+                method: 'PUT',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: this.state.username,
+                    password: this.state.password,
+                    fname: this.state.fname,
+                    lname: this.state.lname
+                }),
+            }).then((response) => {
+                console.log('[editProfile js] responseOnLogin: ', response);
+                if (response.status !== 200) {
+
+                    console.log('[editProfile js] responseOnLogin bad response: ', response);
+                    // this.setState({log:"Cannot log in"})
+                    Toast.show({
+                        text: 'Cannot save changes',
+                        buttonText: 'Ok',
+                        position: 'top',
+                        duration: 4000
+                    });
+                    return;
+                }
+                response.json().then(data => {
+                    console.log('[editProfile js]  json response: ', data);
+                    console.log("[editProfile js] CHANGES SAVED");
+                    // go to feeds page
+                    Toast.show({
+                        text: 'Changes saved successfully',
+                        buttonText: 'Ok',
+                        position: 'top',
+                        duration: 4000
+                    });
+                    console.log('[editProfile js] Response', data);
+                    this.props.navigation.navigate('Feeds', data);
+                });
+            }).catch((error) => {
+                console.log(error);
+            });
+        }else{
+            console.log('[editProfile js] onChangesSave - in else route')
+            console.log('[editProfile js] onChangesSave - validator.isAlpha(fname): ', validator.isAlpha(this.state.fname))
+            console.log('[editProfile js] onChangesSave - validator.isAlpha(lname): ', validator.isAlpha(this.state.lname))
+            console.log('[editProfile js] onChangesSave - fname: ', this.state.fname);
+            console.log('[editProfile js] onChangesSave - lname: ', this.state.lname);
+        }
+
+        
+
+        
+
+        // return fetch(GET_USERS_URI, {
+        //     method: 'PUT',
+        //     headers: {
+        //         Accept: 'application/json',
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify({
+        //         username: this.state.username,
+        //         password: this.state.password,
+        //         fname: this.state.fname,
+        //         lname: this.state.lname
+        //     }),
+        // }).then((response) => {
+        //     console.log('[editProfile js] responseOnLogin: ', response);
+        //     if (response.status !== 200) {
+
+        //         console.log('[editProfile js] responseOnLogin bad response: ', response);
+        //         // this.setState({log:"Cannot log in"})
+        //         Toast.show({
+        //             text: 'Cannot save changes',
+        //             buttonText: 'Ok',
+        //             position: 'top',
+        //             duration: 4000
+        //         });
+        //         this.setState({
+        //             disableButton: false,
+        //             isLoggedIn: false
+        //         });
+        //         return;
+        //     }
+        //     response.json().then(data => {
+        //         console.log('[editProfile js]  json response: ', data);
+        //         console.log("[editProfile js] CHANGES SAVED");
+        //         // go to feeds page
+        //         Toast.show({
+        //             text: 'Changes saved successfully',
+        //             buttonText: 'Ok',
+        //             position: 'top',
+        //             duration: 4000
+        //         });
+        //         console.log('[editProfile js] Response', data);
+        //         this.props.navigation.navigate('Feeds', data);
+        //     });
+        // }).catch((error) => {
+        //     console.log(error);
+        // });
     }
     
     render(){
